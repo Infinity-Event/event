@@ -1,38 +1,46 @@
 package com.capgemini.event.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 
 @Entity
 @Table(name = "feedbacks")
-public class FeedBack {
+public class Feedback {
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long feedbackId;
+
+	@Min(value = 1, message = "Rating must be at least 1")
+	@Max(value = 5, message = "Rating must be at most 5")
 	private int rating;
+
+	@NotBlank(message = "Review cannot be blank")
+	@Size(min = 10, max = 1000, message = "Review must be between 10 and 1000 characters")
 	private String review;
 
 	@ManyToOne
+	@JoinColumn(name = "user_id", nullable = false)
+	@NotNull(message = "User cannot be null")
 	private User user;
+
 	@ManyToOne
+	@JoinColumn(name = "event_id", nullable = false)
+	@NotNull(message = "Event cannot be null")
 	private Event event;
 
-	public FeedBack() {
-
+	public Feedback() {
+		
 	}
 
-	public FeedBack(Long feedbackId, int rating, String review, User user, Event event) {
-		super();
+	public Feedback(Long feedbackId, int rating, String review, User user, Event event) {
 		this.feedbackId = feedbackId;
 		this.rating = rating;
 		this.review = review;
 		this.user = user;
 		this.event = event;
 	}
+
 
 	public Long getFeedbackId() {
 		return feedbackId;
@@ -76,8 +84,7 @@ public class FeedBack {
 
 	@Override
 	public String toString() {
-		return "FeedBack [feedbackId=" + feedbackId + ", rating=" + rating + ", review=" + review + ", user=" + user
-				+ ", event=" + event + "]";
+		return "Feedback [feedbackId=" + feedbackId + ", rating=" + rating + ", review=" + review
+				+ ", user=" + user + ", event=" + event + "]";
 	}
-
 }
