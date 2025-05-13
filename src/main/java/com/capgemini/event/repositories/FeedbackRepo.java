@@ -2,8 +2,8 @@ package com.capgemini.event.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.capgemini.event.entities.FeedBack;
+import com.capgemini.event.entities.Feedback;
 
-public interface FeedBackRepo extends JpaRepository<FeedBack, Long>{
+public interface FeedbackRepo extends JpaRepository<Feedback, Long>{
 
 }
