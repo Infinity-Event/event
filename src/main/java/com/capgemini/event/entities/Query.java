@@ -2,6 +2,7 @@ package com.capgemini.event.entities;
 
 import java.time.LocalDate;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -32,7 +33,7 @@ public class Query {
 	@NotNull(message = "Query date must not be null")
 	private LocalDate queryDate;
 
-	@OneToOne
+	@OneToOne(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
 	@JoinColumn(name = "response_id")
 	private Response response;
 
@@ -45,7 +46,6 @@ public class Query {
 	}
 
 	public Query(Long queryId, String queryBody, String status, LocalDate queryDate, Response response, User user) {
-		super();
 		this.queryId = queryId;
 		this.queryBody = queryBody;
 		this.status = status;
