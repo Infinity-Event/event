@@ -9,23 +9,26 @@ public class Feedback {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "feedback_id")
 	private Long feedbackId;
 
 	@Min(value = 1, message = "Rating must be at least 1")
 	@Max(value = 5, message = "Rating must be at most 5")
+	@Column(name = "rating")
 	private int rating;
 
 	@NotBlank(message = "Review cannot be blank")
 	@Size(min = 10, max = 1000, message = "Review must be between 10 and 1000 characters")
+	@Column(name = "review")
 	private String review;
 
-	@ManyToOne
-	@JoinColumn(name = "user_id", nullable = false)
+	@ManyToOne(optional = true)
+	@JoinColumn(name = "user_id")
 	@NotNull(message = "User cannot be null")
 	private User user;
 
-	@ManyToOne
-	@JoinColumn(name = "event_id", nullable = false)
+	@ManyToOne(optional = true)
+	@JoinColumn(name = "event_id")
 	@NotNull(message = "Event cannot be null")
 	private Event event;
 
