@@ -37,7 +37,7 @@ public class User {
 	@Column(name = "user_type", nullable = false)
 	private UserType type;
 
-	// Constructors
+	// Constructor
 	public User() {
 	}
 
