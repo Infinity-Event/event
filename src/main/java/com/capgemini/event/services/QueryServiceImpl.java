@@ -4,9 +4,11 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Service;
 
 import com.capgemini.event.repositories.QueryRepo;
 
+@Service
 public class QueryServiceImpl implements QueryService {
 	
 	private QueryRepo queryRepo;
