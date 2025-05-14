@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Objects;
 
@@ -15,111 +16,85 @@ import java.util.Objects;
 @RequestMapping("/api/events")
 public class EventController {
 
-    private final EventService eventService;
-
     @Autowired
-    public EventController(EventService eventService) {
-        this.eventService = eventService;
-    }
-
-    @PostMapping("/organizer/{organizerId}")
-    public ResponseEntity<Event> createEvent(@PathVariable Long organizerId,
-                                             @Valid @RequestBody Event event) {
-        Event createdEvent = eventService.createEvent(event, organizerId);
-        if (createdEvent == null) {
-            return ResponseEntity.badRequest().build(); 
-        }
-        return new ResponseEntity<>(createdEvent, HttpStatus.CREATED);
-    }
-
-    @GetMapping("/{eventId}")
-    public ResponseEntity<Event> getEventById(@PathVariable Long eventId) {
-        Event event = eventService.getEventById(eventId);
-        if (event == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(event);
-    }
+    private EventService eventService;
 
     @GetMapping
     public ResponseEntity<List<Event>> getAllEvents() {
         List<Event> events = eventService.getAllEvents();
         return ResponseEntity.ok(events);
     }
-    
-    @GetMapping("/organizer/{organizerId}")
-    public ResponseEntity<List<Event>> getEventsByOrganizer(@PathVariable Long organizerId) {
-        List<Event> events = eventService.getEventsByOrganizer(organizerId);
-         if (events.isEmpty() && eventService.getEventsByOrganizer(organizerId) == null ) { // Check if organizer itself not found
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Event> getEventById(@PathVariable Long id) {
+        Event event = eventService.getEventById(id);
+        if (event == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(events);
+        return ResponseEntity.ok(event);
     }
 
-    @GetMapping("/organizer/{organizerId}/upcoming")
-    public ResponseEntity<List<Event>> getUpcomingEventsByOrganizer(@PathVariable Long organizerId) {
-        List<Event> events = eventService.getUpcomingEventsByOrganizer(organizerId);
-        return ResponseEntity.ok(events);
-    }
-    
-    @GetMapping("/organizer/{organizerId}/past")
-    public ResponseEntity<List<Event>> getPastEventsByOrganizer(@PathVariable Long organizerId) {
-        List<Event> events = eventService.getPastEventsByOrganizer(organizerId);
-        return ResponseEntity.ok(events);
+    @PostMapping
+    public ResponseEntity<Event> createEvent(@Valid @RequestBody Event event) {
+        if (event.getOrganizer() == null || event.getOrganizer().getUserId() == null) {
+            return ResponseEntity.badRequest().body(null);
+        }
+        Long organizerId = event.getOrganizer().getUserId();
+        Event createdEvent = eventService.createEvent(event, organizerId);
+
+        if (createdEvent == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+        return ResponseEntity.created(URI.create("/api/events/" + createdEvent.getEventId())).body(createdEvent);
     }
 
-    @GetMapping("/organizer/{organizerId}/ongoing")
-    public ResponseEntity<List<Event>> getOngoingEventsByOrganizer(@PathVariable Long organizerId) {
-        List<Event> events = eventService.getOngoingEventsByOrganizer(organizerId);
-        return ResponseEntity.ok(events);
-    }
-
-    @PutMapping("/{eventId}/organizer/{currentUserId}")
-    public ResponseEntity<Event> updateEvent(@PathVariable Long eventId,
-                                             @PathVariable Long currentUserId,
-                                             @Valid @RequestBody Event eventDetails) {
-        Event originalEvent = eventService.getEventById(eventId);
-        if (originalEvent == null) {
+    @PutMapping("/{id}")
+    public ResponseEntity<Event> updateEvent(@PathVariable Long id, @Valid @RequestBody Event eventDetails) {
+        Event existingEvent = eventService.getEventById(id);
+        if (existingEvent == null) {
             return ResponseEntity.notFound().build();
         }
-        Event updatedEvent = eventService.updateEvent(eventId, eventDetails, currentUserId);
-        if (updatedEvent == null) { 
-            return ResponseEntity.notFound().build(); // Should ideally not happen if original existed, means user not found during update
+
+        Event updatedEvent = eventService.updateEvent(id, eventDetails);
+
+        if (updatedEvent == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
-        if (Objects.equals(updatedEvent.getEventId(), originalEvent.getEventId()) && updatedEvent == originalEvent) {
-             // Check if the event was returned unmodified by the service (signifying potential auth failure)
-             // This check is a bit weak; depends on service impl for unauthorized update.
-             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        
+        if (Objects.equals(updatedEvent.getEventId(), existingEvent.getEventId()) &&
+            updatedEvent == existingEvent &&
+            !Objects.equals(existingEvent.getOrganizer().getUserId(), null )) { 
         }
+
         return ResponseEntity.ok(updatedEvent);
     }
 
-    @DeleteMapping("/{eventId}/organizer/{currentUserId}")
-    public ResponseEntity<Void> deleteEvent(@PathVariable Long eventId, @PathVariable Long currentUserId) {
-        boolean deleted = eventService.deleteEvent(eventId, currentUserId);
-        if (!deleted) {
-            Event eventExists = eventService.getEventById(eventId);
-            if(eventExists == null) return ResponseEntity.notFound().build(); // Event not found
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build(); // Found but not authorized to delete
+    @PatchMapping("/{id}")
+    public ResponseEntity<Event> patchEvent(@PathVariable Long id, @RequestBody Event partialEventDetails) {
+        Event existingEvent = eventService.getEventById(id);
+        if (existingEvent == null) {
+            return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.noContent().build();
+
+        Event patchedEvent = eventService.patchEvent(id, partialEventDetails); 
+
+        if (patchedEvent == null) {
+             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+        return ResponseEntity.ok(patchedEvent);
     }
 
-    @GetMapping("/upcoming")
-    public ResponseEntity<List<Event>> getUpcomingEvents() {
-        List<Event> events = eventService.getUpcomingEvents();
-        return ResponseEntity.ok(events);
-    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteEvent(@PathVariable Long id) {
+        boolean deleted = eventService.deleteEvent(id); 
 
-    @GetMapping("/past")
-    public ResponseEntity<List<Event>> getPastEvents() {
-        List<Event> events = eventService.getPastEvents();
-        return ResponseEntity.ok(events);
-    }
-    
-    @GetMapping("/trending")
-    public ResponseEntity<List<Event>> getTrendingEvents() {
-        List<Event> events = eventService.getTrendingEvents();
-        return ResponseEntity.ok(events);
+        if (!deleted) {
+            Event eventExists = eventService.getEventById(id);
+            if (eventExists == null) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build(); 
+        }
+        return ResponseEntity.ok().build();
     }
 }
