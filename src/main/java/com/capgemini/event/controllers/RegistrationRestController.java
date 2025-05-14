@@ -1,35 +1,86 @@
 package com.capgemini.event.controllers;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import com.capgemini.event.entities.Event;
 import com.capgemini.event.entities.Registration;
-import com.capgemini.event.entities.User;
 import com.capgemini.event.services.RegistrationService;
 
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.net.URI;
+import java.util.List;
+//
+
 @RestController
-@RequestMapping("/api/register")
-public class RegistrationController {
+@RequestMapping("/api/registrations")
+public class RegistrationRestController {
 
-    @Autowired
-    private RegistrationService registrationService;
+	private RegistrationService registrationService;
 
-    
-    @PostMapping
-    public Registration registerUserToEvent(@RequestBody Registration registrationRequest) {
-        User user = registrationRequest.getUser();
-        Event event = registrationRequest.getEvent();
+	@Autowired
+	public RegistrationRestController(RegistrationService registrationService) {
+		this.registrationService = registrationService;
+	}
 
-        return registrationService.registerUserToEvent(user, event);
-    }
+	@GetMapping
+	public ResponseEntity<List<Registration>> getAllRegistrations() {
+		List<Registration> registrations = registrationService.getAllRegistrations();
+		return ResponseEntity.ok(registrations);
+	}
 
-    
-    @PostMapping("/user")
-    public List<Registration> getRegistrationsByUser(@RequestBody User user) {
-        return registrationService.getRegistrationsByUser(user);
-    }
-    
+	@GetMapping("/{id}")
+	public ResponseEntity<Registration> getRegistrationById(@PathVariable Long id) {
+		Registration registration = registrationService.getRegistrationById(id);
+		if (registration == null) {
+			return ResponseEntity.notFound().build();
+		}
+		return ResponseEntity.ok(registration);
+	}
+
+	@PostMapping
+	public ResponseEntity<Registration> createRegistration(@Valid @RequestBody Registration registration) {
+		Registration createdRegistration = registrationService.createRegistration(registration);
+		if (createdRegistration == null) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+		}
+		return ResponseEntity.created(URI.create("/api/registrations/" + createdRegistration.getRegId()))
+				.body(createdRegistration);
+	}
+
+	@PutMapping("/{id}")
+	public ResponseEntity<Registration> updateRegistration(@PathVariable Long id,
+			@Valid @RequestBody Registration registrationDetails) {
+		Registration existingRegistration = registrationService.getRegistrationById(id);
+		if (existingRegistration == null) {
+			return ResponseEntity.notFound().build();
+		}
+		Registration updatedRegistration = registrationService.updateRegistration(id, registrationDetails);
+		if (updatedRegistration == null) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+		}
+		return ResponseEntity.ok(updatedRegistration);
+	}
+
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Void> deleteRegistration(@PathVariable Long id) {
+		boolean deleted = registrationService.deleteRegistration(id);
+		if (!deleted) {
+			return ResponseEntity.notFound().build();
+		}
+		return ResponseEntity.ok().build();
+	}
+
+	@GetMapping("/user/{userId}")
+	public ResponseEntity<List<Registration>> getRegistrationsByUserId(@PathVariable Long userId) {
+		List<Registration> registrations = registrationService.getRegistrationsByUserId(userId);
+		return ResponseEntity.ok(registrations);
+	}
+
+	@GetMapping("/event/{eventId}")
+	public ResponseEntity<List<Registration>> getRegistrationsByEventId(@PathVariable Long eventId) {
+		List<Registration> registrations = registrationService.getRegistrationsByEventId(eventId);
+		return ResponseEntity.ok(registrations);
+	}
 }
