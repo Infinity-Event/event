@@ -1,33 +1,35 @@
-HELP.md
-target/
-!.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
-
-### STS ###
-.apt_generated
-.classpath
-.factorypath
+Change the .gitignore:                                                                                                                                                                                                                                    # Eclipse project files
+.settings/
 .project
-.settings
-.springBeans
-.sts4-cache
+.classpath
 
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
-
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
+# Java build output
+bin/
+target/
 build/
-!**/src/main/**/build/
-!**/src/test/**/build/
 
-### VS Code ###
-.vscode/
+# Maven
+log/
+*.log
+*.war
+*.ear
+
+# Gradle
+.gradle/
+build/
+
+# Package Files
+*.jar
+*.war
+*.ear
+
+# Eclipse working files
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+
+# OS-specific files
+.DS_Store
+Thumbs.db
