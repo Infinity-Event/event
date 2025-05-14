@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+//Service Implementation for EventServices
 @Service
 public class EventServiceImpl implements EventService {
 
@@ -64,11 +65,13 @@ public class EventServiceImpl implements EventService {
             return null;
         }
         Event existingEvent = eventOptional.get();
-        existingEvent.setName(eventDetails.getName());
+        existingEvent.setTitle(eventDetails.getTitle());
         existingEvent.setDescription(eventDetails.getDescription());
         existingEvent.setDate(eventDetails.getDate());
         existingEvent.setTime(eventDetails.getTime());
         existingEvent.setLocation(eventDetails.getLocation());
+        existingEvent.setCapacity(eventDetails.getCapacity());
+        existingEvent.setCategory(eventDetails.getCategory());
         return eventRepo.save(existingEvent);
     }
 
@@ -79,11 +82,13 @@ public class EventServiceImpl implements EventService {
             return null;
         }
         Event existingEvent = eventOptional.get();
-        if (partialEventDetails.getName() != null) existingEvent.setName(partialEventDetails.getName());
+        if (partialEventDetails.getTitle() != null) existingEvent.setTitle(partialEventDetails.getTitle());
         if (partialEventDetails.getDescription() != null) existingEvent.setDescription(partialEventDetails.getDescription());
         if (partialEventDetails.getDate() != null) existingEvent.setDate(partialEventDetails.getDate());
         if (partialEventDetails.getTime() != null) existingEvent.setTime(partialEventDetails.getTime());
         if (partialEventDetails.getLocation() != null) existingEvent.setLocation(partialEventDetails.getLocation());
+        if (partialEventDetails.getCapacity() != null) existingEvent.setCapacity(partialEventDetails.getCapacity());
+        if (partialEventDetails.getCategory() != null) existingEvent.setCategory(partialEventDetails.getCategory());
         return eventRepo.save(existingEvent);
     }
 
