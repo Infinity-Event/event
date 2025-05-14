@@ -16,4 +16,5 @@ public interface QueryService {
 	Query createEventQuery(Query query, Long userId);
 	
 	void deleteQuery(Long queryId);
+	
 }

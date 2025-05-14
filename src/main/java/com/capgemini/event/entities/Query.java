@@ -107,5 +107,5 @@ public class Query {
 		return "Query [queryId=" + queryId + ", queryBody=" + queryBody + ", status=" + status + ", queryDate="
 				+ queryDate + ", response=" + response + ", user=" + user + "]";
 	}
-	
+
 }
