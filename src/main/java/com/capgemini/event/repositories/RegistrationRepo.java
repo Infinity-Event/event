@@ -11,7 +11,8 @@ import com.capgemini.event.entities.Registration;
 import com.capgemini.event.entities.User;
 
 @Repository
-public interface RegistrationRepository extends JpaRepository<Registration, Long> {
+public interface RegistrationRepo extends JpaRepository<Registration, Long> {
+
 
 	Optional<Registration> findByUserAndEvent(User user, Event event);
 
