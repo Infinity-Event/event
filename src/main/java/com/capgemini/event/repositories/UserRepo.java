@@ -6,4 +6,5 @@ import com.capgemini.event.entities.User;
 public interface UserRepo extends JpaRepository<User, Long> {
 
     User findByEmail(String email);
+ 
 }
