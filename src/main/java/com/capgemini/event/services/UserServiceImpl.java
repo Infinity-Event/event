@@ -2,7 +2,7 @@ package com.capgemini.event.services;
 
 
 import com.capgemini.event.entities.User;
-import com.capgemini.event.repositories.UserRepository;
+import com.capgemini.event.repositories.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +13,7 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserRepo userRepository;
 
     @Override
     public List<User> getAllUsers() {
