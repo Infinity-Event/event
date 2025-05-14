@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.capgemini.event.entities.Event;
 import com.capgemini.event.entities.Feedback;
 import com.capgemini.event.entities.User;
+import com.capgemini.event.repositories.EventRepo;
 import com.capgemini.event.repositories.FeedbackRepo;
 import com.capgemini.event.repositories.UserRepo;
 
@@ -15,6 +16,10 @@ import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class FeedbackServiceImpl implements FeedbackService {
+
+    private static final String USER_NOT_FOUND = "User not found with id: ";
+    private static final String EVENT_NOT_FOUND = "Event not found with id: ";
+    private static final String FEEDBACK_NOT_FOUND = "Feedback not found with id: ";
 
     private final FeedbackRepo feedbackRepo;
     private final UserRepo userRepo;
@@ -35,22 +40,22 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Override
     public Feedback getFeedbackById(Long id) {
         return feedbackRepo.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Feedback not found with id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException(FEEDBACK_NOT_FOUND + id));
     }
 
     @Override
     public Feedback createFeedback(Feedback feedback) {
         if (feedback.getUser() != null) {
-            Long userId = feedback.getUser().getId();
+            Long userId = feedback.getUser().getUserId();
             User user = userRepo.findById(userId)
-                    .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
+                    .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND + userId));
             feedback.setUser(user);
         }
 
         if (feedback.getEvent() != null) {
-            Long eventId = feedback.getEvent().getId();
+            Long eventId = feedback.getEvent().getEventId();
             Event event = eventRepo.findById(eventId)
-                    .orElseThrow(() -> new EntityNotFoundException("Event not found with id: " + eventId));
+                    .orElseThrow(() -> new EntityNotFoundException(EVENT_NOT_FOUND + eventId));
             feedback.setEvent(event);
         }
 
@@ -65,16 +70,16 @@ public class FeedbackServiceImpl implements FeedbackService {
         existing.setReview(updatedFeedback.getReview());
 
         if (updatedFeedback.getUser() != null) {
-            Long userId = updatedFeedback.getUser().getId();
+            Long userId = updatedFeedback.getUser().getUserId();
             User user = userRepo.findById(userId)
-                    .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
+                    .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND + userId));
             existing.setUser(user);
         }
 
         if (updatedFeedback.getEvent() != null) {
-            Long eventId = updatedFeedback.getEvent().getId();
+            Long eventId = updatedFeedback.getEvent().getEventId();
             Event event = eventRepo.findById(eventId)
-                    .orElseThrow(() -> new EntityNotFoundException("Event not found with id: " + eventId));
+                    .orElseThrow(() -> new EntityNotFoundException(EVENT_NOT_FOUND + eventId));
             existing.setEvent(event);
         }
 
@@ -94,16 +99,16 @@ public class FeedbackServiceImpl implements FeedbackService {
         }
 
         if (partialFeedback.getUser() != null) {
-            Long userId = partialFeedback.getUser().getId();
+            Long userId = partialFeedback.getUser().getUserId();
             User user = userRepo.findById(userId)
-                    .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
+                    .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND + userId));
             existing.setUser(user);
         }
 
         if (partialFeedback.getEvent() != null) {
-            Long eventId = partialFeedback.getEvent().getId();
+            Long eventId = partialFeedback.getEvent().getEventId();
             Event event = eventRepo.findById(eventId)
-                    .orElseThrow(() -> new EntityNotFoundException("Event not found with id: " + eventId));
+                    .orElseThrow(() -> new EntityNotFoundException(EVENT_NOT_FOUND + eventId));
             existing.setEvent(event);
         }
 
