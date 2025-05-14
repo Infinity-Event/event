@@ -3,6 +3,7 @@ package com.capgemini.event.controllers;
 import com.capgemini.event.entities.Feedback;
 import com.capgemini.event.services.FeedbackService;
 import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,10 +15,12 @@ import java.util.List;
 @RequestMapping("/api/feedbacks")
 public class FeedbackRestController {
 
+    private final FeedbackService feedbackService;
+
     @Autowired
-    private FeedbackService feedbackService;
-    
-    
+    public FeedbackRestController(FeedbackService feedbackService) {
+        this.feedbackService = feedbackService;
+    }
 
     @GetMapping
     public ResponseEntity<List<Feedback>> getAllFeedbacks() {
@@ -50,5 +53,4 @@ public class FeedbackRestController {
         feedbackService.deleteFeedback(id);
         return ResponseEntity.ok().build();
     }
-    
 }
