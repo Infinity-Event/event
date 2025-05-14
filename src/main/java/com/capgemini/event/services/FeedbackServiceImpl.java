@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.capgemini.event.entities.Event;
 import com.capgemini.event.entities.Feedback;
 import com.capgemini.event.entities.User;
+import com.capgemini.event.repositories.EventRepo;
 import com.capgemini.event.repositories.FeedbackRepo;
 import com.capgemini.event.repositories.UserRepo;
 
@@ -40,46 +41,49 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     @Override
     public Feedback createFeedback(Feedback feedback) {
-        if (feedback.getUser() != null) {
-            Long userId = feedback.getUser().getId();
-            User user = userRepo.findById(userId)
-                    .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
-            feedback.setUser(user);
+        if (feedback.getUser() == null || feedback.getUser().getUserId() == null) {
+            throw new IllegalArgumentException("Feedback must be associated with a valid User.");
+        }
+        if (feedback.getEvent() == null || feedback.getEvent().getEventId() == null) {
+            throw new IllegalArgumentException("Feedback must be associated with a valid Event.");
         }
 
-        if (feedback.getEvent() != null) {
-            Long eventId = feedback.getEvent().getId();
-            Event event = eventRepo.findById(eventId)
-                    .orElseThrow(() -> new EntityNotFoundException("Event not found with id: " + eventId));
-            feedback.setEvent(event);
-        }
+        User user = userRepo.findById(feedback.getUser().getUserId())
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + feedback.getUser().getUserId()));
+        Event event = eventRepo.findById(feedback.getEvent().getEventId())
+                .orElseThrow(() -> new EntityNotFoundException("Event not found with id: " + feedback.getEvent().getEventId()));
+
+        feedback.setUser(user);
+        feedback.setEvent(event);
 
         return feedbackRepo.save(feedback);
     }
+
 
     @Override
     public Feedback updateFeedback(Long id, Feedback updatedFeedback) {
         Feedback existing = getFeedbackById(id);
 
+        if (updatedFeedback.getUser() == null || updatedFeedback.getUser().getUserId() == null) {
+            throw new IllegalArgumentException("User is required for feedback update.");
+        }
+        if (updatedFeedback.getEvent() == null || updatedFeedback.getEvent().getEventId() == null) {
+            throw new IllegalArgumentException("Event is required for feedback update.");
+        }
+
+        User user = userRepo.findById(updatedFeedback.getUser().getUserId())
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + updatedFeedback.getUser().getUserId()));
+        Event event = eventRepo.findById(updatedFeedback.getEvent().getEventId())
+                .orElseThrow(() -> new EntityNotFoundException("Event not found with id: " + updatedFeedback.getEvent().getEventId()));
+
         existing.setRating(updatedFeedback.getRating());
         existing.setReview(updatedFeedback.getReview());
-
-        if (updatedFeedback.getUser() != null) {
-            Long userId = updatedFeedback.getUser().getId();
-            User user = userRepo.findById(userId)
-                    .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
-            existing.setUser(user);
-        }
-
-        if (updatedFeedback.getEvent() != null) {
-            Long eventId = updatedFeedback.getEvent().getId();
-            Event event = eventRepo.findById(eventId)
-                    .orElseThrow(() -> new EntityNotFoundException("Event not found with id: " + eventId));
-            existing.setEvent(event);
-        }
+        existing.setUser(user);
+        existing.setEvent(event);
 
         return feedbackRepo.save(existing);
     }
+
 
     @Override
     public Feedback patchFeedback(Long id, Feedback partialFeedback) {
@@ -93,22 +97,21 @@ public class FeedbackServiceImpl implements FeedbackService {
             existing.setReview(partialFeedback.getReview());
         }
 
-        if (partialFeedback.getUser() != null) {
-            Long userId = partialFeedback.getUser().getId();
-            User user = userRepo.findById(userId)
-                    .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
+        if (partialFeedback.getUser() != null && partialFeedback.getUser().getUserId() != null) {
+            User user = userRepo.findById(partialFeedback.getUser().getUserId())
+                    .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + partialFeedback.getUser().getUserId()));
             existing.setUser(user);
         }
 
-        if (partialFeedback.getEvent() != null) {
-            Long eventId = partialFeedback.getEvent().getId();
-            Event event = eventRepo.findById(eventId)
-                    .orElseThrow(() -> new EntityNotFoundException("Event not found with id: " + eventId));
+        if (partialFeedback.getEvent() != null && partialFeedback.getEvent().getEventId() != null) {
+            Event event = eventRepo.findById(partialFeedback.getEvent().getEventId())
+                    .orElseThrow(() -> new EntityNotFoundException("Event not found with id: " + partialFeedback.getEvent().getEventId()));
             existing.setEvent(event);
         }
 
         return feedbackRepo.save(existing);
     }
+
 
     @Override
     public void deleteFeedback(Long id) {
