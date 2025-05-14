@@ -150,7 +150,7 @@ public class EventServiceImpl implements EventService {
          return eventRepo.findAllPast(LocalDate.now(), LocalTime.now());
     }
     
-    //added this method to get trending events
+    //added this method to get trending 
 
     @Override
     public List<Event> getTrendingEvents() {
