@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 # Eclipse project files
+=======
+Change the .gitignore:                                                                                                                                                                                                                                    # Eclipse project files
+>>>>>>> branch 'main' of https://github.com/Infinity-Event/event
 .settings/
 .project
 .classpath
