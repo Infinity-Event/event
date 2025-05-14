@@ -43,7 +43,7 @@ public class RegistrationServiceImpl implements RegistrationService {
 			return null;
 		}
 
-		User user = userOptional.get(); //
+		User user = userOptional.get();
 		Event event = eventOptional.get();
 
 		if (registrationRepo.existsByUserAndEvent(user, event)) {

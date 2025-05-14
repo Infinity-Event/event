@@ -12,7 +12,7 @@ public interface RegistrationService {
 
 	List<Registration> getAllRegistrations();
 
-	Registration updateRegistration(Long regId, Registration registrationDetails); //
+	Registration updateRegistration(Long regId, Registration registrationDetails);
 
 	boolean deleteRegistration(Long regId);
 

@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
-//
 
 @RestController
 @RequestMapping("/api/registrations")
