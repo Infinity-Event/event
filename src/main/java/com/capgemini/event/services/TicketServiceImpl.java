@@ -8,7 +8,10 @@ import org.springframework.stereotype.Service;
 
 import com.capgemini.event.entities.Ticket;
 import com.capgemini.event.repositories.TicketRepo;
+<<<<<<< HEAD
 
+=======
+>>>>>>> branch 'main' of https://github.com/Infinity-Event/event
 @Service
 public class TicketServiceImpl implements TicketService {
 
