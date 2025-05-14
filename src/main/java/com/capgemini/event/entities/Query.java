@@ -6,42 +6,52 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "queries")
-
 public class Query {
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long queryId;
-	private String query;
-	private String response;
-	private String status;
-	private LocalDate queryDate;
-	private LocalDate responseDate;
+	
+	@NotBlank(message = "Query body must not be blank")
+	@Size(max = 1000, message = "Query body must not exceed 1000 characters")
+	private String queryBody;
 
-	@ManyToOne
+	@NotBlank(message = "Status must not be blank")
+	private String status;
+	
+	@NotNull(message = "Query date must not be null")
+	private LocalDate queryDate;
+
+	@OneToOne
+	@JoinColumn(name = "response_id")
+	private Response response;
+
+	@ManyToOne(optional = false)
+	@JoinColumn(name ="user_id")
+	@NotNull(message = "User must be specified")
 	private User user;
-	private Long orgId;
 
 	public Query() {
-
 	}
 
-	public Query(Long queryId, String query, String response, String status, LocalDate queryDate,
-			LocalDate responseDate, User user, Long orgId) {
+	public Query(Long queryId, String queryBody, String status, LocalDate queryDate, Response response, User user) {
 		super();
 		this.queryId = queryId;
-		this.query = query;
-		this.response = response;
+		this.queryBody = queryBody;
 		this.status = status;
 		this.queryDate = queryDate;
-		this.responseDate = responseDate;
+		this.response = response;
 		this.user = user;
-		this.orgId = orgId;
 	}
 
 	public Long getQueryId() {
@@ -52,20 +62,12 @@ public class Query {
 		this.queryId = queryId;
 	}
 
-	public String getQuery() {
-		return query;
+	public String getQueryBody() {
+		return queryBody;
 	}
 
-	public void setQuery(String query) {
-		this.query = query;
-	}
-
-	public String getResponse() {
-		return response;
-	}
-
-	public void setResponse(String response) {
-		this.response = response;
+	public void setQueryBody(String queryBody) {
+		this.queryBody = queryBody;
 	}
 
 	public String getStatus() {
@@ -84,12 +86,12 @@ public class Query {
 		this.queryDate = queryDate;
 	}
 
-	public LocalDate getResponseDate() {
-		return responseDate;
+	public Response getResponse() {
+		return response;
 	}
 
-	public void setResponseDate(LocalDate responseDate) {
-		this.responseDate = responseDate;
+	public void setResponse(Response response) {
+		this.response = response;
 	}
 
 	public User getUser() {
@@ -100,19 +102,10 @@ public class Query {
 		this.user = user;
 	}
 
-	public Long getOrgId() {
-		return orgId;
-	}
-
-	public void setOrgId(Long orgId) {
-		this.orgId = orgId;
-	}
-
 	@Override
 	public String toString() {
-		return "Query [queryId=" + queryId + ", query=" + query + ", response=" + response + ", status=" + status
-				+ ", queryDate=" + queryDate + ", responseDate=" + responseDate + ", user=" + user + ", orgId=" + orgId
-				+ "]";
+		return "Query [queryId=" + queryId + ", queryBody=" + queryBody + ", status=" + status + ", queryDate="
+				+ queryDate + ", response=" + response + ", user=" + user + "]";
 	}
 
 }
