@@ -3,11 +3,15 @@ package com.capgemini.event.entities;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
@@ -15,117 +19,134 @@ import jakarta.persistence.Table;
 @Table(name = "events")
 public class Event {
 
-	@Id
-	@GeneratedValue
-	private Long eventId;
-	private Long organizerId;
-	private String title;
-	private LocalDate date;
-	private LocalTime time;
-	private String location;
-	private Integer capacity;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long eventId;
 
-	@Enumerated(EnumType.STRING)
-	private Category type;
+    @Column(nullable = false)
+    private String title;
 
-	@ManyToOne
-	private User user;
+    @Lob
+    private String description;
 
-	public Event() {
+    @Column(nullable = false)
+    private LocalDate date;
 
-	}
+    @Column(nullable = false)
+    private LocalTime time;
 
-	public Event(Long eventId, Long organizerId, String title, LocalDate date, LocalTime time, String location,
-			Integer capacity, Category type, User user) {
-		super();
-		this.eventId = eventId;
-		this.organizerId = organizerId;
-		this.title = title;
-		this.date = date;
-		this.time = time;
-		this.location = location;
-		this.capacity = capacity;
-		this.type = type;
-		this.user = user;
-	}
+    @Column(nullable = false)
+    private String location;
 
-	public Long getEventId() {
-		return eventId;
-	}
+    private Integer capacity;
 
-	public void setEventId(Long eventId) {
-		this.eventId = eventId;
-	}
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Category category;
 
-	public Long getOrganizerId() {
-		return organizerId;
-	}
+    @ManyToOne
+    @JoinColumn(name = "organizer_user_id", nullable = false)
+    private User organizer;
 
-	public void setOrganizerId(Long organizerId) {
-		this.organizerId = organizerId;
-	}
+    public Event() {
+    }
 
-	public String getTitle() {
-		return title;
-	}
+    public Event(String title, String description, LocalDate date, LocalTime time, String location, Integer capacity,
+                 Category category, User organizer) {
+        this.title = title;
+        this.description = description;
+        this.date = date;
+        this.time = time;
+        this.location = location;
+        this.capacity = capacity;
+        this.category = category;
+        this.organizer = organizer;
+    }
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
+    public Long getEventId() {
+        return eventId;
+    }
 
-	public LocalDate getDate() {
-		return date;
-	}
+    public void setEventId(Long eventId) {
+        this.eventId = eventId;
+    }
 
-	public void setDate(LocalDate date) {
-		this.date = date;
-	}
+    public String getTitle() {
+        return title;
+    }
 
-	public LocalTime getTime() {
-		return time;
-	}
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-	public void setTime(LocalTime time) {
-		this.time = time;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public String getLocation() {
-		return location;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public void setLocation(String location) {
-		this.location = location;
-	}
+    public LocalDate getDate() {
+        return date;
+    }
 
-	public Integer getCapacity() {
-		return capacity;
-	}
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
 
-	public void setCapacity(Integer capacity) {
-		this.capacity = capacity;
-	}
+    public LocalTime getTime() {
+        return time;
+    }
 
-	public Category getType() {
-		return type;
-	}
+    public void setTime(LocalTime time) {
+        this.time = time;
+    }
 
-	public void setType(Category type) {
-		this.type = type;
-	}
+    public String getLocation() {
+        return location;
+    }
 
-	public User getUser() {
-		return user;
-	}
+    public void setLocation(String location) {
+        this.location = location;
+    }
 
-	public void setUser(User user) {
-		this.user = user;
-	}
+    public Integer getCapacity() {
+        return capacity;
+    }
 
-	@Override
-	public String toString() {
-		return "Event [eventId=" + eventId + ", organizerId=" + organizerId + ", title=" + title + ", date=" + date
-				+ ", time=" + time + ", location=" + location + ", capacity=" + capacity + ", type=" + type + ", user="
-				+ user + "]";
-	}
+    public void setCapacity(Integer capacity) {
+        this.capacity = capacity;
+    }
 
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public User getOrganizer() {
+        return organizer;
+    }
+
+    public void setOrganizer(User organizer) {
+        this.organizer = organizer;
+    }
+
+    @Override
+    public String toString() {
+        return "Event{" +
+                "eventId=" + eventId +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", date=" + date +
+                ", time=" + time +
+                ", location='" + location + '\'' +
+                ", capacity=" + capacity +
+                ", category=" + category +
+                ", organizer=" + (organizer != null ? organizer.getUserId() : null) +
+                '}';
+    }
 }
