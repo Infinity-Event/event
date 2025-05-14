@@ -1,39 +1,42 @@
 package com.capgemini.event.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 
 @Entity
 @Table(name = "users")
 public class User {
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long userId;
+
+	@NotBlank(message = "Name is required")
+	@Size(min = 2, max = 50, message = "Name must be between 2 and 50 characters")
 	private String name;
 
 	@Column(unique = true)
+	@NotBlank(message = "Email is required")
+	@Email(message = "Email should be valid")
 	private String email;
 
+	@NotBlank(message = "Password is required")
+	@Size(min = 6, message = "Password must be at least 6 characters")
 	private String password;
 
+	@NotBlank(message = "Phone number is required")
+	@Pattern(regexp = "^[0-9]{10}$", message = "Phone number must be 10 digits")
 	private String phone;
 
 	@Enumerated(EnumType.STRING)
+	@NotNull(message = "User type is required")
 	private UserType type;
 
+	// Constructors
 	public User() {
-
 	}
 
 	public User(Long userId, String name, String email, String password, String phone, UserType type) {
-		super();
 		this.userId = userId;
 		this.name = name;
 		this.email = email;
@@ -41,6 +44,8 @@ public class User {
 		this.phone = phone;
 		this.type = type;
 	}
+
+	// Getters and setters
 
 	public Long getUserId() {
 		return userId;
@@ -95,5 +100,4 @@ public class User {
 		return "User [userId=" + userId + ", name=" + name + ", email=" + email + ", password=" + password + ", phone="
 				+ phone + ", type=" + type + "]";
 	}
-
 }
