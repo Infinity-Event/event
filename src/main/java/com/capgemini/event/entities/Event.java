@@ -51,7 +51,7 @@ public class Event {
 
     public Event() {
     }
-    // Constructor to initialize an Event object with all field
+    // Constructor to initialize an Event object with all fields
     public Event(String title, String description, LocalDate date, LocalTime time, String location, Integer capacity,
                  Category category, User organizer) {
         this.title = title;
