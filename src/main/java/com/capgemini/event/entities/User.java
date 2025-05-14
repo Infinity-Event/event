@@ -9,27 +9,32 @@ public class User {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "user_id")
 	private Long userId;
 
 	@NotBlank(message = "Name is required")
 	@Size(min = 2, max = 50, message = "Name must be between 2 and 50 characters")
+	@Column(name = "name", nullable = false)
 	private String name;
 
-	@Column(unique = true)
 	@NotBlank(message = "Email is required")
 	@Email(message = "Email should be valid")
+	@Column(name = "email", unique = true, nullable = false)
 	private String email;
 
 	@NotBlank(message = "Password is required")
 	@Size(min = 6, message = "Password must be at least 6 characters")
+	@Column(name = "password", nullable = false)
 	private String password;
 
 	@NotBlank(message = "Phone number is required")
 	@Pattern(regexp = "^[0-9]{10}$", message = "Phone number must be 10 digits")
+	@Column(name = "phone", nullable = false)
 	private String phone;
 
 	@Enumerated(EnumType.STRING)
 	@NotNull(message = "User type is required")
+	@Column(name = "user_type", nullable = false)
 	private UserType type;
 
 	// Constructors
@@ -45,7 +50,7 @@ public class User {
 		this.type = type;
 	}
 
-	// Getters and setters
+	// Getters and Setters
 
 	public Long getUserId() {
 		return userId;
