@@ -29,6 +29,7 @@ public class QueryController {
 		this.queryService = queryService;
 	}
 
+	//Created Api's
 	@GetMapping
 	public ResponseEntity<List<Query>> getAllQueries(){
 		return ResponseEntity.status(HttpStatus.OK).body(queryService.getAllQueries());

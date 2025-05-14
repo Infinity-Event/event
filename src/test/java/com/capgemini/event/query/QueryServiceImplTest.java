@@ -113,5 +113,6 @@ class QueryServiceImplTest {
         assertThrows(QueryNotFoundException.class, () -> {
             queryService.deleteQuery(100L);
         });
+        
     }
 }

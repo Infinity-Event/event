@@ -104,5 +104,6 @@ class QueryControllerTest {
 	                .andExpect(status().isNoContent());
 
 	        verify(queryService, times(1)).deleteQuery(1L);
+	        
 	    }
 }

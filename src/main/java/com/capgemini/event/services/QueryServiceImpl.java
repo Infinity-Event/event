@@ -43,9 +43,7 @@ public class QueryServiceImpl implements QueryService {
 
 	@Override
 	public void deleteQuery(Long queryId) {
-
 		Query query = queryRepo.findById(queryId).orElseThrow(()-> new QueryNotFoundException("Query not found!"));
-		
 		queryRepo.delete(query);
 	}
 }

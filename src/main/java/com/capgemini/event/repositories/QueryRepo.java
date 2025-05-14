@@ -6,4 +6,5 @@ import com.capgemini.event.entities.Query;
 
 public interface QueryRepo extends JpaRepository<Query, Long>{
 
+	
 }
