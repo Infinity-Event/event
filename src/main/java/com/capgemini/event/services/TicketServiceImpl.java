@@ -4,10 +4,11 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.capgemini.event.entities.Ticket;
 import com.capgemini.event.repositories.TicketRepo;
-
+@Service
 public class TicketServiceImpl implements TicketService {
 
 	TicketRepo ticketRepo;
