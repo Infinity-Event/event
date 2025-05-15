@@ -3,6 +3,7 @@ package com.capgemini.event.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.capgemini.event.entities.Query;
 import com.capgemini.event.services.QueryService;
 
 import jakarta.validation.Valid;
@@ -34,21 +34,20 @@ public class QueryController {
 		return ResponseEntity.status(HttpStatus.OK).body(queryService.getAllQueries());
 	}
 	
-	@GetMapping("/{queryId}")
-    public ResponseEntity<Query> getQueryById(@PathVariable Long queryId) {
-		 Query query = queryService.getQueryById(queryId);
-		 return ResponseEntity.ok(query);
+	@GetMapping("/{id}")
+    public ResponseEntity<Query> getQueryById(@PathVariable Long id) {
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 	}
 	
-	@PostMapping("/user/{userId}")
-    public ResponseEntity<Query> creatEventeQuery(@Valid @RequestBody Query query, @PathVariable Long userId) {
-        Query savedQuery = queryService.createEventQuery(query, userId);
+	@PostMapping
+    public ResponseEntity<Query> createQuery(@Valid @RequestBody Query query) {
+        Query savedQuery = queryService.createQuery(query);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedQuery);
     }
 	
-	@DeleteMapping("/{queryId}")
-    public ResponseEntity<Void> deleteQuery(@PathVariable Long queryId) {
-        queryService.deleteQuery(queryId);
+	@DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteQuery(@PathVariable Long id) {
+        queryService.deleteQuery(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

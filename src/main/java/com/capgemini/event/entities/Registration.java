@@ -1,10 +1,16 @@
 package com.capgemini.event.entities;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import org.hibernate.annotations.CreationTimestamp;
-
 import java.time.LocalDate;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "registrations", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "event_id" }) })
@@ -14,34 +20,54 @@ public class Registration {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long regId;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id", nullable = false)
-	@NotNull(message = "User cannot be null for registration")
+	@NotNull(message = "Registration date is required")
+	private LocalDate regDate;
+
+	@Column(nullable = false)
+	private String status; // ✅ New column
+
+	@ManyToOne
+	@NotNull(message = "User is required")
 	private User user;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "event_id", nullable = false)
-	@NotNull(message = "Event cannot be null for registration")
+	@ManyToOne
+	@NotNull(message = "Event is required")
 	private Event event;
-
-	@Column(nullable = false, updatable = false)
-	@CreationTimestamp
-	private LocalDate regDate;
 
 	public Registration() {
 	}
 
-	public Registration(User user, Event event) {
+	public Registration(Long regId, LocalDate regDate, String status, User user, Event event) {
+		this.regId = regId;
+		this.regDate = regDate;
+		this.status = status;
 		this.user = user;
 		this.event = event;
 	}
 
+	// Getters and setters
 	public Long getRegId() {
 		return regId;
 	}
 
 	public void setRegId(Long regId) {
 		this.regId = regId;
+	}
+
+	public LocalDate getRegDate() {
+		return regDate;
+	}
+
+	public void setRegDate(LocalDate regDate) {
+		this.regDate = regDate;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	public User getUser() {
@@ -60,32 +86,10 @@ public class Registration {
 		this.event = event;
 	}
 
-	public LocalDate getRegDate() {
-		return regDate;
-	}
-
-	public void setRegDate(LocalDate regDate) {
-		this.regDate = regDate;
-	}
-
 	@Override
 	public String toString() {
-		return "Registration{" + "regId=" + regId + ", userId=" + (user != null ? user.getUserId() : null)
-				+ ", eventId=" + (event != null ? event.getEventId() : null) + ", regDate=" + regDate + '}';
+		return "Registration [regId=" + regId + ", regDate=" + regDate + ", status=" + status + ", user=" + user
+				+ ", event=" + event + "]";
 	}
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-		if (o == null || getClass() != o.getClass())
-			return false;
-		Registration that = (Registration) o;
-		return regId != null && regId.equals(that.regId);
-	}
-
-	@Override
-	public int hashCode() {
-		return getClass().hashCode();
-	}
 }
