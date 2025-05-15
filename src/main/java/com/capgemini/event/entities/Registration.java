@@ -36,7 +36,7 @@ public class Registration {
 	private LocalDate regDate;
 
 	@Column(name ="status")
-	private String status; // ✅ New column
+	private String status; 
 
 	public Registration() {
 	}
