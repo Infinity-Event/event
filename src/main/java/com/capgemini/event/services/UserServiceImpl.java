@@ -53,7 +53,7 @@ public class UserServiceImpl implements UserService {
             user.setType(updatedUser.getType());
             log.debug("Saving updated user to repository: {}", user);
             return userRepository.save(user);
-        }).orElseThrow(() -> {
+        }).orElseThrow(() -> { 
             log.warn("User not found for update with ID: {}", id);
             return new UserNotFoundException("User with ID " + id + " not found");
         }); 
