@@ -50,6 +50,8 @@ public class AuthController {
 			Map<String, Object> claims = new HashMap<>();
 			claims.put("email", user.getEmail());
 			claims.put("userid", user.getUserId());
+			claims.put("name", user.getName());
+			claims.put("phone", user.getPhone());
 			claims.put("usertype", user.getType());
 			String token = jwtService.generateToken(loginDto.getUsername(), claims);
 			ResponseToken responseToken = new ResponseToken(token);
