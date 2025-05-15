@@ -38,7 +38,7 @@ public class QueryController {
 	@GetMapping("/{id}")
 	public ResponseEntity<Query> getQueryById(@PathVariable Long id) {
     		Query query = queryService.getQueryById(id);
-    		return ResponseEntity.status.(HttpStatus.OK).body(query);
+    		return ResponseEntity.status(HttpStatus.OK).body(query);
 }
 	
 	@PostMapping("/user/{userId}")
