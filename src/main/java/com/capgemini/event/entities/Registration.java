@@ -19,19 +19,13 @@ public class Registration {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long regId;
-
-	@NotNull(message = "Registration date is required")
 	private LocalDate regDate;
-
-	@Column(nullable = false)
-	private String status; // ✅ New column
+	private String status;
 
 	@ManyToOne
-	@NotNull(message = "User is required")
 	private User user;
 
 	@ManyToOne
-	@NotNull(message = "Event is required")
 	private Event event;
 
 	public Registration() {
