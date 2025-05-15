@@ -37,7 +37,7 @@ public class User {
 	@Column(name = "user_type", nullable = false)
 	private UserType type;
 
-	// Constructors
+	
 	public User() {
 	}
 
@@ -50,7 +50,7 @@ public class User {
 		this.type = type;
 	}
 
-	// Getters and setters
+	
 
 	public Long getUserId() {
 		return userId;

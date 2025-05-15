@@ -58,7 +58,7 @@ class RegistrationServiceImplTest {
         when(registrationRepo.findByUserAndEvent(user, event));
         when(registrationRepo.save(any(Registration.class))).thenReturn(registration);
 
-        Registration result = registrationService.createRegistration(registration);
+        Registration result = registrationService.createRegistration(registration, null, null);
 
         assertNotNull(result);
         assertEquals(user, result.getUser());
@@ -72,7 +72,7 @@ class RegistrationServiceImplTest {
         invalid.setUser(null);
         invalid.setEvent(null);
 
-        Registration result = registrationService.createRegistration(invalid);
+        Registration result = registrationService.createRegistration(invalid, null, null);
 
         assertNull(result);
     }
@@ -82,7 +82,7 @@ class RegistrationServiceImplTest {
         when(userRepo.findById(1L)).thenReturn(Optional.empty());
         when(eventRepo.findById(1L)).thenReturn(Optional.of(event));
 
-        Registration result = registrationService.createRegistration(registration);
+        Registration result = registrationService.createRegistration(registration, null, null);
         assertNull(result);
     }
 
@@ -92,7 +92,7 @@ class RegistrationServiceImplTest {
         when(eventRepo.findById(1L)).thenReturn(Optional.of(event));
         when(registrationRepo.findByUserAndEvent(user, event));
 
-        Registration result = registrationService.createRegistration(registration);
+        Registration result = registrationService.createRegistration(registration, null, null);
         assertNull(result);
     }
 
