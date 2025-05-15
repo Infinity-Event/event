@@ -71,6 +71,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		errorDetails.put("status", HttpStatus.NOT_FOUND.value());
 		return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
 	}
+	
+	@ExceptionHandler(TicketNotFoundException.class)
+	public ResponseEntity<Object> handleQueryNotFound(TicketNotFoundException ex) {
+		Map<String, Object> errorDetails = new HashMap<>();
+		errorDetails.put("timestamp", LocalDateTime.now());
+		errorDetails.put("message", ex.getMessage());
+		errorDetails.put("status", HttpStatus.NOT_FOUND.value());
+		return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+	}
 
 	@Override
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
