@@ -47,10 +47,10 @@ public class TicketController {
 		return ResponseEntity.status(HttpStatus.OK).body(ticketService.updateTicket(ticketId, ticket));
 	}
 
-//	@PatchMapping("/{ticketId}")
-//	public ResponseEntity<Ticket> patchTicket(@PathVariable Long ticketId, @RequestBody Ticket ticket) {
-//		return ResponseEntity.status(HttpStatus.OK).body(ticketService.patchTicket(ticketId, ticket));
-//	}
+	@PatchMapping("/{ticketId}")
+	public ResponseEntity<Ticket> patchTicket(@PathVariable Long ticketId, @RequestBody Ticket ticket) {
+		return ResponseEntity.status(HttpStatus.OK).body(ticketService.patchTicket(ticketId, ticket));
+	}
 
 	@DeleteMapping("/{ticketId}")
 	public ResponseEntity<Void> deleteTicket(@PathVariable Long ticketId) {

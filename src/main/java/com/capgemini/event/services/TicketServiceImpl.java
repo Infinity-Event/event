@@ -49,25 +49,25 @@ public class TicketServiceImpl implements TicketService {
 		return null;
 	}
 
-//	@Override
-//	public Ticket patchTicket(Long ticketId, Ticket patchedTicket) {
-//		Optional<Ticket> optiTicket = ticketRepo.findById(ticketId);
-//
-//		if (optiTicket.isPresent()) {
-//			Ticket existingTicket = optiTicket.get();
-//			if(existingTicket.getDate()!=null) {
-//				existingTicket.setDate(patchedTicket.getDate());
-//			}
-//			if(existingTicket.getEvent()!=null) {
-//				existingTicket.setEvent(patchedTicket.getEvent());
-//			}
-//			if(existingTicket.getUser()!=null) {
-//				existingTicket.setUser(patchedTicket.getUser());
-//			}
-//			return ticketRepo.save(existingTicket);
-//		}
-//		return null;
-//	}
+	@Override
+	public Ticket patchTicket(Long ticketId, Ticket patchedTicket) {
+		Optional<Ticket> optiTicket = ticketRepo.findById(ticketId);
+
+		if (optiTicket.isPresent()) {
+			Ticket existingTicket = optiTicket.get();
+			if(existingTicket.getDate()!=null) {
+				existingTicket.setDate(patchedTicket.getDate());
+			}
+			if(existingTicket.getEvent()!=null) {
+				existingTicket.setEvent(patchedTicket.getEvent());
+			}
+			if(existingTicket.getUser()!=null) {
+				existingTicket.setUser(patchedTicket.getUser());
+			}
+			return ticketRepo.save(existingTicket);
+		}
+		return null;
+	}
 
 	@Override
 	public void deleteTicket(Long ticketId) {

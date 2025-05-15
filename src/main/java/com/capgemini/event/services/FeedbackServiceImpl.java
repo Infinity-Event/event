@@ -13,21 +13,6 @@ import com.capgemini.event.repositories.FeedbackRepo;
 import com.capgemini.event.repositories.UserRepo;
 
 import jakarta.persistence.EntityNotFoundException;
-package com.capgemini.event.services;
-
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.capgemini.event.entities.Event;
-import com.capgemini.event.entities.Feedback;
-import com.capgemini.event.entities.User;
-import com.capgemini.event.repositories.EventRepo;
-import com.capgemini.event.repositories.FeedbackRepo;
-import com.capgemini.event.repositories.UserRepo;
-
-import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class FeedbackServiceImpl implements FeedbackService {
