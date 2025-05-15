@@ -3,7 +3,7 @@ package com.capgemini.event.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Query;
+import com.capgemini.event.entities.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -40,12 +40,12 @@ public class QueryController {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 	}
 	
-	@PostMapping
-    public ResponseEntity<Query> createQuery(@Valid @RequestBody Query query, BindingResult bindingResult) {
+	@PostMapping("/{userId}")
+    public ResponseEntity<Query> createQuery(@Valid @RequestBody Query query, BindingResult bindingResult, @PathVariable Long userId) {
 		if(bindingResult.hasErrors() ) {
 			throw new IllegalArgumentException("Invalid Data");
 		}
-        Query savedQuery = queryService.createQuery(query);
+        Query savedQuery = queryService.createEventQuery(query, userId);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedQuery);
     }
 	

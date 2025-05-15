@@ -62,7 +62,7 @@ class TicketControllerTest {
 		Ticket savedTicket = new Ticket();
 		when(ticketService.createTicket(any(Ticket.class))).thenReturn(savedTicket);
 
-		ResponseEntity<Ticket> response = ticketController.createTicket(inputTicket);
+		ResponseEntity<Ticket> response = ticketController.createTicket(inputTicket, null);
 
 		assertEquals(HttpStatus.CREATED, response.getStatusCode());
 		assertEquals(savedTicket, response.getBody());
