@@ -10,8 +10,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
+import com.capgemini.event.entities.Category;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,6 +25,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.capgemini.event.controllers.QueryController;
+import com.capgemini.event.entities.Event;
 import com.capgemini.event.entities.Query;
 import com.capgemini.event.entities.User;
 import com.capgemini.event.entities.UserType;
@@ -40,12 +43,16 @@ class QueryControllerTest {
 	private Query query1;
 	private Query query2;
 	private User user;
+	private Event event;
 
 	@BeforeEach
 	void setUp() {
+		
+		event = new Event("Tech Talk: AI & Future","AI description",  LocalDate.of(2024, 5, 1),LocalTime.of(10, 0), "Mumbai Hall A", 150,Category.CONFERENCE, null);
+		event.setEventId(1L);
 		user = new User(1L, "Alice", "alice@example.com", "pass1", "1234567890", UserType.NORMAL);
-		query1 = new Query(1L, "Query 1 body", "Open", LocalDate.of(2024, 5, 1), null, user);
-		query2 = new Query(2L, "Query 2 body", "Closed", LocalDate.of(2024, 5, 2), null, user);
+		query1 = new Query(1L, "Query 1 body", "Open", LocalDate.of(2024, 5, 1), null, user, event);
+		query2 = new Query(2L, "Query 2 body", "Closed", LocalDate.of(2024, 5, 2), null, user, event);
 	}
 
 	@Test
@@ -69,7 +76,7 @@ class QueryControllerTest {
 	
 	 @Test
 	    void testCreateQuery() throws Exception {
-	        when(queryService.createEventQuery(any(Query.class), eq(1L))).thenReturn(query1);
+	        when(queryService.createEventQuery(any(Query.class), eq(1L), eq(1L))).thenReturn(query1);
 
 	        String queryJson = """
 	            {
@@ -87,11 +94,11 @@ class QueryControllerTest {
 	                }
 	            }
 	        """;
-	        mockMvc.perform(MockMvcRequestBuilders.post("/api/queries/user/1")
-	                        .contentType(MediaType.APPLICATION_JSON)
-	                        .content(queryJson))
-	                .andExpect(status().isCreated())
-	                .andExpect(jsonPath("$.queryBody").value("Query 1 body"));
+	        mockMvc.perform(MockMvcRequestBuilders.post("/api/queries/event/1/user/1") 
+	                .contentType(MediaType.APPLICATION_JSON)
+	                .content(queryJson))
+	            .andExpect(status().isCreated())
+	            .andExpect(jsonPath("$.queryBody").value("Query 1 body"));
 	    }
 
 	    @Test

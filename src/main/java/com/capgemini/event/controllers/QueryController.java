@@ -35,18 +35,18 @@ public class QueryController {
 		return ResponseEntity.status(HttpStatus.OK).body(queryService.getAllQueries());
 	}
 	
-	@GetMapping("/{id}")
-	public ResponseEntity<Query> getQueryById(@PathVariable Long id) {
-    		Query query = queryService.getQueryById(id);
+	@GetMapping("/{queryId}")
+	public ResponseEntity<Query> getQueryById(@PathVariable Long queryId) {
+    		Query query = queryService.getQueryById(queryId);
     		return ResponseEntity.status(HttpStatus.OK).body(query);
 }
 	
-	@PostMapping("/user/{userId}")
-    public ResponseEntity<Query> createQuery(@Valid @RequestBody Query query, BindingResult bindingResult, @PathVariable Long userId) {
+	@PostMapping("event/{eventId}/user/{userId}")
+    public ResponseEntity<Query> createQuery(@Valid @RequestBody Query query, BindingResult bindingResult,@PathVariable Long eventId, @PathVariable Long userId) {
 		if(bindingResult.hasErrors() ) {
-			throw new IllegalArgumentException("Invalid Data");
+			throw new IllegalArgumentException(bindingResult.getFieldErrors().toString());
 		}
-        Query savedQuery = queryService.createEventQuery(query, userId);
+        Query savedQuery = queryService.createEventQuery(query, userId, eventId);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedQuery);
     }
 	
