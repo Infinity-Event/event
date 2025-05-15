@@ -1,13 +1,14 @@
 package com.capgemini.event.repositories;
 
-import com.capgemini.event.entities.Event;
-import com.capgemini.event.entities.Registration;
-import com.capgemini.event.entities.User;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Optional;
+import com.capgemini.event.entities.Event;
+import com.capgemini.event.entities.Registration;
+import com.capgemini.event.entities.User;
 
 @Repository
 public interface RegistrationRepo extends JpaRepository<Registration, Long> {
@@ -18,5 +19,5 @@ public interface RegistrationRepo extends JpaRepository<Registration, Long> {
 
 	List<Registration> findByEvent(Event event);
 
-	boolean existsByUserAndEvent(User user, Event event);
+	long countByEvent(Event event);
 }
