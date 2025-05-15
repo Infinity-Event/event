@@ -13,7 +13,7 @@ import java.util.List;
 
 @Repository
 public interface EventRepo extends JpaRepository<Event, Long> {
-
+//repo
     List<Event> findByOrganizer(User organizer);
 
     @Query("SELECT e FROM Event e WHERE e.organizer = :organizer AND (e.date > :currentDate OR (e.date = :currentDate AND e.time > :currentTime)) ORDER BY e.date ASC, e.time ASC")
