@@ -117,14 +117,12 @@ class UserServiceImplTest {
 
     @Test
     void testDeleteUser() {
-        when(userRepository.existsById(1L)).thenReturn(true);
         when(userRepository.findById(1L)).thenReturn(Optional.of(user1));
-        doNothing().when(userRepository).deleteById(1L);
+        doNothing().when(userRepository).delete(user1);  // 👈 Correct method being used
 
         userService.deleteUser(1L);
 
-        verify(userRepository).deleteById(1L);
+        verify(userRepository).delete(user1);  // 👈 Verify correct method call
     }
-
 }
 
