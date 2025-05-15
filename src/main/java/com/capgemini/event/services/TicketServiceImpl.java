@@ -1,20 +1,19 @@
 package com.capgemini.event.services;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.capgemini.event.entities.Ticket;
+import com.capgemini.event.exceptions.TicketNotFoundException;
 import com.capgemini.event.repositories.TicketRepo;
 
-@Service
-public class TicketServiceImpl implements TicketService {
+import lombok.extern.slf4j.Slf4j;
 
-	private static final Logger logger = LoggerFactory.getLogger(TicketServiceImpl.class);
+@Service
+@Slf4j
+public class TicketServiceImpl implements TicketService {
 
 	TicketRepo ticketRepo;
 
@@ -25,83 +24,75 @@ public class TicketServiceImpl implements TicketService {
 
 	@Override
 	public List<Ticket> getAllTickets() {
-		logger.info("Fetching all tickets");
+		log.info("Fetching all tickets");
 		List<Ticket> tickets = ticketRepo.findAll();
-		logger.debug("Found {} tickets", tickets.size());
+		log.debug("Found {} tickets", tickets.size());
 		return tickets;
 	}
 
 	@Override
 	public Ticket getTicketById(Long ticketId) {
-		logger.info("Fetching ticket with ID: {}", ticketId);
+		log.info("Fetching ticket with ID: {}", ticketId);
 		return ticketRepo.findById(ticketId).orElseThrow(() -> {
-			logger.error("Ticket with ID {} not found", ticketId);
-			return new RuntimeException("Ticket \"" + ticketId + "\" Not found");
+			log.error("Ticket with ID {} not found", ticketId);
+			return new TicketNotFoundException("Ticket Not found");
 		});
 	}
 
 	@Override
 	public Ticket createTicket(Ticket ticket) {
-		logger.info("Creating new ticket: {}", ticket);
+		log.info("Creating new ticket: {}", ticket);
 		Ticket saved = ticketRepo.save(ticket);
-		logger.debug("Created ticket with ID: {}", saved.getTicketId());
+		log.debug("Created ticket with ID: {}", saved.getTicketId());
 		return saved;
 	}
 
 	@Override
 	public Ticket updateTicket(Long ticketId, Ticket updatedTicket) {
-		logger.info("Updating ticket with ID: {}", ticketId);
-		Optional<Ticket> optiTicket = ticketRepo.findById(ticketId);
+		log.info("Updating ticket with ID: {}", ticketId);
 
-		if (optiTicket.isPresent()) {
-			Ticket existingTicket = optiTicket.get();
-			existingTicket.setDate(updatedTicket.getDate());
-			existingTicket.setEvent(updatedTicket.getEvent());
-			existingTicket.setUser(updatedTicket.getUser());
-			Ticket updated = ticketRepo.save(existingTicket);
-			logger.debug("Updated ticket: {}", updated);
-			return updated;
-		} else {
-			logger.warn("Ticket with ID {} not found for update", ticketId);
-			return null;
-		}
+		return ticketRepo.findById(ticketId).map(ticket -> {
+			ticket.setDate(updatedTicket.getDate());
+			ticket.setEvent(updatedTicket.getEvent());
+			ticket.setUser(updatedTicket.getUser());
+			return ticketRepo.save(ticket);
+		}).orElseThrow(() -> {
+			log.warn("Ticket not found for update with ID: {}", ticketId);
+			return new TicketNotFoundException("Ticket with ID " + ticketId + " not found");
+		});
 	}
 
 	@Override
 	public Ticket patchTicket(Long ticketId, Ticket patchedTicket) {
-		logger.info("Patching ticket with ID: {}", ticketId);
-		Optional<Ticket> optiTicket = ticketRepo.findById(ticketId);
+		log.info("Patching ticket with ID: {}", ticketId);
 
-		if (optiTicket.isPresent()) {
-			Ticket existingTicket = optiTicket.get();
+		Ticket existingTicket = ticketRepo.findById(ticketId)
+				.orElseThrow(() -> new TicketNotFoundException("Ticket not found to patch"));
 
-			if (patchedTicket.getDate() != null) {
-				existingTicket.setDate(patchedTicket.getDate());
-			}
-			if (patchedTicket.getEvent() != null) {
-				existingTicket.setEvent(patchedTicket.getEvent());
-			}
-			if (patchedTicket.getUser() != null) {
-				existingTicket.setUser(patchedTicket.getUser());
-			}
-			Ticket patched = ticketRepo.save(existingTicket);
-			logger.debug("Patched ticket: {}", patched);
-			return patched;
-		} else {
-			logger.warn("Ticket with ID {} not found for patching", ticketId);
-			return null;
+		if (patchedTicket.getDate() != null) {
+			existingTicket.setDate(patchedTicket.getDate());
 		}
+		if (patchedTicket.getEvent() != null) {
+			existingTicket.setEvent(patchedTicket.getEvent());
+		}
+		if (patchedTicket.getUser() != null) {
+			existingTicket.setUser(patchedTicket.getUser());
+		}
+
+		Ticket patched = ticketRepo.save(existingTicket);
+		log.debug("Patched ticket: {}", patched);
+		return patched;
 	}
 
 	@Override
 	public void deleteTicket(Long ticketId) {
-		logger.info("Deleting ticket with ID: {}", ticketId);
+		log.info("Deleting ticket with ID: {}", ticketId);
 		Ticket ticket = ticketRepo.findById(ticketId).orElseThrow(() -> {
-			logger.error("Ticket with ID {} not found for deletion", ticketId);
-			return new RuntimeException("Ticket not found ID: " + ticketId);
+			log.error("Ticket with ID {} not found for deletion", ticketId);
+			return new TicketNotFoundException("Ticket not found ID: " + ticketId);
 		});
 		ticketRepo.delete(ticket);
-		logger.debug("Deleted ticket with ID: {}", ticketId);
+		log.debug("Deleted ticket with ID: {}", ticketId);
 	}
 
 }
