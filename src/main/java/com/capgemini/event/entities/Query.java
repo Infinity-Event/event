@@ -3,6 +3,7 @@ package com.capgemini.event.entities;
 import java.time.LocalDate;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -21,16 +22,20 @@ public class Query {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "query_id")
 	private Long queryId;
 	
 	@NotBlank(message = "Query body must not be blank")
+	@Column(name = "query_body")
 	@Size(max = 1000, message = "Query body must not exceed 1000 characters")
 	private String queryBody;
 
 	@NotBlank(message = "Status must not be blank")
+	@Column(name = "status")
 	private String status;
 	
 	@NotNull(message = "Query date must not be null")
+	@Column(name = "query_date")
 	private LocalDate queryDate;
 
 	@OneToOne(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
