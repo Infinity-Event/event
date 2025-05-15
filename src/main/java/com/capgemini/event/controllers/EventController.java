@@ -63,7 +63,7 @@ public class EventController {
         
         if (Objects.equals(updatedEvent.getEventId(), existingEvent.getEventId()) &&
             updatedEvent == existingEvent &&
-            !Objects.equals(existingEvent.getOrganizer().getUserId(), null )) { 
+            !Objects.equals(existingEvent.getOrganizer().getUserId(), null )) {
         }
 
         return ResponseEntity.ok(updatedEvent);
