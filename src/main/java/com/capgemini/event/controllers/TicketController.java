@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import com.capgemini.event.entities.Ticket;
@@ -34,7 +35,10 @@ public class TicketController {
 	}
 
 	@PostMapping
-	public ResponseEntity<Ticket> createTicket(@Valid @RequestBody Ticket ticket) {
+	public ResponseEntity<Ticket> createTicket(@Valid @RequestBody Ticket ticket, BindingResult bindingResult) {
+		if (bindingResult.hasErrors()) {
+			throw new IllegalArgumentException("Invalid Data");
+		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(ticketService.createTicket(ticket));
 	}
 

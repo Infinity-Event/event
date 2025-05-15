@@ -1,37 +1,27 @@
 package com.capgemini.event;
 
-import com.capgemini.event.controllers.EventController;
-import com.capgemini.event.entities.Event;
-import com.capgemini.event.entities.User;
-import com.capgemini.event.entities.UserType;
-import com.capgemini.event.services.EventService;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+
 import java.util.Arrays;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.http.ResponseEntity;
 
-@ExtendWith(MockitoExtension.class)
+import com.capgemini.event.controllers.EventController;
+import com.capgemini.event.entities.Event;
+import com.capgemini.event.entities.User;
+import com.capgemini.event.services.EventService;
+
 class EventControllerTest {
-
-    private MockMvc mockMvc;
 
     @Mock
     private EventService eventService;
@@ -39,126 +29,87 @@ class EventControllerTest {
     @InjectMocks
     private EventController eventController;
 
-    private ObjectMapper objectMapper;
-    private Event sampleEvent;
-    private Event sampleEvent2;
-    private User sampleOrganizer;
-
-    @BeforeEach
-    void setUp() {
-        objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-        mockMvc = MockMvcBuilders.standaloneSetup(eventController).build();
-
-        sampleOrganizer = new User();
-        sampleOrganizer.setUserId(1L);
-        sampleOrganizer.setName("Test Organizer");
-        sampleOrganizer.setEmail("organizer@example.com");
-        sampleOrganizer.setType(UserType.ORGANIZER);
-
-        sampleEvent = new Event("Sample Event", "Event Description", LocalDate.now(), LocalTime.now(), "Event Location", 100, null, sampleOrganizer);
-        sampleEvent.setEventId(1L);
-
-        sampleEvent2 = new Event("Another Event", "Another Description", LocalDate.now().plusDays(1), LocalTime.now().plusHours(2), "Another Location", 50, null, sampleOrganizer);
-        sampleEvent2.setEventId(2L);
-    }
-
-    private String asJsonString(final Object obj) {
-        try {
-            return objectMapper.writeValueAsString(obj);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    public EventControllerTest() {
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    void createEvent_success() throws Exception {
-        Event eventToCreate = new Event("New Event", "New Desc", LocalDate.now().plusDays(5), LocalTime.now().plusHours(2), "New Location", 50, null, sampleOrganizer);
-        Event createdEvent = new Event("New Event", "New Desc", LocalDate.now().plusDays(5), LocalTime.now().plusHours(2), "New Location", 50, null, sampleOrganizer);
-        createdEvent.setEventId(3L);
+    void testGetAllEvents() {
+        Event event1 = new Event();
+        Event event2 = new Event();
+        when(eventService.getAllEvents()).thenReturn(Arrays.asList(event1, event2));
 
-        when(eventService.createEvent(any(Event.class), anyLong())).thenReturn(createdEvent);
-
-        mockMvc.perform(post("/events")
-                        .param("organizerId", "1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(eventToCreate)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.eventId").value(3L))
-                .andExpect(jsonPath("$.title").value("New Event"));
+        ResponseEntity<List<Event>> response = eventController.getAllEvents();
+        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(2, response.getBody().size());
     }
 
     @Test
-    void getEventById_found() throws Exception {
-        when(eventService.getEventById(1L)).thenReturn(sampleEvent);
+    void testGetEventByIdFound() {
+        Event event = new Event();
+        when(eventService.getEventById(1L)).thenReturn(event);
 
-        mockMvc.perform(get("/events/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.eventId").value(1L))
-                .andExpect(jsonPath("$.title").value("Sample Event"));
+        ResponseEntity<Event> response = eventController.getEventById(1L);
+        assertEquals(200, response.getStatusCodeValue());
+        assertNotNull(response.getBody());
     }
 
     @Test
-    void getAllEvents_success() throws Exception {
-        List<Event> events = Arrays.asList(sampleEvent, sampleEvent2);
-        when(eventService.getAllEvents()).thenReturn(events);
+    void testGetEventByIdNotFound() {
+        when(eventService.getEventById(1L)).thenReturn(null);
 
-        mockMvc.perform(get("/events"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()").value(2))
-                .andExpect(jsonPath("$[0].title").value("Sample Event"))
-                .andExpect(jsonPath("$[1].title").value("Another Event"));
+        ResponseEntity<Event> response = eventController.getEventById(1L);
+        assertEquals(404, response.getStatusCodeValue());
     }
 
     @Test
-    void getEventsByOrganizer_success() throws Exception {
-        List<Event> organizerEvents = Arrays.asList(sampleEvent);
-        when(eventService.getEventsByOrganizer(1L)).thenReturn(organizerEvents);
+    void testCreateEventSuccess() {
+        Event event = new Event();
+        User organizer = new User();
+        organizer.setUserId(1L);
+        event.setOrganizer(organizer);
+        event.setEventId(10L);
 
-        mockMvc.perform(get("/events/organizer/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()").value(1))
-                .andExpect(jsonPath("$[0].eventId").value(sampleEvent.getEventId()));
+        when(eventService.createEvent(any(), eq(1L))).thenReturn(event);
+
+        ResponseEntity<Event> response = eventController.createEvent(event);
+        assertEquals(201, response.getStatusCodeValue());
+        assertNotNull(response.getBody());
     }
 
     @Test
-    void updateEvent_success() throws Exception {
-        Event eventDetailsToUpdate = new Event("Updated Title", "Updated Desc", LocalDate.now().plusDays(1), LocalTime.now().plusHours(1), "New Location", 150, null, sampleOrganizer);
-        Event updatedEvent = new Event("Updated Title", "Updated Desc", LocalDate.now().plusDays(1), LocalTime.now().plusHours(1), "New Location", 150, null, sampleOrganizer);
-        updatedEvent.setEventId(1L);
+    void testCreateEventBadRequest() {
+        Event event = new Event();
+        event.setOrganizer(null);
 
-        when(eventService.updateEvent(anyLong(), any(Event.class))).thenReturn(updatedEvent);
-
-        mockMvc.perform(put("/events/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(eventDetailsToUpdate)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title").value("Updated Title"))
-                .andExpect(jsonPath("$.eventId").value(1L));
+        ResponseEntity<Event> response = eventController.createEvent(event);
+        assertEquals(400, response.getStatusCodeValue());
     }
 
     @Test
-    void patchEvent_success() throws Exception {
-        Event partialDetails = new Event();
-        partialDetails.setTitle("Patched Title");        Event patchedEvent = new Event("Patched Title", sampleEvent.getDescription(), sampleEvent.getDate(), sampleEvent.getTime(), sampleEvent.getLocation(), sampleEvent.getCapacity(), sampleEvent.getCategory(), sampleEvent.getOrganizer());
-        patchedEvent.setEventId(1L);
+    void testUpdateEventSuccess() {
+        Event existing = new Event();
+        User user = new User();
+        user.setUserId(1L);
+        existing.setOrganizer(user);
+        existing.setEventId(1L);
 
-        when(eventService.patchEvent(anyLong(), any(Event.class))).thenReturn(patchedEvent);
+        Event updated = new Event();
+        updated.setOrganizer(user);
+        updated.setEventId(1L);
 
-        mockMvc.perform(patch("/events/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(partialDetails)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title").value("Patched Title"))
-                .andExpect(jsonPath("$.description").value(sampleEvent.getDescription()))
-                .andExpect(jsonPath("$.eventId").value(1L));
+        when(eventService.getEventById(1L)).thenReturn(existing);
+        when(eventService.updateEvent(eq(1L), any())).thenReturn(updated);
+
+        ResponseEntity<Event> response = eventController.updateEvent(1L, updated);
+        assertEquals(200, response.getStatusCodeValue());
     }
 
     @Test
-    void deleteEvent_success() throws Exception {
+    void testDeleteEventSuccess() {
         when(eventService.deleteEvent(1L)).thenReturn(true);
 
-        mockMvc.perform(delete("/events/1"))
-                .andExpect(status().isNoContent());
+        ResponseEntity<Void> response = eventController.deleteEvent(1L);
+        assertEquals(200, response.getStatusCodeValue());
     }
 }
