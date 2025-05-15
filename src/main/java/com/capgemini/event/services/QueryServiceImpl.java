@@ -3,7 +3,7 @@ package com.capgemini.event.services;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Query;
+import com.capgemini.event.entities.Query;
 
 import com.capgemini.event.repositories.QueryRepo;
 

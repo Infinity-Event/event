@@ -90,7 +90,7 @@ class RegistrationServiceImplTest {
     void testCreateRegistration_AlreadyExists() {
         when(userRepo.findById(1L)).thenReturn(Optional.of(user));
         when(eventRepo.findById(1L)).thenReturn(Optional.of(event));
-        when(registrationRepo.existsByUserAndEvent(user, event));
+        when(registrationRepo.findByUserAndEvent(user, event));
 
         Registration result = registrationService.createRegistration(registration);
         assertNull(result);
