@@ -18,21 +18,23 @@ public class Registration {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "reg_id")
 	private Long regId;
-
-	@NotNull(message = "Registration date is required")
-	private LocalDate regDate;
-
-	@Column(nullable = false)
-	private String status; // ✅ New column
-
-	@ManyToOne
-	@NotNull(message = "User is required")
+  
+	@ManyToOne(fetch = FetchType.LAZY, optional =false)
+	@JoinColumn(name = "user_id")
 	private User user;
 
-	@ManyToOne
-	@NotNull(message = "Event is required")
+	@ManyToOne(fetch = FetchType.LAZY, optional=false)
+	@JoinColumn(name = "event_id")
 	private Event event;
+
+	@NotNull(message = "Registration date must not be null")
+	@Column(name = "reg_date")
+	private LocalDate regDate;
+
+	@Column(name ="status")
+	private String status; // ✅ New column
 
 	public Registration() {
 	}
