@@ -36,11 +36,12 @@ public class QueryController {
 	}
 	
 	@GetMapping("/{id}")
-    public ResponseEntity<Query> getQueryById(@PathVariable Long id) {
-		return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-	}
+	public ResponseEntity<Query> getQueryById(@PathVariable Long id) {
+    		Query query = queryService.getQueryById(id);
+    		return ResponseEntity.status(HttpStatus.OK).body(query);
+}
 	
-	@PostMapping("/{userId}")
+	@PostMapping("/user/{userId}")
     public ResponseEntity<Query> createQuery(@Valid @RequestBody Query query, BindingResult bindingResult, @PathVariable Long userId) {
 		if(bindingResult.hasErrors() ) {
 			throw new IllegalArgumentException("Invalid Data");
