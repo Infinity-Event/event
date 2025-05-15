@@ -1,57 +1,74 @@
 package com.capgemini.event.services;
 
-
 import com.capgemini.event.entities.User;
 import com.capgemini.event.exceptions.UserNotFoundException;
 import com.capgemini.event.repositories.UserRepo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
+@Slf4j
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private UserRepo userRepository;
 
-    @Override
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
-    }
+	private final UserRepo userRepository;
 
-    @Override
-    public User getUserById(Long id) {
-        return userRepository.findById(id).orElse(null);
-    }
+	@Autowired
+	public UserServiceImpl(UserRepo userRepository) {
+		this.userRepository = userRepository;
+	}
 
-    @Override
-    public User createUser(User user) {
-        return userRepository.save(user);
-    }
+	@Override
+	public List<User> getAllUsers() {
+		log.debug("Fetching all users from the repository");
+		return userRepository.findAll();
+	}
 
-    @Override
-    public User updateUser(Long id, User updatedUser) {
-        Optional<User> optionalUser = userRepository.findById(id);
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            user.setName(updatedUser.getName());
-            user.setEmail(updatedUser.getEmail());
-            user.setPassword(updatedUser.getPassword());
-            user.setPhone(updatedUser.getPhone());
-            user.setType(updatedUser.getType());
-            return userRepository.save(user);
-        }
-        return null;
-    }
+	@Override
+	public User getUserById(Long id) {
+		log.debug("Fetching user by ID: {}", id);
+		return userRepository.findById(id).orElseThrow(() -> {
+			log.warn("User not found with ID: {}", id);
+			return new UserNotFoundException("User with ID " + id + " not found");
+		});
+	}
 
-    @Override
-    public void deleteUser(Long id) {
-        userRepository.deleteById(id);
-    }
-    
-    @Override
+	@Override
+	public User createUser(User user) {
+		log.debug("Saving new user to the repository");
+		return userRepository.save(user);
+	}
+
+	@Override
+	public User updateUser(Long id, User updatedUser) {
+		log.debug("Updating user with ID: {}", id);
+		return userRepository.findById(id).map(user -> {
+			user.setName(updatedUser.getName());
+			user.setEmail(updatedUser.getEmail());
+			user.setPassword(updatedUser.getPassword());
+			user.setPhone(updatedUser.getPhone());
+			user.setType(updatedUser.getType());
+			log.debug("Saving updated user to repository: {}", user);
+			return userRepository.save(user);
+		}).orElseThrow(() -> {
+			log.warn("User not found for update with ID: {}", id);
+			return new UserNotFoundException("User with ID " + id + " not found");
+		});
+	}
+
+	@Override
+	public void deleteUser(Long id) {
+		log.debug("Attempting to delete user with ID: {}", id);
+		User user = userRepository.findById(id)
+				.orElseThrow(() -> new UserNotFoundException("User not found with ID: " + id));
+		userRepository.delete(user);
+		log.debug("User with ID {} deleted from repository", id);
+	}
+
+  @Override
     public boolean existsByEmail(String email) {
 
     	return userRepository.existsByEmail(email);
@@ -68,8 +85,5 @@ public class UserServiceImpl implements UserService {
     	return userRepository.findByEmailOrName(email, name)
 				.orElseThrow(()->new UserNotFoundException("Username or Email not Found !"));
     }
-    
-//    end
-
-	
 }
+
