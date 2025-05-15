@@ -39,7 +39,7 @@ public class RegistrationRestController {
 	public ResponseEntity<Registration> createRegistration(@Valid @RequestBody Registration registration,
 			BindingResult bindingResult) {
 		if (bindingResult.hasErrors()) {
-			throw new IllegalArgumentException("Invalid Data");
+			throw new IllegalArgumentException(bindingResult.getFieldErrors().toString());
 		}
 		Registration createdRegistration = registrationService.createRegistration(registration);
 		if (createdRegistration == null) {
