@@ -1,9 +1,4 @@
 package com.capgemini.event.entities;
-
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
-package com.capgemini.event.entities;
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
