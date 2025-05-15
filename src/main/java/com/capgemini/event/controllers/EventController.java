@@ -65,7 +65,6 @@ public class EventController {
             updatedEvent == existingEvent &&
             !Objects.equals(existingEvent.getOrganizer().getUserId(), null )) {
         }
-
         return ResponseEntity.ok(updatedEvent);
     }
 

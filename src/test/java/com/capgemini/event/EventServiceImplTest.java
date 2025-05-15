@@ -1,5 +1,6 @@
 package com.capgemini.event;
 
+
 import com.capgemini.event.entities.Event;
 import com.capgemini.event.entities.User;
 import com.capgemini.event.entities.UserType;
