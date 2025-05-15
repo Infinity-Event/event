@@ -19,10 +19,12 @@ public class RegistrationServiceImpl implements RegistrationService {
 	private RegistrationRepo registrationRepository;
 
 	@Override
-	public Registration registerUserToEvent(User user, Event event) {
-		Optional<Registration> existing = registrationRepository.findByUserAndEvent(user, event);
-		if (existing.isPresent()) {
-			throw new RuntimeException("User already registered for this event.");
+
+	public Registration createRegistration(Registration registration) {
+		if (registration.getUser() == null || registration.getUser().getUserId() == null
+				|| registration.getEvent() == null || registration.getEvent().getEventId() == null) {
+			return null;
+
 		}
 
 		Registration registration = new Registration();
