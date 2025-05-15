@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
- import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MockMvc;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -99,7 +99,6 @@ class QueryControllerTest {
 	    @Test
 	    void testDeleteQuery() throws Exception {
 	        doNothing().when(queryService).deleteQuery(1L);
-
 	        mockMvc.perform(MockMvcRequestBuilders.delete("/api/queries/1"))
 	                .andExpect(status().isNoContent());
 	        verify(queryService, times(1)).deleteQuery(1L);
