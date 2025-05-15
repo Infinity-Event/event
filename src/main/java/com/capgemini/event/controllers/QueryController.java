@@ -18,8 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.capgemini.event.services.QueryService;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
+@Slf4j
+@RequiredArgsConstructor
 @RequestMapping("api/queries")
 public class QueryController {
 	
@@ -32,11 +36,13 @@ public class QueryController {
 
 	@GetMapping
 	public ResponseEntity<List<Query>> getAllQueries(){
+		log.info("Received request to fetch all queries");
 		return ResponseEntity.status(HttpStatus.OK).body(queryService.getAllQueries());
 	}
 	
 	@GetMapping("/{queryId}")
 	public ResponseEntity<Query> getQueryById(@PathVariable Long queryId) {
+		log.info("Received request to fetch query with ID: {}", queryId);
     		Query query = queryService.getQueryById(queryId);
     		return ResponseEntity.status(HttpStatus.OK).body(query);
 }
