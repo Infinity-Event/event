@@ -3,9 +3,9 @@ package com.capgemini.event.services;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 
+import com.capgemini.event.entities.Query;
 import com.capgemini.event.entities.User;
 import com.capgemini.event.exceptions.QueryNotFoundException;
 import com.capgemini.event.exceptions.UserNotFoundException;
@@ -48,5 +48,4 @@ public class QueryServiceImpl implements QueryService {
 		queryRepo.delete(query);
 	}
 
-	
 }

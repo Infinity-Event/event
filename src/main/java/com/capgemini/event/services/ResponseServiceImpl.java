@@ -3,9 +3,13 @@
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.stereotype.Service;
+
 import com.capgemini.event.entities.Response;
 import com.capgemini.event.repositories.ResponseRepo;
 
+
+@Service
 public class ResponseServiceImpl implements ResponseService{
 
     private ResponseRepo responseRepo;
