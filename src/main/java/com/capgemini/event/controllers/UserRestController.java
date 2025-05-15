@@ -31,7 +31,7 @@ public class UserRestController {
 	@PostMapping
 	public ResponseEntity<User> createUser(@Valid @RequestBody User user, BindingResult bindingResult) {
 		if (bindingResult.hasErrors()) {
-			throw new IllegalArgumentException("Invalid Data");
+			throw new IllegalArgumentException(bindingResult.getFieldErrors().toString());
 		}
 		User createdUser = userService.createUser(user);
 		return ResponseEntity.created(URI.create("/api/users/" + createdUser.getUserId())).body(createdUser);

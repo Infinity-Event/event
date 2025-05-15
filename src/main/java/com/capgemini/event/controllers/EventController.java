@@ -38,7 +38,7 @@ public class EventController {
 	@PostMapping
 	public ResponseEntity<Event> createEvent(@Valid @RequestBody Event event, BindingResult bindingResult) {
 		if (bindingResult.hasErrors()) {
-			throw new IllegalArgumentException("Invalid Data");
+			throw new IllegalArgumentException(bindingResult.getFieldErrors().toString());
 		}
 		if (event.getOrganizer() == null || event.getOrganizer().getUserId() == null) {
 			return ResponseEntity.badRequest().body(null);

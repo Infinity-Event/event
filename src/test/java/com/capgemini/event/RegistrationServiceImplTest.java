@@ -47,7 +47,7 @@ class RegistrationServiceImplTest {
         user = new User(1L, "John", "john@example.com", "pass", "1234567890", null);
         event = new Event();
         event.setEventId(1L);
-        registration = new Registration(user, event);
+        registration = new Registration(null, null, null, user, event);
         registration.setRegDate(LocalDate.now());
     }
 
@@ -55,7 +55,7 @@ class RegistrationServiceImplTest {
     void testCreateRegistration_Success() {
         when(userRepo.findById(1L)).thenReturn(Optional.of(user));
         when(eventRepo.findById(1L)).thenReturn(Optional.of(event));
-        when(registrationRepo.existsByUserAndEvent(user, event)).thenReturn(false);
+        when(registrationRepo.findByUserAndEvent(user, event));
         when(registrationRepo.save(any(Registration.class))).thenReturn(registration);
 
         Registration result = registrationService.createRegistration(registration);
@@ -90,7 +90,7 @@ class RegistrationServiceImplTest {
     void testCreateRegistration_AlreadyExists() {
         when(userRepo.findById(1L)).thenReturn(Optional.of(user));
         when(eventRepo.findById(1L)).thenReturn(Optional.of(event));
-        when(registrationRepo.existsByUserAndEvent(user, event)).thenReturn(true);
+        when(registrationRepo.findByUserAndEvent(user, event));
 
         Registration result = registrationService.createRegistration(registration);
         assertNull(result);
