@@ -82,7 +82,7 @@ class EventControllerTest {
         Event event = new Event();
         event.setOrganizer(null);
 
-        ResponseEntity<Event> response = eventController.createEvent(event);
+        ResponseEntity<Event> response = eventController.createEvent(event, null);
         assertEquals(400, response.getStatusCodeValue());
     }
 
