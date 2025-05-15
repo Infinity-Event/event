@@ -14,7 +14,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-//Service Implementation for EventServices
+//Service Implementation for EventService
 @Service
 public class EventServiceImpl implements EventService {
 
