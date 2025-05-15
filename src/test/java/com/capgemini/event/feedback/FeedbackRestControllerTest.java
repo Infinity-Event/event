@@ -46,6 +46,7 @@ public class FeedbackRestControllerTest {
 
         Event event = new Event(); 
         event.setEventId(1L);
+        //
 
         return new Feedback(1L, 5, "Amazing event, really well managed!", user, event);
     }

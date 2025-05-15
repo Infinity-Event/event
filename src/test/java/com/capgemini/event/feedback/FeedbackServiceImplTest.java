@@ -46,7 +46,7 @@ class FeedbackServiceImplTest {
     private User user;
     private Event event;
 
-    @BeforeEach
+    @BeforeEach //
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
