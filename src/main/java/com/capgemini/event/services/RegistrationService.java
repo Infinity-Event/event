@@ -1,22 +1,21 @@
 package com.capgemini.event.services;
 
-import com.capgemini.event.entities.Registration;
-
 import java.util.List;
+
+
+import com.capgemini.event.entities.Event;
+import com.capgemini.event.entities.Registration;
+import com.capgemini.event.entities.User;
 
 public interface RegistrationService {
 
-	Registration createRegistration(Registration registration);
+	Registration registerUserToEvent(User user, Event event);
 
-	Registration getRegistrationById(Long regId);
+	List<Registration> getRegistrationsByUser(User user);
 
-	List<Registration> getAllRegistrations();
+	List<Registration> getRegistrationsByEvent(Event event);
 
-	Registration updateRegistration(Long regId, Registration registrationDetails);
+	boolean isUserAlreadyRegistered(User user, Event event);
 
-	boolean deleteRegistration(Long regId);
-
-	List<Registration> getRegistrationsByUserId(Long userId);
-
-	List<Registration> getRegistrationsByEventId(Long eventId);
+	void deleteRegistration(Long registrationId);
 }
