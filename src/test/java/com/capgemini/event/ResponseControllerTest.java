@@ -78,6 +78,34 @@ class ResponseControllerTest {
 		assertEquals(expected, response.getBody());
 		verify(responseService).getResponseById(responseId);
 	}
+	
+	@Test
+	void getResponseByQueryId_Found() {
+		Long queryId = 100L;
+		Response expected = sampleResponse();
+
+		when(responseService.getResponseByQueryId(queryId)).thenReturn(expected);
+
+		ResponseEntity<Response> response = responseController.getResponseByQueryId(queryId);
+
+		assertEquals(HttpStatus.OK, response.getStatusCode());
+		assertEquals(expected, response.getBody());
+		verify(responseService).getResponseByQueryId(queryId);
+	}
+
+	@Test
+	void getResponseByQueryId_NotFound() {
+		Long queryId = 999L;
+
+		when(responseService.getResponseByQueryId(queryId)).thenThrow(new RuntimeException("Query not found"));
+
+		ResponseEntity<Response> response = responseController.getResponseByQueryId(queryId);
+
+		assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+		assertNull(response.getBody());
+		verify(responseService).getResponseByQueryId(queryId);
+	}
+
 
 	@Test
 	void getResponseById_NotFound() {

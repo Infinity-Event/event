@@ -38,7 +38,6 @@ public class Query {
 
 	@ManyToOne(optional = false)
 	@JoinColumn(name ="user_id")
-	@NotNull(message = "User must be specified")
 	private User user;
 
 	public Query() {

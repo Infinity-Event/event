@@ -12,7 +12,7 @@ public interface QueryService {
 	
 	Query getQueryById(Long queryId);
 	
-	Query createQuery(Query query);
+	Query createEventQuery(Query query, Long userId);
 	
 	void deleteQuery(Long queryId);
 	
