@@ -102,7 +102,6 @@ class QueryControllerTest {
 
 	        mockMvc.perform(MockMvcRequestBuilders.delete("/api/queries/1"))
 	                .andExpect(status().isNoContent());
-
 	        verify(queryService, times(1)).deleteQuery(1L);
 	    }
 }
