@@ -46,7 +46,6 @@ public class FeedbackRestControllerTest {
 
         Event event = new Event(); 
         event.setEventId(1L);
-        //
 
         return new Feedback(1L, 5, "Amazing event, really well managed!", user, event);
     }
@@ -74,8 +73,7 @@ public class FeedbackRestControllerTest {
     @Test
     public void testCreateFeedback() throws Exception {
         Feedback feedback = sampleFeedback();
-        feedback.setFeedbackId(null); // simulate incoming POST without ID
-
+        feedback.setFeedbackId(null); 
         Feedback createdFeedback = sampleFeedback();
 
         when(feedbackService.createFeedback(any(Feedback.class))).thenReturn(createdFeedback);

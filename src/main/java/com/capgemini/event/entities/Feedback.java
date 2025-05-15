@@ -22,14 +22,12 @@ public class Feedback {
 	@Column(name = "review")
 	private String review;
 
-	@ManyToOne(optional = true)
+	@ManyToOne(optional = false)
 	@JoinColumn(name = "user_id")
-	@NotNull(message = "User cannot be null")
 	private User user;
 
-	@ManyToOne(optional = true)
+	@ManyToOne(optional = false)
 	@JoinColumn(name = "event_id")
-	@NotNull(message = "Event cannot be null")
 	private Event event;
 
 	public Feedback() {
