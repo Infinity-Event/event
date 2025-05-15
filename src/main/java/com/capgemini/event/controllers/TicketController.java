@@ -37,7 +37,7 @@ public class TicketController {
 	@PostMapping
 	public ResponseEntity<Ticket> createTicket(@Valid @RequestBody Ticket ticket, BindingResult bindingResult) {
 		if (bindingResult.hasErrors()) {
-			throw new IllegalArgumentException("Invalid Data");
+			throw new IllegalArgumentException(bindingResult.getFieldErrors().toString());
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(ticketService.createTicket(ticket));
 	}

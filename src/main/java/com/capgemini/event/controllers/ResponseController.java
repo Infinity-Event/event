@@ -42,6 +42,16 @@ public class ResponseController {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 		}
 	}
+	
+	@GetMapping("/query/{queryId}")
+    public ResponseEntity<Response> getResponseByQueryId(@PathVariable Long queryId) {
+        try {
+            Response response = responseService.getResponseByQueryId(queryId);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
 	@PostMapping
 	public ResponseEntity<Response> createResponse(@Valid @RequestBody Response response, BindingResult bindingResult) {

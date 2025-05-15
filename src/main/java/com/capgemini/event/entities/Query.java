@@ -38,13 +38,16 @@ public class Query {
 
 	@ManyToOne(optional = false)
 	@JoinColumn(name ="user_id")
-	@NotNull(message = "User must be specified")
 	private User user;
 
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "event_id")
+	private Event event;
+	
 	public Query() {
 	}
 
-	public Query(Long queryId, String queryBody, String status, LocalDate queryDate, Response response, User user) {
+	public Query(Long queryId, String queryBody, String status, LocalDate queryDate, Response response, User user, Event event) {
 		super();
 		this.queryId = queryId;
 		this.queryBody = queryBody;
@@ -52,6 +55,7 @@ public class Query {
 		this.queryDate = queryDate;
 		this.response = response;
 		this.user = user;
+		this.event = event;
 	}
 
 	public Long getQueryId() {
@@ -105,7 +109,15 @@ public class Query {
 	@Override
 	public String toString() {
 		return "Query [queryId=" + queryId + ", queryBody=" + queryBody + ", status=" + status + ", queryDate="
-				+ queryDate + ", response=" + response + ", user=" + user + "]";
+				+ queryDate + ", response=" + response + ", user=" + user + ", event=" + event +"]";
+	}
+
+	public Event getEvent() {
+		return event;
+	}
+
+	public void setEvent(Event event) {
+		this.event = event;
 	}
 
 }

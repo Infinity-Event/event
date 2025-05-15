@@ -10,4 +10,5 @@ public interface ResponseService {
     Response getResponseById(Long responseId);
     List<Response> getAllResponses();
     void deleteResponse(Long responseId);
+    Response getResponseByQueryId(Long queryId);
 }

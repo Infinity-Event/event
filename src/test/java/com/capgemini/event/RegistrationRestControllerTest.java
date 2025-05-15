@@ -75,57 +75,6 @@ class RegistrationRestControllerTest {
                 .andExpect(jsonPath("$.regId").value(1));
     }
 
-//    @Test
-//    void testGetRegistrationById_NotFound() throws Exception {
-//        Mockito.when(registrationService.getRegistrationById(99L)).thenReturn(null);
-//
-//        mockMvc.perform(get("/api/registrations/99"))
-//                .andExpect(status().isNotFound());
-//    }
-
-//    @Test
-//    void testCreateRegistration_Success() throws Exception {
-//        Mockito.when(registrationService.createRegistration(any(Registration.class))).thenReturn(registration);
-//
-//        mockMvc.perform(post("/api/registrations")
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .content(new ObjectMapper().writeValueAsString(registration)))
-//                .andExpect(status().isCreated())
-//                .andExpect(header().string("Location", "/api/registrations/1"))
-//                .andExpect(jsonPath("$.regId").value(1));
-//    }
-
-//    @Test
-//    void testCreateRegistration_BadRequest() throws Exception {
-//        Mockito.when(registrationService.createRegistration(any(Registration.class))).thenReturn(null);
-//
-//        mockMvc.perform(post("/api/registrations")
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .content(new ObjectMapper().writeValueAsString(registration)))
-//                .andExpect(status().isBadRequest());
-//    }
-
-//    @Test
-//    void testUpdateRegistration_Success() throws Exception {
-//        Mockito.when(registrationService.getRegistrationById(1L)).thenReturn(registration);
-//        Mockito.when(registrationService.updateRegistration(eq(1L), any(Registration.class))).thenReturn(registration);
-//
-//        mockMvc.perform(put("/api/registrations/1")
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .content(new ObjectMapper().writeValueAsString(registration)))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.regId").value(1));
-//    }
-
-//    @Test
-//    void testUpdateRegistration_NotFound() throws Exception {
-//        Mockito.when(registrationService.getRegistrationById(99L)).thenReturn(null);
-//
-//        mockMvc.perform(put("/api/registrations/99")
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .content(new ObjectMapper().writeValueAsString(registration)))
-//                .andExpect(status().isNotFound());
-//    }
 
     @Test
     void testDeleteRegistration_Success() throws Exception {
