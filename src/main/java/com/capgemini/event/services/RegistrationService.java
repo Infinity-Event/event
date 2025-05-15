@@ -15,7 +15,7 @@ public interface RegistrationService {
 	Registration updateRegistration(Long regId, Registration registrationDetails);
 
 	boolean deleteRegistration(Long regId);
-
+                                                                                                                                                           
 	List<Registration> getRegistrationsByUserId(Long userId);
 
 	List<Registration> getRegistrationsByEventId(Long eventId);
