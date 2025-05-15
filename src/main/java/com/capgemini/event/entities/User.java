@@ -94,12 +94,12 @@ public class User {
 
 	public UserType getType() {
 		return type;
-	}
+	} 
 
 	public void setType(UserType type) {
 		this.type = type;
 	}
-
+ 
 	@Override
 	public String toString() {
 		return "User [userId=" + userId + ", name=" + name + ", email=" + email + ", password=" + password + ", phone="

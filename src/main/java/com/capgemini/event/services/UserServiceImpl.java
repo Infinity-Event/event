@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService {
         log.debug("Saving new user to the repository");
         return userRepository.save(user);
     }
-
+   
     @Override
     public User updateUser(Long id, User updatedUser) {
         log.debug("Updating user with ID: {}", id);
