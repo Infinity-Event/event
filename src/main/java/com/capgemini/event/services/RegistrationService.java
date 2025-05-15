@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface RegistrationService {
 
-	Registration createRegistration(Registration registration);
+	Registration createRegistration(Registration registration, Long userId, Long eventId);
 
 	Registration getRegistrationById(Long regId);
 

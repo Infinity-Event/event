@@ -6,14 +6,16 @@ import com.capgemini.event.exceptions.UserNotFoundException;
 import com.capgemini.event.exceptions.QueryNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
 import com.capgemini.event.entities.Event;
+
+import org.springframework.stereotype.Service;
 import com.capgemini.event.entities.Query;
 import com.capgemini.event.entities.User;
 import com.capgemini.event.repositories.EventRepo;
 import com.capgemini.event.repositories.QueryRepo;
 import com.capgemini.event.repositories.UserRepo;
 
+@Service
 public class QueryServiceImpl implements QueryService {
 	
 	private QueryRepo queryRepo;

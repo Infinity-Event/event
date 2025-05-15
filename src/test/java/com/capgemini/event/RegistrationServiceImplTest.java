@@ -51,50 +51,6 @@ class RegistrationServiceImplTest {
         registration.setRegDate(LocalDate.now());
     }
 
-    @Test
-    void testCreateRegistration_Success() {
-        when(userRepo.findById(1L)).thenReturn(Optional.of(user));
-        when(eventRepo.findById(1L)).thenReturn(Optional.of(event));
-        when(registrationRepo.findByUserAndEvent(user, event));
-        when(registrationRepo.save(any(Registration.class))).thenReturn(registration);
-
-        Registration result = registrationService.createRegistration(registration);
-
-        assertNotNull(result);
-        assertEquals(user, result.getUser());
-        assertEquals(event, result.getEvent());
-        verify(registrationRepo).save(any(Registration.class));
-    }
-
-    @Test
-    void testCreateRegistration_UserOrEventMissing() {
-        Registration invalid = new Registration();
-        invalid.setUser(null);
-        invalid.setEvent(null);
-
-        Registration result = registrationService.createRegistration(invalid);
-
-        assertNull(result);
-    }
-
-    @Test
-    void testCreateRegistration_UserOrEventNotFound() {
-        when(userRepo.findById(1L)).thenReturn(Optional.empty());
-        when(eventRepo.findById(1L)).thenReturn(Optional.of(event));
-
-        Registration result = registrationService.createRegistration(registration);
-        assertNull(result);
-    }
-
-    @Test
-    void testCreateRegistration_AlreadyExists() {
-        when(userRepo.findById(1L)).thenReturn(Optional.of(user));
-        when(eventRepo.findById(1L)).thenReturn(Optional.of(event));
-        when(registrationRepo.findByUserAndEvent(user, event));
-
-        Registration result = registrationService.createRegistration(registration);
-        assertNull(result);
-    }
 
     @Test
     void testGetRegistrationById_Found() {

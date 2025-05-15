@@ -12,6 +12,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
@@ -35,6 +36,7 @@ public class Registration {
 	@Column(name = "reg_date")
 	private LocalDate regDate;
 
+	@NotBlank(message="Status must not be blank")
 	@Column(name ="status")
 	private String status; 
 
@@ -49,7 +51,7 @@ public class Registration {
 		this.event = event;
 	}
 
-	// Getters and setters
+
 	public Long getRegId() {
 		return regId;
 	}

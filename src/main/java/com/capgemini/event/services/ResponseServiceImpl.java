@@ -3,15 +3,24 @@
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.stereotype.Service;
+
 import com.capgemini.event.entities.Response;
 import com.capgemini.event.repositories.ResponseRepo;
 
+@Service
 public class ResponseServiceImpl implements ResponseService{
 
     private ResponseRepo responseRepo;
 
     public ResponseServiceImpl(ResponseRepo responseRepo) {
     	this.responseRepo = responseRepo;
+    }
+    
+    @Override
+    public Response getResponseByQueryId(Long queryId) {
+        return responseRepo.findByQueryQueryId(queryId)
+                .orElseThrow(() -> new RuntimeException("No response found for Query ID: " + queryId));
     }
     
     @Override
@@ -22,7 +31,7 @@ public class ResponseServiceImpl implements ResponseService{
     @Override
     public Response getResponseById(Long responseId) {
         Optional<Response> optionalResponse = responseRepo.findById(responseId);
-        return optionalResponse.orElse(null); // Or throw exception if preferred
+        return optionalResponse.orElse(null);
     }
 
     @Override
