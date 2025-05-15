@@ -4,10 +4,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import com.capgemini.event.entities.Category;
+import com.capgemini.event.entities.Event;
 import com.capgemini.event.entities.Query;
 import com.capgemini.event.entities.User;
 import com.capgemini.event.entities.UserType;
@@ -36,13 +39,16 @@ class QueryServiceImplTest {
 
     private User user;
     private Query query1, query2;
+    private Event event;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        event = new Event("Tech Talk: AI & Future","AI description",  LocalDate.of(2024, 5, 1),LocalTime.of(10, 0), "Mumbai Hall A", 150,Category.CONFERENCE, null);
+		event.setEventId(1L);
         user = new User(1L, "Alice", "alice@example.com", "pass", "1234567890", UserType.NORMAL);
-        query1 = new Query(1L, "Query 1", "Open", LocalDate.now(), null, user);
-        query2 = new Query(2L, "Query 2", "Closed", LocalDate.now(), null, user);
+        query1 = new Query(1L, "Query 1", "Open", LocalDate.now(), null, user, event);
+        query2 = new Query(2L, "Query 2", "Closed", LocalDate.now(), null, user, event);
     }
 
     @Test
@@ -60,7 +66,7 @@ class QueryServiceImplTest {
         when(userRepo.findById(1L)).thenReturn(Optional.of(user));
         when(queryRepo.save(any(Query.class))).thenReturn(query1);
 
-        Query result = queryService.createEventQuery(query1, 1L);
+        Query result = queryService.createEventQuery(query1, 1L, 1L);
 
         assertNotNull(result);
         assertEquals("Query 1", result.getQueryBody());
@@ -73,7 +79,7 @@ class QueryServiceImplTest {
         when(userRepo.findById(99L)).thenReturn(Optional.empty());
 
         assertThrows(UserNotFoundException.class, () -> {
-            queryService.createEventQuery(query1, 99L);
+            queryService.createEventQuery(query1, 99L, 2L);
         });
     }
 
