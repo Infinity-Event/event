@@ -19,30 +19,31 @@ import jakarta.persistence.Table;
 @Table(name = "events")
 public class Event {
 // Event class representing an event entity in the system
-	// Field
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long eventId;
 
-    @Column(nullable = false)
+    @Column(name = "title")
     private String title;
 
-    @Lob
+    @Column(name = "description")
     private String description;
 
-    @Column(nullable = false)
+    @Column(name = "date")
     private LocalDate date;
 
-    @Column(nullable = false)
+    @Column(name = "time")
     private LocalTime time;
 
-    @Column(nullable = false)
+    @Column(name = "location")
     private String location;
 
+    @Column(name = "capacity")
     private Integer capacity;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "category")
     private Category category;
 
     @ManyToOne
