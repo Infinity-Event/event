@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import com.capgemini.event.entities.Event;
 import com.capgemini.event.entities.Registration;
 import com.capgemini.event.entities.User;
-import com.capgemini.event.repositories.RegistrationRepository;
+import com.capgemini.event.repositories.RegistrationRepo;
 
 @Service
 public class RegistrationServiceImpl implements RegistrationService {
