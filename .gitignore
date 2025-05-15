@@ -1,4 +1,5 @@
-Change the .gitignore:                                                                                                                                                                                                                                    # Eclipse project files
+
+# Eclipse project files
 .settings/
 .project
 .classpath

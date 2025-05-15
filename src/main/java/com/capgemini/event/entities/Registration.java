@@ -4,9 +4,11 @@ import java.time.LocalDate;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
@@ -18,15 +20,23 @@ public class Registration {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "reg_id")
 	private Long regId;
-	private LocalDate regDate;
-	private String status;
-
-	@ManyToOne
+	
+	@ManyToOne(fetch = FetchType.LAZY, optional =false)
+	@JoinColumn(name = "user_id")
 	private User user;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY, optional=false)
+	@JoinColumn(name = "event_id")
 	private Event event;
+
+	@NotNull(message = "Registration date must not be null")
+	@Column(name = "reg_date")
+	private LocalDate regDate;
+
+	@Column(name ="status")
+	private String status; 
 
 	public Registration() {
 	}
