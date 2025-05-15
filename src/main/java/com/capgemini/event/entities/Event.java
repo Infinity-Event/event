@@ -18,8 +18,7 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "events")
 public class Event {
-// Event class representing an event entity in the system
-	// Field
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long eventId;
