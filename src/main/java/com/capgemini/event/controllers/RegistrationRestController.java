@@ -17,9 +17,13 @@ import java.util.List;
 @RequestMapping("/api/registrations")
 public class RegistrationRestController {
 
-	@Autowired
 	private RegistrationService registrationService;
 
+	@Autowired
+	public RegistrationRestController(RegistrationService registrationService) {
+		this.registrationService = registrationService;
+	}
+	
 	@GetMapping
 	public ResponseEntity<List<Registration>> getAllRegistrations() {
 		List<Registration> registrations = registrationService.getAllRegistrations();
@@ -35,13 +39,13 @@ public class RegistrationRestController {
 		return ResponseEntity.ok(registration);
 	}
 
-	@PostMapping
+	@PostMapping("event/{eventId}/user/{userId}")
 	public ResponseEntity<Registration> createRegistration(@Valid @RequestBody Registration registration,
-			BindingResult bindingResult) {
+			BindingResult bindingResult, @PathVariable Long eventId, @PathVariable Long userId) {
 		if (bindingResult.hasErrors()) {
 			throw new IllegalArgumentException(bindingResult.getFieldErrors().toString());
 		}
-		Registration createdRegistration = registrationService.createRegistration(registration);
+		Registration createdRegistration = registrationService.createRegistration(registration, userId, eventId);
 		if (createdRegistration == null) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 		}

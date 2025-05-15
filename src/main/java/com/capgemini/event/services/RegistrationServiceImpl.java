@@ -3,6 +3,7 @@ package com.capgemini.event.services;
 import com.capgemini.event.entities.Event;
 import com.capgemini.event.entities.Registration;
 import com.capgemini.event.entities.User;
+import com.capgemini.event.exceptions.UserNotFoundException;
 import com.capgemini.event.repositories.EventRepo;
 import com.capgemini.event.repositories.RegistrationRepo;
 import com.capgemini.event.repositories.UserRepo;
@@ -31,32 +32,13 @@ public class RegistrationServiceImpl implements RegistrationService {
 
 	@Override
 	@Transactional
-	public Registration createRegistration(Registration registration) {
-		if (registration.getUser() == null || registration.getUser().getUserId() == null
-				|| registration.getEvent() == null || registration.getEvent().getEventId() == null) {
-			return null;
-		}
+	public Registration createRegistration(Registration registration, Long userId, Long eventId) {
+		User user = userRepo.findById(userId).orElseThrow(()-> new UserNotFoundException("User Not Found!"));
+		Event event  = eventRepo.findById(eventId).orElseThrow(null);
+		registration.setEvent(event);
+		registration.setUser(user);
 
-		Optional<User> userOptional = userRepo.findById(registration.getUser().getUserId());
-		Optional<Event> eventOptional = eventRepo.findById(registration.getEvent().getEventId());
-
-		if (userOptional.isEmpty() || eventOptional.isEmpty()) {
-			return null;
-		}
-
-		User user = userOptional.get();
-		Event event = eventOptional.get();
-
-//		if (registrationRepo.existsByUserAndEvent(user, event)) {
-//			return null;
-//		}
-
-		Registration newRegistration = new Registration();
-		newRegistration.setUser(user);
-		newRegistration.setEvent(event);
-		newRegistration.setRegId(null);
-
-		return registrationRepo.save(newRegistration);
+		return registrationRepo.save(registration);
 	}
 
 	@Override
