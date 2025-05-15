@@ -31,6 +31,7 @@ public class QueryServiceImpl implements QueryService {
 	@Override
 	public Query createEventQuery(Query query, Long userId) {
 		User user = userRepo.findById(userId).orElseThrow(() -> new UserNotFoundException("User Not Found!"));
+		query.setUser(user);
 		return queryRepo.save(query);
 	}
 	
@@ -43,7 +44,6 @@ public class QueryServiceImpl implements QueryService {
 	public void deleteQuery(Long queryId) {
 
 		Query query = queryRepo.findById(queryId).orElseThrow(()-> new QueryNotFoundException("Query Not Found!"));
-		
 		queryRepo.delete(query);
 	}
 }
