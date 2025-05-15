@@ -1,4 +1,4 @@
-package com.capgemini.event;
+package com.capgemini.event.user;
 
 
 import static org.mockito.ArgumentMatchers.any;
@@ -99,3 +99,5 @@ class UserRestControllerTest {
         Mockito.verify(userService).deleteUser(1L);
     }
 }
+
+// end

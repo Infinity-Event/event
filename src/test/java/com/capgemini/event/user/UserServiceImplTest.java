@@ -1,4 +1,4 @@
-package com.capgemini.event;
+package com.capgemini.event.user;
 
 
 
