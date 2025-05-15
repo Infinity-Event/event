@@ -40,12 +40,12 @@ public class QueryController {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 	}
 	
-	@PostMapping
-    public ResponseEntity<Query> createQuery(@Valid @RequestBody Query query, BindingResult bindingResult) {
+	@PostMapping("/{userId}")
+    public ResponseEntity<Query> createQuery(@Valid @RequestBody Query query, BindingResult bindingResult, @PathVariable Long userId) {
 		if(bindingResult.hasErrors() ) {
 			throw new IllegalArgumentException("Invalid Data");
 		}
-        Query savedQuery = queryService.createQuery(query);
+        Query savedQuery = queryService.createEventQuery(query, userId);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedQuery);
     }
 	
