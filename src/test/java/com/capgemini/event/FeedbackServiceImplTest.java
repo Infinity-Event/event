@@ -1,15 +1,14 @@
 package com.capgemini.event;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -21,14 +20,16 @@ import org.mockito.MockitoAnnotations;
 import com.capgemini.event.entities.Event;
 import com.capgemini.event.entities.Feedback;
 import com.capgemini.event.entities.User;
+import com.capgemini.event.exceptions.FeedbackNotFoundException;
 import com.capgemini.event.repositories.EventRepo;
 import com.capgemini.event.repositories.FeedbackRepo;
 import com.capgemini.event.repositories.UserRepo;
 import com.capgemini.event.services.FeedbackServiceImpl;
 
-import jakarta.persistence.EntityNotFoundException;
+public class FeedbackServiceImplTest {
 
-class FeedbackServiceImplTest {
+    @InjectMocks
+    private FeedbackServiceImpl feedbackService;
 
     @Mock
     private FeedbackRepo feedbackRepo;
@@ -39,98 +40,102 @@ class FeedbackServiceImplTest {
     @Mock
     private EventRepo eventRepo;
 
-    @InjectMocks
-    private FeedbackServiceImpl feedbackService;
-
-    private Feedback feedback;
     private User user;
     private Event event;
+    private Feedback feedback;
 
-    @BeforeEach //
-    void setUp() {
+    @BeforeEach
+    public void setUp() {
         MockitoAnnotations.openMocks(this);
-
         user = new User();
         user.setUserId(1L);
 
         event = new Event();
         event.setEventId(1L);
 
-        feedback = new Feedback();
-        feedback.setFeedbackId(1L);
-        feedback.setRating(5);
-        feedback.setReview("Great event");
-        feedback.setUser(user);
-        feedback.setEvent(event);
+        feedback = new Feedback(1L, 5, "Great event!", user, event);
     }
 
     @Test
-    void testGetAllFeedbacks() {
+    public void testGetAllFeedbacks() {
         when(feedbackRepo.findAll()).thenReturn(Arrays.asList(feedback));
-        List<Feedback> result = feedbackService.getAllFeedbacks();
 
-        assertEquals(1, result.size());
-        verify(feedbackRepo).findAll();
+        var result = feedbackService.getAllFeedbacks();
+
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getRating()).isEqualTo(5);
     }
 
     @Test
-    void testGetFeedbackById_Found() {
+    public void testGetFeedbackById_Found() {
         when(feedbackRepo.findById(1L)).thenReturn(Optional.of(feedback));
+
         Feedback result = feedbackService.getFeedbackById(1L);
 
-        assertNotNull(result);
-        assertEquals("Great event", result.getReview());
+        assertThat(result.getFeedbackId()).isEqualTo(1L);
     }
 
     @Test
-    void testGetFeedbackById_NotFound() {
-        when(feedbackRepo.findById(99L)).thenReturn(Optional.empty());
-        assertThrows(EntityNotFoundException.class, () -> feedbackService.getFeedbackById(99L));
+    public void testGetFeedbackById_NotFound() {
+        when(feedbackRepo.findById(1L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> feedbackService.getFeedbackById(1L))
+            .isInstanceOf(FeedbackNotFoundException.class);
     }
 
     @Test
-    void testCreateFeedback_Success() {
-        when(userRepo.findById(1L)).thenReturn(Optional.of(user));
-        when(eventRepo.findById(1L)).thenReturn(Optional.of(event));
-        when(feedbackRepo.save(feedback)).thenReturn(feedback);
+    public void testCreateFeedback() {
+        Feedback newFeedback = new Feedback(null, 4, "Nice", user, event);
 
-        Feedback result = feedbackService.createFeedback(feedback);
-        assertEquals(5, result.getRating());
-        verify(feedbackRepo).save(feedback);
-    }
-
-    @Test
-    void testCreateFeedback_UserNotFound() {
-        when(userRepo.findById(1L)).thenReturn(Optional.empty());
-        assertThrows(EntityNotFoundException.class, () -> feedbackService.createFeedback(feedback));
-    }
-
-    @Test
-    void testUpdateFeedback_Success() {
-        Feedback updated = new Feedback();
-        updated.setRating(4);
-        updated.setReview("Updated review");
-        updated.setUser(user);
-        updated.setEvent(event);
-
-        when(feedbackRepo.findById(1L)).thenReturn(Optional.of(feedback));
         when(userRepo.findById(1L)).thenReturn(Optional.of(user));
         when(eventRepo.findById(1L)).thenReturn(Optional.of(event));
         when(feedbackRepo.save(any(Feedback.class))).thenReturn(feedback);
 
-        Feedback result = feedbackService.updateFeedback(1L, updated);
+        Feedback result = feedbackService.createFeedback(newFeedback);
 
-        assertEquals("Updated review", result.getReview());
-        verify(feedbackRepo).save(any(Feedback.class));
+        assertThat(result.getRating()).isEqualTo(5); 
     }
 
     @Test
-    void testDeleteFeedback() {
+    public void testUpdateFeedback_Found() {
+        Feedback updatedFeedback = new Feedback(1L, 3, "Updated", user, event);
+
         when(feedbackRepo.findById(1L)).thenReturn(Optional.of(feedback));
-        doNothing().when(feedbackRepo).delete(feedback);
+        when(feedbackRepo.save(any(Feedback.class))).thenReturn(updatedFeedback);
+
+        Feedback result = feedbackService.updateFeedback(1L, updatedFeedback);
+
+        assertThat(result.getRating()).isEqualTo(3);
+    }
+
+    @Test
+    public void testUpdateFeedback_NotFound() {
+        when(feedbackRepo.findById(1L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> feedbackService.updateFeedback(1L, feedback))
+            .isInstanceOf(FeedbackNotFoundException.class);
+    }
+
+    @Test
+    public void testPatchFeedback() {
+        Feedback patch = new Feedback();
+        patch.setRating(2); // Only patching rating
+
+        when(feedbackRepo.findById(1L)).thenReturn(Optional.of(feedback));
+        when(feedbackRepo.save(any(Feedback.class))).thenReturn(feedback);
+
+        Feedback result = feedbackService.patchFeedback(1L, patch);
+
+        assertThat(result.getRating()).isEqualTo(2);
+    }
+
+    @Test
+    public void testDeleteFeedback() {
+        when(feedbackRepo.findById(1L)).thenReturn(Optional.of(feedback));
+        doNothing().when(feedbackRepo).deleteById(1L);
 
         feedbackService.deleteFeedback(1L);
 
-        verify(feedbackRepo).delete(feedback);
+        verify(feedbackRepo, times(1)).deleteById(1L);
     }
 }

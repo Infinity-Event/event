@@ -8,13 +8,13 @@ public interface FeedbackService {
     
     List<Feedback> getAllFeedbacks();
 
-    Feedback getFeedbackById(Long id);
+    Feedback getFeedbackById(Long feedbackId);
 
     Feedback createFeedback(Feedback feedback);
 
-    Feedback updateFeedback(Long id, Feedback feedback);
+    Feedback updateFeedback(Long feedbackId, Feedback feedback);
 
-    Feedback patchFeedback(Long id, Feedback feedback);
+    Feedback patchFeedback(Long feedbackId, Feedback feedback);
 
-    void deleteFeedback(Long id);
+    void deleteFeedback(Long feedbackId);
 }
