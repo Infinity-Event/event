@@ -44,7 +44,7 @@ public class QueryController {
 	@PostMapping("/user/{userId}")
     public ResponseEntity<Query> createQuery(@Valid @RequestBody Query query, BindingResult bindingResult, @PathVariable Long userId) {
 		if(bindingResult.hasErrors() ) {
-			throw new IllegalArgumentException("Invalid Data");
+			throw new IllegalArgumentException(bindingResult.getFieldErrors().toString());
 		}
         Query savedQuery = queryService.createEventQuery(query, userId);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedQuery);
