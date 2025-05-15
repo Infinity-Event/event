@@ -56,7 +56,7 @@ public class UserServiceImpl implements UserService {
         }).orElseThrow(() -> {
             log.warn("User not found for update with ID: {}", id);
             return new UserNotFoundException("User with ID " + id + " not found");
-        });
+        }); 
     }
 
     @Override

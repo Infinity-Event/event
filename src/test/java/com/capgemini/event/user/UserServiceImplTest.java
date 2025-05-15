@@ -54,7 +54,7 @@ class UserServiceImplTest {
 
         assertEquals(2, result.size());
         verify(userRepository, times(1)).findAll();
-    }
+    } 
 
     @Test
     void testGetUserById_Found() {

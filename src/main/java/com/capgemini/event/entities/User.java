@@ -94,7 +94,7 @@ public class User {
 
 	public UserType getType() {
 		return type;
-	} 
+	}  
 
 	public void setType(UserType type) {
 		this.type = type;
