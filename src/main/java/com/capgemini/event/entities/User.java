@@ -37,7 +37,7 @@ public class User {
 	@Column(name = "user_type")
 	private UserType userType;
 
-	
+
 	public User() {
 	}
 
@@ -49,8 +49,6 @@ public class User {
 		this.phone = phone;
 		this.userType = userType;
 	}
-
-	
 
 	public Long getUserId() {
 		return userId;
@@ -95,12 +93,12 @@ public class User {
 	public UserType getType() {
 
 		return userType;
-	}  
-
+	}
 
 	public void setType(UserType userType) {
 		this.userType = userType;
 	}
+
  
 	@Override
 	public String toString() {

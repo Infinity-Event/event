@@ -1,19 +1,22 @@
 package com.capgemini.event.services;
 
-import com.capgemini.event.entities.User;
-import com.capgemini.event.exceptions.UserNotFoundException;
-import com.capgemini.event.repositories.UserRepo;
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import com.capgemini.event.entities.User;
+import com.capgemini.event.exceptions.UserNotFoundException;
+import com.capgemini.event.repositories.UserRepo;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
 public class UserServiceImpl implements UserService {
 
-    private final UserRepo userRepository;
+	private final UserRepo userRepository;
+
 
     @Autowired
     public UserServiceImpl(UserRepo userRepository) {
@@ -26,15 +29,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll();
     }
 
-    @Override
-    public User getUserById(Long id) {
-        log.debug("Fetching user by ID: {}", id);
-        return userRepository.findById(id)
-                .orElseThrow(() -> {
-                    log.warn("User not found with ID: {}", id);
-                    return new UserNotFoundException("User with ID " + id + " not found");
-                });
-    }
+	
 
     @Override
     public User createUser(User user) {
@@ -59,12 +54,28 @@ public class UserServiceImpl implements UserService {
         }); 
     }
 
-    @Override
-    public void deleteUser(Long id) {
-        log.debug("Attempting to delete user with ID: {}", id);
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + id));
-        userRepository.deleteById(id);
-        log.debug("User with ID {} deleted from repository", id);
-    }
+    
+
+	@Override
+	public User getUserById(Long id) {
+		log.debug("Fetching user by ID: {}", id);
+		return userRepository.findById(id).orElseThrow(() -> {
+			log.warn("User not found with ID: {}", id);
+			return new UserNotFoundException("User with ID " + id + " not found");
+		});
+	}
+
+	
+
+
+
+	@Override
+	public void deleteUser(Long id) {
+		log.debug("Attempting to delete user with ID: {}", id);
+		User user = userRepository.findById(id)
+				.orElseThrow(() -> new UserNotFoundException("User not found with ID: " + id));
+		userRepository.delete(user);
+		log.debug("User with ID {} deleted from repository", id);
+	}
+
 }

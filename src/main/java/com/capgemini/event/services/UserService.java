@@ -1,6 +1,5 @@
 package com.capgemini.event.services;
 
-
 import com.capgemini.event.entities.User;
 import java.util.List;
 
