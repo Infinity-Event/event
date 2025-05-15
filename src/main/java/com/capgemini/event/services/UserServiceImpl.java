@@ -13,6 +13,7 @@ import java.util.List;
 @Slf4j
 public class UserServiceImpl implements UserService {
 
+
 	private final UserRepo userRepository;
 
 	@Autowired
@@ -66,4 +67,23 @@ public class UserServiceImpl implements UserService {
 		userRepository.delete(user);
 		log.debug("User with ID {} deleted from repository", id);
 	}
+
+  @Override
+    public boolean existsByEmail(String email) {
+
+    	return userRepository.existsByEmail(email);
+    }
+    
+    @Override
+    public boolean existsByName(String name) {
+    	return userRepository.existsByName(name);
+    }
+    
+    @Override
+    public User findByEmailOrName(String email, String name) {
+
+    	return userRepository.findByEmailOrName(email, name)
+				.orElseThrow(()->new UserNotFoundException("Username or Email not Found !"));
+    }
 }
+
