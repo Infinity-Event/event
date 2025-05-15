@@ -5,6 +5,7 @@ package com.capgemini.event.user;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
@@ -23,6 +24,7 @@ import org.mockito.MockitoAnnotations;
 
 import com.capgemini.event.entities.User;
 import com.capgemini.event.entities.UserType;
+import com.capgemini.event.exceptions.UserNotFoundException;
 import com.capgemini.event.repositories.UserRepo;
 import com.capgemini.event.services.UserServiceImpl;
 
@@ -68,9 +70,9 @@ class UserServiceImplTest {
     void testGetUserById_NotFound() {
         when(userRepository.findById(99L)).thenReturn(Optional.empty());
 
-        User result = userService.getUserById(99L);
-
-        assertNull(result);
+        assertThrows(UserNotFoundException.class, () -> {
+            userService.getUserById(99L);
+        });
     }
 
     @Test
@@ -107,18 +109,22 @@ class UserServiceImplTest {
         when(userRepository.findById(99L)).thenReturn(Optional.empty());
 
         User updatedUser = new User();
-        User result = userService.updateUser(99L, updatedUser);
-
-        assertNull(result);
+        assertThrows(UserNotFoundException.class, () -> {
+            userService.updateUser(99L, updatedUser);
+        });
     }
+
 
     @Test
     void testDeleteUser() {
+        when(userRepository.existsById(1L)).thenReturn(true);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user1));
         doNothing().when(userRepository).deleteById(1L);
 
         userService.deleteUser(1L);
 
         verify(userRepository).deleteById(1L);
     }
+
 }
 
