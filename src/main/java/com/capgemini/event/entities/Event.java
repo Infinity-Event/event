@@ -11,48 +11,63 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "events")
 public class Event {
-// Event class representing an event entity in the system
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long eventId;
 
+    @NotBlank(message = "Title is required")
+    @Size(min = 3, max = 100, message = "Title must be between 3 and 100 characters")
     @Column(name = "title")
     private String title;
 
+    @NotBlank(message = "Description is required")
+    @Size(max = 1000, message = "Description cannot exceed 1000 characters")
     @Column(name = "description")
     private String description;
 
+    @NotNull(message = "Date is required")
+    @Future(message = "Event date must be in the future")
     @Column(name = "date")
     private LocalDate date;
 
+    @NotNull(message = "Time is required")
     @Column(name = "time")
     private LocalTime time;
 
+    @NotBlank(message = "Location is required")
+    @Size(max = 200, message = "Location cannot exceed 200 characters")
     @Column(name = "location")
     private String location;
 
+    @NotNull(message = "Capacity is required")
+    @Min(value = 1, message = "Capacity must be at least 1")
     @Column(name = "capacity")
     private Integer capacity;
 
+    @NotNull(message = "Category is required")
     @Enumerated(EnumType.STRING)
     @Column(name = "category")
     private Category category;
 
     @ManyToOne
-    @JoinColumn(name = "organizer_user_id", nullable = false)
+    @JoinColumn(name = "organizer_user_id")
     private User organizer;
 
     public Event() {
     }
-    // Constructor to initialize an Event object with all field
+
+
     public Event(String title, String description, LocalDate date, LocalTime time, String location, Integer capacity,
                  Category category, User organizer) {
         this.title = title;
