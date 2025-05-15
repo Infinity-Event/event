@@ -2,9 +2,8 @@ package com.capgemini.event.services;
 
 import java.util.List;
 
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
-
-import com.capgemini.event.entities.Query;
 
 @Service
 public interface QueryService {
@@ -13,7 +12,7 @@ public interface QueryService {
 	
 	Query getQueryById(Long queryId);
 	
-	Query createEventQuery(Query query, Long userId);
+	Query createQuery(Query query);
 	
 	void deleteQuery(Long queryId);
 	
