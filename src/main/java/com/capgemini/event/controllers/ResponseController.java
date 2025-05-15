@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,36 +22,39 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/responses")
 public class ResponseController {
 
-    private ResponseService responseService;
+	private ResponseService responseService;
 
-    public ResponseController(ResponseService responseService) {
-    	this.responseService = responseService;
-    }
-    
-    @GetMapping
-    public ResponseEntity<List<Response>> getAllResponses() {
-        return ResponseEntity.status(HttpStatus.OK).body(responseService.getAllResponses());
-    }
+	public ResponseController(ResponseService responseService) {
+		this.responseService = responseService;
+	}
 
-    @GetMapping("/{responseId}")
-    public ResponseEntity<Response> getResponseById(@PathVariable Long responseId) {
-        Response response = responseService.getResponseById(responseId);
-        if (response != null) {
-            return ResponseEntity.status(HttpStatus.OK).body(response);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-    }
+	@GetMapping
+	public ResponseEntity<List<Response>> getAllResponses() {
+		return ResponseEntity.status(HttpStatus.OK).body(responseService.getAllResponses());
+	}
 
-    @PostMapping
-    public ResponseEntity<Response> createResponse(@Valid @RequestBody Response response) {
-        Response created = responseService.createResponse(response);
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
-    }
+	@GetMapping("/{responseId}")
+	public ResponseEntity<Response> getResponseById(@PathVariable Long responseId) {
+		Response response = responseService.getResponseById(responseId);
+		if (response != null) {
+			return ResponseEntity.status(HttpStatus.OK).body(response);
+		} else {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+		}
+	}
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteResponse(@PathVariable Long id) {
-        responseService.deleteResponse(id);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-    }
+	@PostMapping
+	public ResponseEntity<Response> createResponse(@Valid @RequestBody Response response, BindingResult bindingResult) {
+		if (bindingResult.hasErrors()) {
+			throw new IllegalArgumentException("Invalid Data");
+		}
+		Response created = responseService.createResponse(response);
+		return ResponseEntity.status(HttpStatus.CREATED).body(created);
+	}
+
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Void> deleteResponse(@PathVariable Long id) {
+		responseService.deleteResponse(id);
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+	}
 }
