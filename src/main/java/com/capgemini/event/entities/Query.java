@@ -43,6 +43,7 @@ public class Query {
 	private User user;
 
 	public Query() {
+		
 	}
 
 	public Query(Long queryId, String queryBody, String status, LocalDate queryDate, Response response, User user) {
