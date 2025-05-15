@@ -2,6 +2,7 @@ package com.capgemini.event.services;
 
 
 import com.capgemini.event.entities.User;
+import com.capgemini.event.exceptions.UserNotFoundException;
 import com.capgemini.event.repositories.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,6 +49,24 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
+    }
+    
+    @Override
+    public boolean existsByEmail(String email) {
+
+    	return userRepository.existsByEmail(email);
+    }
+    
+    @Override
+    public boolean existsByName(String name) {
+    	return userRepository.existsByName(name);
+    }
+    
+    @Override
+    public User findByEmailOrName(String email, String name) {
+
+    	return userRepository.findByEmailOrName(email, name)
+				.orElseThrow(()->new UserNotFoundException("Username or Email not Found !"));
     }
     
 //    end
