@@ -4,6 +4,9 @@ import com.capgemini.event.entities.Registration;
 import com.capgemini.event.services.RegistrationService;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +17,8 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
+@Slf4j
+@RequiredArgsConstructor
 @RequestMapping("/api/registrations")
 public class RegistrationRestController {
 
@@ -26,13 +31,17 @@ public class RegistrationRestController {
 	
 	@GetMapping
 	public ResponseEntity<List<Registration>> getAllRegistrations() {
+		log.info("Received request to fetch all registrations");
 		List<Registration> registrations = registrationService.getAllRegistrations();
+		log.debug("Returning {} registrations", registrations.size());
 		return ResponseEntity.ok(registrations);
 	}
 
 	@GetMapping("/{id}")
 	public ResponseEntity<Registration> getRegistrationById(@PathVariable Long id) {
+		log.info("Received request to fetch registration with ID: {}", id);
 		Registration registration = registrationService.getRegistrationById(id);
+		log.debug("Registration fetched: {}", registration);
 		if (registration == null) {
 			return ResponseEntity.notFound().build();
 		}
@@ -42,6 +51,8 @@ public class RegistrationRestController {
 	@PostMapping("event/{eventId}/user/{userId}")
 	public ResponseEntity<Registration> createRegistration(@Valid @RequestBody Registration registration,
 			BindingResult bindingResult, @PathVariable Long eventId, @PathVariable Long userId) {
+		
+		log.info("Received request to create registration: {}", registration);
 		if (bindingResult.hasErrors()) {
 			throw new IllegalArgumentException(bindingResult.getFieldErrors().toString());
 		}
@@ -49,6 +60,7 @@ public class RegistrationRestController {
 		if (createdRegistration == null) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 		}
+		log.debug("Registration created with ID: {}", createdRegistration.getRegId());
 		return ResponseEntity.created(URI.create("/api/registrations/" + createdRegistration.getRegId()))
 				.body(createdRegistration);
 	}
@@ -69,10 +81,12 @@ public class RegistrationRestController {
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> deleteRegistration(@PathVariable Long id) {
+		log.info("Received request to delete registration with ID: {}", id);
 		boolean deleted = registrationService.deleteRegistration(id);
 		if (!deleted) {
 			return ResponseEntity.notFound().build();
 		}
+		log.info("Registration with ID {} successfully deleted", id);
 		return ResponseEntity.ok().build();
 	}
 

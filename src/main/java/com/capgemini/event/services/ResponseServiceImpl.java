@@ -31,7 +31,7 @@ public class ResponseServiceImpl implements ResponseService{
     @Override
     public Response getResponseById(Long responseId) {
         Optional<Response> optionalResponse = responseRepo.findById(responseId);
-        return optionalResponse.orElse(null); // Or throw exception if preferred
+        return optionalResponse.orElse(null);
     }
 
     @Override

@@ -51,6 +51,7 @@ class RegistrationServiceImplTest {
         registration.setRegDate(LocalDate.now());
     }
 
+
     @Test
     void testCreateRegistration_Success() {
         when(userRepo.findById(1L)).thenReturn(Optional.of(user));
