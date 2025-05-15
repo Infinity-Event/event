@@ -14,43 +14,40 @@ public class User {
 
 	@NotBlank(message = "Name is required")
 	@Size(min = 2, max = 50, message = "Name must be between 2 and 50 characters")
-	@Column(name = "name", nullable = false)
+	@Column(name = "name")
 	private String name;
 
 	@NotBlank(message = "Email is required")
 	@Email(message = "Email should be valid")
-	@Column(name = "email", unique = true, nullable = false)
+	@Column(name = "email", unique = true)
 	private String email;
 
 	@NotBlank(message = "Password is required")
 	@Size(min = 6, message = "Password must be at least 6 characters")
-	@Column(name = "password", nullable = false)
+	@Column(name = "password")
 	private String password;
 
 	@NotBlank(message = "Phone number is required")
 	@Pattern(regexp = "^[0-9]{10}$", message = "Phone number must be 10 digits")
-	@Column(name = "phone", nullable = false)
+	@Column(name = "phone")
 	private String phone;
 
 	@Enumerated(EnumType.STRING)
 	@NotNull(message = "User type is required")
-	@Column(name = "user_type", nullable = false)
-	private UserType type;
+	@Column(name = "user_type")
+	private UserType userType;
 
-	// Constructors
 	public User() {
 	}
 
-	public User(Long userId, String name, String email, String password, String phone, UserType type) {
+	public User(Long userId, String name, String email, String password, String phone, UserType userType) {
 		this.userId = userId;
 		this.name = name;
 		this.email = email;
 		this.password = password;
 		this.phone = phone;
-		this.type = type;
+		this.userType = userType;
 	}
-
-	// Getters and setters
 
 	public Long getUserId() {
 		return userId;
@@ -93,16 +90,16 @@ public class User {
 	}
 
 	public UserType getType() {
-		return type;
+		return userType;
 	}
 
-	public void setType(UserType type) {
-		this.type = type;
+	public void setType(UserType userType) {
+		this.userType = userType;
 	}
 
 	@Override
 	public String toString() {
 		return "User [userId=" + userId + ", name=" + name + ", email=" + email + ", password=" + password + ", phone="
-				+ phone + ", type=" + type + "]";
+				+ phone + ", userType=" + userType + "]";
 	}
 }
