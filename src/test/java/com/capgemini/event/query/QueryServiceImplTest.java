@@ -102,7 +102,6 @@ class QueryServiceImplTest {
         doNothing().when(queryRepo).delete(query1);
 
         queryService.deleteQuery(1L);
-
         verify(queryRepo).delete(query1);
     }
 
