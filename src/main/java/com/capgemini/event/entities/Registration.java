@@ -12,20 +12,19 @@ public class Registration {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "reg_id")
 	private Long regId;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id", nullable = false)
-	@NotNull(message = "User cannot be null for registration")
+	@ManyToOne(fetch = FetchType.LAZY, optional =false)
+	@JoinColumn(name = "user_id")
 	private User user;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "event_id", nullable = false)
-	@NotNull(message = "Event cannot be null for registration")
+	@ManyToOne(fetch = FetchType.LAZY, optional=false)
+	@JoinColumn(name = "event_id")
 	private Event event;
 
-	@Column(nullable = false, updatable = false)
-	@CreationTimestamp
+	@NotNull(message = "Registration date must not be null")
+	@Column(name = "reg_date")
 	private LocalDate regDate;
 
 	public Registration() {

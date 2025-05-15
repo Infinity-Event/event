@@ -29,7 +29,6 @@ public class RegistrationServiceImpl implements RegistrationService {
 	}
 
 	@Override
-	@Transactional
 	public Registration createRegistration(Registration registration) {
 		if (registration.getUser() == null || registration.getUser().getUserId() == null
 				|| registration.getEvent() == null || registration.getEvent().getEventId() == null) {
