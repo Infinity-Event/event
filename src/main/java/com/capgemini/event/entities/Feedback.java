@@ -2,10 +2,6 @@ package com.capgemini.event.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-package com.capgemini.event.entities;
-
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 
 @Entity
 @Table(name = "feedbacks")
@@ -19,28 +15,28 @@ public class Feedback {
 	@Min(value = 1, message = "Rating must be at least 1")
 	@Max(value = 5, message = "Rating must be at most 5")
 	@Column(name = "rating")
-	private Integer rating;
+	private int rating;
 
 	@NotBlank(message = "Review cannot be blank")
 	@Size(min = 10, max = 1000, message = "Review must be between 10 and 1000 characters")
 	@Column(name = "review")
 	private String review;
 
-	@ManyToOne(optional = false)
+	@ManyToOne(optional = true)
 	@JoinColumn(name = "user_id")
 	@NotNull(message = "User cannot be null")
 	private User user;
 
-	@ManyToOne(optional = false)
+	@ManyToOne(optional = true)
 	@JoinColumn(name = "event_id")
 	@NotNull(message = "Event cannot be null")
 	private Event event;
 
 	public Feedback() {
-
+		
 	}
 
-	public Feedback(Long feedbackId, Integer rating, String review, User user, Event event) {
+	public Feedback(Long feedbackId, int rating, String review, User user, Event event) {
 		this.feedbackId = feedbackId;
 		this.rating = rating;
 		this.review = review;
@@ -48,18 +44,6 @@ public class Feedback {
 		this.event = event;
 	}
 
-	public Feedback(Long feedbackId, Integer rating, String review, User user) {
-		this.feedbackId = feedbackId;
-		this.rating = rating;
-		this.review = review;
-		this.user = user;
-	}
-
-	public Feedback(Long feedbackId, Integer rating, String review) {
-		this.feedbackId = feedbackId;
-		this.rating = rating;
-		this.review = review;
-	}
 
 	public Long getFeedbackId() {
 		return feedbackId;
@@ -103,6 +87,7 @@ public class Feedback {
 
 	@Override
 	public String toString() {
-		return "Feedback [feedbackId=" + feedbackId + ", rating=" + rating + ", review=" + review + "]";
+		return "Feedback [feedbackId=" + feedbackId + ", rating=" + rating + ", review=" + review
+				+ ", user=" + user + ", event=" + event + "]";
 	}
 }
