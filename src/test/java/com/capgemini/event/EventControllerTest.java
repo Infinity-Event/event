@@ -72,7 +72,7 @@ class EventControllerTest {
 
         when(eventService.createEvent(any(), eq(1L))).thenReturn(event);
 
-        ResponseEntity<Event> response = eventController.createEvent(event);
+        ResponseEntity<Event> response = eventController.createEvent(event, null);
         assertEquals(201, response.getStatusCodeValue());
         assertNotNull(response.getBody());
     }
