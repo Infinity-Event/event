@@ -16,7 +16,7 @@ import com.capgemini.event.repositories.RegistrationRepository;
 public class RegistrationServiceImpl implements RegistrationService {
 
 	@Autowired
-	private RegistrationRepository registrationRepository;
+	private RegistrationRepo registrationRepository;
 
 	@Override
 	public Registration registerUserToEvent(User user, Event event) {
