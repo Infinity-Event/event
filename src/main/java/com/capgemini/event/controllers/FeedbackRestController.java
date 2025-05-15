@@ -36,7 +36,7 @@ public class FeedbackRestController {
 	@PostMapping
 	public ResponseEntity<Feedback> createFeedback(@Valid @RequestBody Feedback feedback, BindingResult bindingResult) {
 		if (bindingResult.hasErrors()) {
-			throw new IllegalArgumentException("Invalid Data");
+			throw new IllegalArgumentException(bindingResult.getFieldErrors().toString());
 		}
 		Feedback created = feedbackService.createFeedback(feedback);
 		return ResponseEntity.created(URI.create("/api/feedbacks/" + created.getFeedbackId())).body(created);
