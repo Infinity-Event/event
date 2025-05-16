@@ -3,9 +3,10 @@ package com.capgemini.event.services;
 import com.capgemini.event.entities.Event;
 import com.capgemini.event.entities.User;
 import com.capgemini.event.entities.UserType;
+import com.capgemini.event.exceptions.EventNotFoundException;
+import com.capgemini.event.exceptions.UserNotFoundException;
 import com.capgemini.event.repositories.EventRepo;
 import com.capgemini.event.repositories.UserRepo;
-import com.capgemini.event.services.EventService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -31,15 +32,14 @@ public class EventServiceImpl implements EventService {
         Optional<User> organizerOptional = userRepo.findById(organizerId);
         if (organizerOptional.isEmpty()) {
             log.warn("Failed to create event: Organizer not found with ID: {}", organizerId);
-            return null;
+            throw new UserNotFoundException("Organizer not found with Id: "+organizerId);
         }
         User organizer = organizerOptional.get();
         if (organizer.getType() != UserType.ORGANIZER) {
             log.warn("Failed to create event: User with ID {} is not an ORGANIZER. Actual type: {}", organizerId, organizer.getType());
-            return null;
+            throw new UserNotFoundException("Organizer not found");
         }
         event.setOrganizer(organizer);
-        event.setEventId(null);
         Event savedEvent = eventRepo.save(event);
         log.info("Successfully created event with ID: {} and title: '{}'", savedEvent.getEventId(), savedEvent.getTitle());
         return savedEvent;
@@ -51,7 +51,7 @@ public class EventServiceImpl implements EventService {
         Optional<Event> eventOptional = eventRepo.findById(eventId);
         if (eventOptional.isEmpty()) {
             log.warn("Event not found with ID: {}", eventId);
-            return null;
+            throw new EventNotFoundException("Event with id "+eventId+" not found");
         }
         Event event = eventOptional.get();
         log.debug("Found event: {}", event.getTitle());
@@ -73,7 +73,7 @@ public class EventServiceImpl implements EventService {
         Optional<Event> eventOptional = eventRepo.findById(eventId);
         if (eventOptional.isEmpty()) {
             log.warn("Failed to update event: Event not found with ID: {}", eventId);
-            return null;
+            ;
         }
         Event existingEvent = eventOptional.get();
         log.debug("Updating event '{}'. Original details: {}", existingEvent.getTitle(), existingEvent);
@@ -99,20 +99,19 @@ public class EventServiceImpl implements EventService {
         Optional<Event> eventOptional = eventRepo.findById(eventId);
         if (eventOptional.isEmpty()) {
             log.warn("Failed to patch event: Event not found with ID: {}", eventId);
-            return null;
+            throw new EventNotFoundException("Event with id "+eventId+" not found");
         }
         Event existingEvent = eventOptional.get();
         log.debug("Patching event '{}'. Original details: {}", existingEvent.getTitle(), existingEvent);
         log.debug("Partial details for patch: {}", partialEventDetails);
 
         if (partialEventDetails.getTitle() != null) existingEvent.setTitle(partialEventDetails.getTitle());
-        if (partialEventDetails.getDescription() != null) existingEvent.setDescription(partialEventDetails.getDescription());
-        if (partialEventDetails.getDate() != null) existingEvent.setDate(partialEventDetails.getDate());
-        if (partialEventDetails.getTime() != null) existingEvent.setTime(partialEventDetails.getTime());
-        if (partialEventDetails.getLocation() != null) existingEvent.setLocation(partialEventDetails.getLocation());
-        if (partialEventDetails.getCapacity() != null) existingEvent.setCapacity(partialEventDetails.getCapacity());
-        if (partialEventDetails.getCategory() != null) existingEvent.setCategory(partialEventDetails.getCategory());
-        
+        else if (partialEventDetails.getDescription() != null) existingEvent.setDescription(partialEventDetails.getDescription());
+        else if (partialEventDetails.getDate() != null) existingEvent.setDate(partialEventDetails.getDate());
+        else if (partialEventDetails.getTime() != null) existingEvent.setTime(partialEventDetails.getTime());
+        else if (partialEventDetails.getLocation() != null) existingEvent.setLocation(partialEventDetails.getLocation());
+        else if (partialEventDetails.getCapacity() != null) existingEvent.setCapacity(partialEventDetails.getCapacity());
+        else if (partialEventDetails.getCategory() != null) existingEvent.setCategory(partialEventDetails.getCategory());
         Event patchedEvent = eventRepo.save(existingEvent);
         log.info("Successfully patched event with ID: {}. Current title: '{}'", patchedEvent.getEventId(), patchedEvent.getTitle());
         return patchedEvent;
