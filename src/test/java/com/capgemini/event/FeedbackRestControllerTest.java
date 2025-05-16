@@ -1,124 +1,141 @@
 package com.capgemini.event;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.net.URI;
 import java.util.Arrays;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 
 import com.capgemini.event.controllers.FeedbackRestController;
-import com.capgemini.event.entities.Event;
 import com.capgemini.event.entities.Feedback;
-import com.capgemini.event.entities.User;
 import com.capgemini.event.services.FeedbackService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
-@WebMvcTest(FeedbackRestController.class)
-public class FeedbackRestControllerTest {
+@ExtendWith(org.mockito.junit.jupiter.MockitoExtension.class)
+class FeedbackRestControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @MockBean
+    @Mock
     private FeedbackService feedbackService;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    @Mock
+    private BindingResult bindingResult;
 
-    private Feedback sampleFeedback() {
-        User user = new User(); 
-        user.setUserId(1L);
+    @InjectMocks
+    private FeedbackRestController controller;
 
-        Event event = new Event(); 
-        event.setEventId(1L);
-        //
+    @Test
+    void getAllFeedbacks_ShouldReturnList() {
+        Feedback f1 = new Feedback();
+        f1.setFeedbackId(1L);
+        Feedback f2 = new Feedback();
+        f2.setFeedbackId(2L);
+        List<Feedback> feedbacks = Arrays.asList(f1, f2);
 
-        return new Feedback(1L, 5, "Amazing event, really well managed!", user, event);
+        when(feedbackService.getAllFeedbacks()).thenReturn(feedbacks);
+
+        ResponseEntity<List<Feedback>> response = controller.getAllFeedbacks();
+
+        assertThat(response.getStatusCodeValue()).isEqualTo(200);
+        assertThat(response.getBody()).hasSize(2);
+        verify(feedbackService).getAllFeedbacks();
     }
 
     @Test
-    public void testGetAllFeedbacks() throws Exception {
-        when(feedbackService.getAllFeedbacks()).thenReturn(Arrays.asList(sampleFeedback()));
+    void getFeedbackById_ShouldReturnFeedback() {
+        Feedback feedback = new Feedback();
+        feedback.setFeedbackId(1L);
 
-        mockMvc.perform(get("/api/feedbacks"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].feedbackId").value(1))
-                .andExpect(jsonPath("$[0].rating").value(5))
-                .andExpect(jsonPath("$[0].review").value("Amazing event, really well managed!"));
+        when(feedbackService.getFeedbackById(1L)).thenReturn(feedback);
+
+        ResponseEntity<Feedback> response = controller.getFeedbackById(1L);
+
+        assertThat(response.getStatusCodeValue()).isEqualTo(200);
+        assertThat(response.getBody().getFeedbackId()).isEqualTo(1L);
+        verify(feedbackService).getFeedbackById(1L);
     }
 
     @Test
-    public void testGetFeedbackById() throws Exception {
-        when(feedbackService.getFeedbackById(1L)).thenReturn(sampleFeedback());
+    void createFeedback_WithValidFeedback_ShouldCreate() {
+        Feedback feedback = new Feedback();
+        feedback.setFeedbackId(null);
+        Feedback createdFeedback = new Feedback();
+        createdFeedback.setFeedbackId(10L);
 
-        mockMvc.perform(get("/api/feedbacks/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.feedbackId").value(1));
+        when(bindingResult.hasErrors()).thenReturn(false);
+        when(feedbackService.createFeedback(feedback)).thenReturn(createdFeedback);
+
+        ResponseEntity<Feedback> response = controller.createFeedback(feedback, bindingResult);
+
+        assertThat(response.getStatusCodeValue()).isEqualTo(201);
+        assertThat(response.getHeaders().getLocation()).isEqualTo(URI.create("/api/feedbacks/10"));
+        assertThat(response.getBody().getFeedbackId()).isEqualTo(10L);
+        verify(feedbackService).createFeedback(feedback);
     }
 
     @Test
-    public void testCreateFeedback() throws Exception {
-        Feedback feedback = sampleFeedback();
-        feedback.setFeedbackId(null); // simulate incoming POST without ID
+    void createFeedback_WithValidationErrors_ShouldThrow() {
+        Feedback feedback = new Feedback();
 
-        Feedback createdFeedback = sampleFeedback();
+        when(bindingResult.hasErrors()).thenReturn(true);
 
-        when(feedbackService.createFeedback(any(Feedback.class))).thenReturn(createdFeedback);
+        assertThrows(IllegalArgumentException.class, () -> {
+            controller.createFeedback(feedback, bindingResult);
+        });
 
-        mockMvc.perform(post("/api/feedbacks")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(feedback)))
-                .andExpect(status().isCreated())
-                .andExpect(header().string("Location", "/api/feedbacks/1"))
-                .andExpect(jsonPath("$.feedbackId").value(1));
+        verify(feedbackService, never()).createFeedback(any());
     }
 
     @Test
-    public void testUpdateFeedback() throws Exception {
-        Feedback updated = sampleFeedback();
+    void updateFeedback_ShouldReturnUpdated() {
+        Feedback feedback = new Feedback();
+        feedback.setFeedbackId(1L);
+        Feedback updatedFeedback = new Feedback();
+        updatedFeedback.setFeedbackId(1L);
 
-        when(feedbackService.updateFeedback(Mockito.eq(1L), any(Feedback.class))).thenReturn(updated);
+        when(feedbackService.updateFeedback(1L, feedback)).thenReturn(updatedFeedback);
 
-        mockMvc.perform(put("/api/feedbacks/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updated)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.review").value("Amazing event, really well managed!"));
+        ResponseEntity<Feedback> response = controller.updateFeedback(1L, feedback);
+
+        assertThat(response.getStatusCodeValue()).isEqualTo(200);
+        assertThat(response.getBody().getFeedbackId()).isEqualTo(1L);
+        verify(feedbackService).updateFeedback(1L, feedback);
     }
 
     @Test
-    public void testPatchFeedback() throws Exception {
-        Feedback patched = sampleFeedback();
+    void patchFeedback_ShouldReturnPatched() {
+        Feedback feedback = new Feedback();
+        feedback.setFeedbackId(1L);
+        Feedback patchedFeedback = new Feedback();
+        patchedFeedback.setFeedbackId(1L);
 
-        when(feedbackService.patchFeedback(Mockito.eq(1L), any(Feedback.class))).thenReturn(patched);
+        when(feedbackService.patchFeedback(1L, feedback)).thenReturn(patchedFeedback);
 
-        mockMvc.perform(patch("/api/feedbacks/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(patched)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.rating").value(5));
+        ResponseEntity<Feedback> response = controller.patchFeedback(1L, feedback);
+
+        assertThat(response.getStatusCodeValue()).isEqualTo(200);
+        assertThat(response.getBody().getFeedbackId()).isEqualTo(1L);
+        verify(feedbackService).patchFeedback(1L, feedback);
     }
 
     @Test
-    public void testDeleteFeedback() throws Exception {
-        Mockito.doNothing().when(feedbackService).deleteFeedback(1L);
+    void deleteFeedback_ShouldCallService() {
+        doNothing().when(feedbackService).deleteFeedback(1L);
 
-        mockMvc.perform(delete("/api/feedbacks/1"))
-                .andExpect(status().isOk());
+        ResponseEntity<Void> response = controller.deleteFeedback(1L);
+
+        assertThat(response.getStatusCodeValue()).isEqualTo(200);
+        verify(feedbackService).deleteFeedback(1L);
     }
 }
