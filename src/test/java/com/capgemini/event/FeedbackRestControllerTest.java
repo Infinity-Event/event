@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 
@@ -47,7 +48,7 @@ class FeedbackRestControllerTest {
 
         ResponseEntity<List<Feedback>> response = controller.getAllFeedbacks();
 
-        assertThat(response.getStatusCodeValue()).isEqualTo(200);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).hasSize(2);
         verify(feedbackService).getAllFeedbacks();
     }
@@ -61,7 +62,7 @@ class FeedbackRestControllerTest {
 
         ResponseEntity<Feedback> response = controller.getFeedbackById(1L);
 
-        assertThat(response.getStatusCodeValue()).isEqualTo(200);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody().getFeedbackId()).isEqualTo(1L);
         verify(feedbackService).getFeedbackById(1L);
     }
@@ -78,7 +79,7 @@ class FeedbackRestControllerTest {
 
         ResponseEntity<Feedback> response = controller.createFeedback(feedback, bindingResult);
 
-        assertThat(response.getStatusCodeValue()).isEqualTo(201);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(response.getHeaders().getLocation()).isEqualTo(URI.create("/api/feedbacks/10"));
         assertThat(response.getBody().getFeedbackId()).isEqualTo(10L);
         verify(feedbackService).createFeedback(feedback);
@@ -108,7 +109,7 @@ class FeedbackRestControllerTest {
 
         ResponseEntity<Feedback> response = controller.updateFeedback(1L, feedback);
 
-        assertThat(response.getStatusCodeValue()).isEqualTo(200);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody().getFeedbackId()).isEqualTo(1L);
         verify(feedbackService).updateFeedback(1L, feedback);
     }
@@ -123,8 +124,8 @@ class FeedbackRestControllerTest {
         when(feedbackService.patchFeedback(1L, feedback)).thenReturn(patchedFeedback);
 
         ResponseEntity<Feedback> response = controller.patchFeedback(1L, feedback);
-
-        assertThat(response.getStatusCodeValue()).isEqualTo(200);
+        
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody().getFeedbackId()).isEqualTo(1L);
         verify(feedbackService).patchFeedback(1L, feedback);
     }
@@ -135,7 +136,7 @@ class FeedbackRestControllerTest {
 
         ResponseEntity<Void> response = controller.deleteFeedback(1L);
 
-        assertThat(response.getStatusCodeValue()).isEqualTo(200);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         verify(feedbackService).deleteFeedback(1L);
     }
 }
