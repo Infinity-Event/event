@@ -29,7 +29,7 @@ public class User {
 
 	@NotBlank(message = "Phone number is required")
 	@Pattern(regexp = "^\\d{10}$", message = "Phone number must be 10 digits")
-	@Column(name = "phone")
+	@Column(name = "phone") 
 	private String phone;
 
 	@Enumerated(EnumType.STRING)
