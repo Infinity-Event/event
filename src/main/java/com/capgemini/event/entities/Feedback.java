@@ -1,4 +1,5 @@
 package com.capgemini.event.entities;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
@@ -11,30 +12,28 @@ public class Feedback {
 	@Column(name = "feedback_id")
 	private Long feedbackId;
 
+	@NotNull(message = "Rating is required")
 	@Min(value = 1, message = "Rating must be at least 1")
 	@Max(value = 5, message = "Rating must be at most 5")
 	@Column(name = "rating")
 	private Integer rating;
 
 	@NotBlank(message = "Review cannot be blank")
-	@Size(min = 10, max = 1000, message = "Review must be between 10 and 1000 characters")
+	@Size(min = 4, max = 1000, message = "Review must be between 4 and 1000 characters")
 	@Column(name = "review")
 	private String review;
 
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "user_id")
-	@NotNull(message = "User cannot be null")
+	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "event_id")
-	@NotNull(message = "Event cannot be null")
+	@JoinColumn(name = "event_id", nullable = false)
 	private Event event;
 
 	public Feedback() {
-
+		
 	}
-
 	public Feedback(Long feedbackId, Integer rating, String review, User user, Event event) {
 		this.feedbackId = feedbackId;
 		this.rating = rating;
@@ -42,19 +41,18 @@ public class Feedback {
 		this.user = user;
 		this.event = event;
 	}
-
-	public Feedback(Long feedbackId, Integer rating, String review, User user) {
-		this.feedbackId = feedbackId;
+	public Feedback(Integer rating, String review, User user, Event event) {
 		this.rating = rating;
 		this.review = review;
 		this.user = user;
+		this.event = event;
 	}
 
-	public Feedback(Long feedbackId, Integer rating, String review) {
-		this.feedbackId = feedbackId;
+	public Feedback(Integer rating, String review) {
 		this.rating = rating;
 		this.review = review;
 	}
+
 
 	public Long getFeedbackId() {
 		return feedbackId;
@@ -64,11 +62,11 @@ public class Feedback {
 		this.feedbackId = feedbackId;
 	}
 
-	public int getRating() {
+	public Integer getRating() {
 		return rating;
 	}
 
-	public void setRating(int rating) {
+	public void setRating(Integer rating) {
 		this.rating = rating;
 	}
 
@@ -98,6 +96,6 @@ public class Feedback {
 
 	@Override
 	public String toString() {
-		return "Feedback [feedbackId=" + feedbackId + ", rating=" + rating + ", review=" + review + "]";
+	    return "Feedback [feedbackId=" + feedbackId + ", rating=" + rating + ", review=" + review + "]";
 	}
 }
