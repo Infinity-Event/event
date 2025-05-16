@@ -16,6 +16,7 @@ import com.capgemini.event.entities.User;
 import com.capgemini.event.entities.UserType;
 import com.capgemini.event.exceptions.QueryNotFoundException;
 import com.capgemini.event.exceptions.UserNotFoundException;
+import com.capgemini.event.repositories.EventRepo;
 import com.capgemini.event.repositories.QueryRepo;
 import com.capgemini.event.repositories.UserRepo;
 import com.capgemini.event.services.QueryServiceImpl;
@@ -33,6 +34,9 @@ class QueryServiceImplTest {
 
     @Mock
     private UserRepo userRepo;
+    
+    @Mock
+    private EventRepo eventRepo;
 
     @InjectMocks
     private QueryServiceImpl queryService;
@@ -65,6 +69,7 @@ class QueryServiceImplTest {
     void testCreateEventQuery_Success() {
         when(userRepo.findById(1L)).thenReturn(Optional.of(user));
         when(queryRepo.save(any(Query.class))).thenReturn(query1);
+        when(eventRepo.findById(1L)).thenReturn(Optional.of(event));
 
         Query result = queryService.createEventQuery(query1, 1L, 1L);
 

@@ -1,7 +1,6 @@
 package com.capgemini.event;
 
 import com.capgemini.event.controllers.ResponseController;
-import com.capgemini.event.entities.Event;
 import com.capgemini.event.entities.Response;
 import com.capgemini.event.services.ResponseService;
 
@@ -31,19 +30,12 @@ class ResponseControllerTest {
 	@InjectMocks
 	private ResponseController responseController;
 
-	private Event sampleEvent() {
-		Event event = new Event();
-		event.setEventId(10L);
-		event.setTitle("Tech Conference");
-		return event;
-	}
-
 	private Response sampleResponse() {
 		Response response = new Response();
 		response.setResponseId(1L);
 		response.setResponseBody("Thank you for the event!");
 		response.setResponseDate(LocalDate.now());
-		response.setEvent(sampleEvent());
+
 		return response;
 	}
 
