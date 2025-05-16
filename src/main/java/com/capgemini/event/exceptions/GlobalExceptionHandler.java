@@ -46,7 +46,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	}
 	
 	@ExceptionHandler(RegistrationNotFoundException.class)
-	public ResponseEntity<Object> handleQueryNotFound(RegistrationNotFoundException ex) {
+	public ResponseEntity<Object> handleRegistrationNotFound(RegistrationNotFoundException ex) {
 		Map<String, Object> errorDetails = new HashMap<>();
 		errorDetails.put("timestamp", LocalDateTime.now());
 		errorDetails.put("message", ex.getMessage());
@@ -55,7 +55,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	}
 	
 	@ExceptionHandler(EventNotFoundException.class)
-	public ResponseEntity<Object> handleQueryNotFound(EventNotFoundException ex) {
+	public ResponseEntity<Object> handleEventNotFound(EventNotFoundException ex) {
 		Map<String, Object> errorDetails = new HashMap<>();
 		errorDetails.put("timestamp", LocalDateTime.now());
 		errorDetails.put("message", ex.getMessage());
@@ -64,7 +64,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	}
 	
 	@ExceptionHandler(ResponseNotFoundException.class)
-	public ResponseEntity<Object> handleQueryNotFound(ResponseNotFoundException ex) {
+	public ResponseEntity<Object> handleResponseNotFound(ResponseNotFoundException ex) {
 		Map<String, Object> errorDetails = new HashMap<>();
 		errorDetails.put("timestamp", LocalDateTime.now());
 		errorDetails.put("message", ex.getMessage());
@@ -73,7 +73,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	}
 	
 	@ExceptionHandler(FeedbackNotFoundException.class)
-	public ResponseEntity<Object> handleQueryNotFound(FeedbackNotFoundException ex) {
+	public ResponseEntity<Object> handleFeedbackNotFound(FeedbackNotFoundException ex) {
 		Map<String, Object> errorDetails = new HashMap<>();
 		errorDetails.put("timestamp", LocalDateTime.now());
 		errorDetails.put("message", ex.getMessage());
@@ -82,7 +82,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	}
 	
 	@ExceptionHandler(TicketNotFoundException.class)
-	public ResponseEntity<Object> handleQueryNotFound(TicketNotFoundException ex) {
+	public ResponseEntity<Object> handleTicketNotFound(TicketNotFoundException ex) {
 		Map<String, Object> errorDetails = new HashMap<>();
 		errorDetails.put("timestamp", LocalDateTime.now());
 		errorDetails.put("message", ex.getMessage());
