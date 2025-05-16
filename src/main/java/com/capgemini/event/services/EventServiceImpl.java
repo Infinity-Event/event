@@ -3,6 +3,7 @@ package com.capgemini.event.services;
 import com.capgemini.event.entities.Event;
 import com.capgemini.event.entities.User;
 import com.capgemini.event.entities.UserType;
+import com.capgemini.event.exceptions.EventNotFoundException;
 import com.capgemini.event.repositories.EventRepo;
 import com.capgemini.event.repositories.UserRepo;
 import com.capgemini.event.services.EventService;
@@ -20,6 +21,7 @@ import java.util.Optional;
 public class EventServiceImpl implements EventService {
 
     private static final Logger logger = LoggerFactory.getLogger(EventServiceImpl.class);
+    private static final String EVENT_NOT_FOUND_MESSAGE = "Event not found with ID: ";
 
     private final EventRepo eventRepo;
     private final UserRepo userRepo;
@@ -50,19 +52,13 @@ public class EventServiceImpl implements EventService {
         Event savedEvent = eventRepo.save(event);
         logger.info("Successfully created event with ID: {} and title: '{}'", savedEvent.getEventId(), savedEvent.getTitle());
         return savedEvent;
-    }
-
-    @Override
+    }    @Override
     public Event getEventById(Long eventId) {
-        logger.debug("Fetching event by ID: {}", eventId);
-        Optional<Event> eventOptional = eventRepo.findById(eventId);
-        if (eventOptional.isEmpty()) {
-            logger.warn("Event not found with ID: {}", eventId);
-            return null;
-        }
-        Event event = eventOptional.get();
-        logger.debug("Found event: {}", event.getTitle());
-        return event;
+        logger.debug("Fetching event by ID: {}", eventId);        return eventRepo.findById(eventId)
+            .orElseThrow(() -> {
+                logger.warn("Event not found with ID: {}", eventId);
+                return new EventNotFoundException(EVENT_NOT_FOUND_MESSAGE + eventId);
+            });
     }
 
     @Override
@@ -84,18 +80,15 @@ public class EventServiceImpl implements EventService {
         List<Event> events = eventRepo.findByOrganizer(organizerOptional.get());
         logger.debug("Found {} events for organizer ID: {}", events.size(), organizerId);
         return events;
-    }
-
-    @Override
+    }    @Override
     @Transactional
     public Event updateEvent(Long eventId, Event eventDetails) {
-        logger.info("Attempting to update event with ID: {}", eventId);
-        Optional<Event> eventOptional = eventRepo.findById(eventId);
-        if (eventOptional.isEmpty()) {
-            logger.warn("Failed to update event: Event not found with ID: {}", eventId);
-            return null;
-        }
-        Event existingEvent = eventOptional.get();
+        logger.info("Attempting to update event with ID: {}", eventId);        Event existingEvent = eventRepo.findById(eventId)
+            .orElseThrow(() -> {
+                logger.warn("Failed to update event: Event not found with ID: {}", eventId);
+                return new EventNotFoundException(EVENT_NOT_FOUND_MESSAGE + eventId);
+            });
+        
         logger.debug("Updating event '{}'. Original details: {}", existingEvent.getTitle(), existingEvent);
         logger.debug("New details for update: {}", eventDetails);
 
@@ -110,18 +103,15 @@ public class EventServiceImpl implements EventService {
         Event updatedEvent = eventRepo.save(existingEvent);
         logger.info("Successfully updated event with ID: {}. New title: '{}'", updatedEvent.getEventId(), updatedEvent.getTitle());
         return updatedEvent;
-    }
-
-    @Override
+    }    @Override
     @Transactional
     public Event patchEvent(Long eventId, Event partialEventDetails) {
-        logger.info("Attempting to patch event with ID: {}", eventId);
-        Optional<Event> eventOptional = eventRepo.findById(eventId);
-        if (eventOptional.isEmpty()) {
-            logger.warn("Failed to patch event: Event not found with ID: {}", eventId);
-            return null;
-        }
-        Event existingEvent = eventOptional.get();
+        logger.info("Attempting to patch event with ID: {}", eventId);        Event existingEvent = eventRepo.findById(eventId)
+            .orElseThrow(() -> {
+                logger.warn("Failed to patch event: Event not found with ID: {}", eventId);
+                return new EventNotFoundException(EVENT_NOT_FOUND_MESSAGE + eventId);
+            });
+        
         logger.debug("Patching event '{}'. Original details: {}", existingEvent.getTitle(), existingEvent);
         logger.debug("Partial details for patch: {}", partialEventDetails);
 
@@ -136,15 +126,12 @@ public class EventServiceImpl implements EventService {
         Event patchedEvent = eventRepo.save(existingEvent);
         logger.info("Successfully patched event with ID: {}. Current title: '{}'", patchedEvent.getEventId(), patchedEvent.getTitle());
         return patchedEvent;
-    }
-
-    @Override
+    }    @Override
     @Transactional
     public boolean deleteEvent(Long eventId) {
-        logger.info("Attempting to delete event with ID: {}", eventId);
-        if (!eventRepo.existsById(eventId)) {
+        logger.info("Attempting to delete event with ID: {}", eventId);        if (!eventRepo.existsById(eventId)) {
             logger.warn("Failed to delete event: Event not found with ID: {}", eventId);
-            return false;
+            throw new EventNotFoundException(EVENT_NOT_FOUND_MESSAGE + eventId);
         }
         eventRepo.deleteById(eventId);
         logger.info("Successfully deleted event with ID: {}", eventId);
