@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 public class FeedbackServiceImpl implements FeedbackService {
 
     private final FeedbackRepo feedbackRepo;
+    private static final String FEEDBACK_NOT_FOUND_MSG = "Feedback not found with id: ";
 
     @Override
     public List<Feedback> getAllFeedbacks() {
@@ -30,7 +31,7 @@ public class FeedbackServiceImpl implements FeedbackService {
         return feedbackRepo.findById(feedbackId)
                 .orElseThrow(() -> {
                     log.warn("Feedback with id {} not found", feedbackId);
-                    return new FeedbackNotFoundException("Feedback not found with id: " + feedbackId);
+                    return new FeedbackNotFoundException(FEEDBACK_NOT_FOUND_MSG + feedbackId);
                 });
     }
 
@@ -46,7 +47,7 @@ public class FeedbackServiceImpl implements FeedbackService {
         Feedback existing = feedbackRepo.findById(feedbackId)
                 .orElseThrow(() -> {
                     log.warn("Feedback with id {} not found for update", feedbackId);
-                    return new FeedbackNotFoundException("Feedback not found with id: " + feedbackId);
+                    return new FeedbackNotFoundException(FEEDBACK_NOT_FOUND_MSG + feedbackId);
                 });
         existing.setRating(feedback.getRating());
         existing.setReview(feedback.getReview());
@@ -61,7 +62,7 @@ public class FeedbackServiceImpl implements FeedbackService {
         Feedback existing = feedbackRepo.findById(feedbackId)
                 .orElseThrow(() -> {
                     log.warn("Feedback with id {} not found for patch", feedbackId);
-                    return new FeedbackNotFoundException("Feedback not found with id: " + feedbackId);
+                    return new FeedbackNotFoundException(FEEDBACK_NOT_FOUND_MSG + feedbackId);
                 });
 
         if (feedback.getRating() != null) {
@@ -84,7 +85,7 @@ public class FeedbackServiceImpl implements FeedbackService {
         log.debug("Deleting feedback with id {}", feedbackId);
         if (!feedbackRepo.existsById(feedbackId)) {
             log.warn("Feedback with id {} not found for deletion", feedbackId);
-            throw new FeedbackNotFoundException("Feedback not found with id: " + feedbackId);
+            throw new FeedbackNotFoundException(FEEDBACK_NOT_FOUND_MSG + feedbackId);
         }
         feedbackRepo.deleteById(feedbackId);
     }
