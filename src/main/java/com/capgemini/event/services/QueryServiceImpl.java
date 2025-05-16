@@ -2,20 +2,20 @@ package com.capgemini.event.services;
 
 import java.util.List;
 
-import com.capgemini.event.exceptions.UserNotFoundException;
-import com.capgemini.event.exceptions.QueryNotFoundException;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import com.capgemini.event.entities.Event;
-
 import org.springframework.stereotype.Service;
+
+import com.capgemini.event.entities.Event;
 import com.capgemini.event.entities.Query;
 import com.capgemini.event.entities.User;
+import com.capgemini.event.exceptions.QueryNotFoundException;
+import com.capgemini.event.exceptions.UserNotFoundException;
 import com.capgemini.event.repositories.EventRepo;
 import com.capgemini.event.repositories.QueryRepo;
 import com.capgemini.event.repositories.UserRepo;
 
 import lombok.extern.slf4j.Slf4j;
+
 
 @Service
 @Slf4j

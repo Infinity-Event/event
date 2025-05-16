@@ -28,7 +28,7 @@ public class User {
 	private String password;
 
 	@NotBlank(message = "Phone number is required")
-	@Pattern(regexp = "^[0-9]{10}$", message = "Phone number must be 10 digits")
+	@Pattern(regexp = "^\\d{10}$", message = "Phone number must be 10 digits")
 	@Column(name = "phone")
 	private String phone;
 
@@ -36,6 +36,7 @@ public class User {
 	@NotNull(message = "User type is required")
 	@Column(name = "user_type")
 	private UserType userType;
+
 
 	public User() {
 	}
@@ -90,6 +91,7 @@ public class User {
 	}
 
 	public UserType getType() {
+
 		return userType;
 	}
 
@@ -97,6 +99,7 @@ public class User {
 		this.userType = userType;
 	}
 
+ 
 	@Override
 	public String toString() {
 		return "User [userId=" + userId + ", name=" + name + ", email=" + email + ", password=" + password + ", phone="
