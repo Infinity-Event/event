@@ -73,7 +73,6 @@ public class EventServiceImpl implements EventService {
         Optional<Event> eventOptional = eventRepo.findById(eventId);
         if (eventOptional.isEmpty()) {
             log.warn("Failed to update event: Event not found with ID: {}", eventId);
-            ;
         }
         Event existingEvent = eventOptional.get();
         log.debug("Updating event '{}'. Original details: {}", existingEvent.getTitle(), existingEvent);

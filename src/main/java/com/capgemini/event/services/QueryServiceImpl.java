@@ -41,8 +41,6 @@ public class QueryServiceImpl implements QueryService {
 	@Override
 	public Query createEventQuery(Query query, Long userId, Long eventId) {
 		log.info("Creating query for user ID {} and event ID {}", userId, eventId);
-//		User user = userRepo.findById(userId).orElseThrow(() -> new UserNotFoundException("User Not Found!"));
-//		Event event= eventRepo.findById(userId).orElseThrow(() -> new RuntimeException("Event Not Found!"));
 		User user = userRepo.findById(userId).orElseThrow(() -> {
 			log.warn("User not found with ID: {}", userId);
 			return new UserNotFoundException("User Not Found!");
@@ -63,7 +61,6 @@ public class QueryServiceImpl implements QueryService {
 		log.info("Retrieving query by ID: {}", queryId);
 		return queryRepo.findById(queryId).orElseThrow(() -> {
 			log.warn("Query not found with ID: {}", queryId);
-//			new QueryNotFoundException("Query Not Found!"));
 			return new QueryNotFoundException("Query Not Found!");
 		});
 	}

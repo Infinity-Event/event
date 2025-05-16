@@ -87,7 +87,7 @@ public class RegistrationRestController {
 			return ResponseEntity.notFound().build();
 		}
 		log.info("Registration with ID {} successfully deleted", id);
-		return ResponseEntity.ok().build();
+		return ResponseEntity.noContent().build();
 	}
 
 	@GetMapping("/user/{userId}")

@@ -9,30 +9,32 @@ import com.capgemini.event.services.RegistrationService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-
-import org.springframework.test.web.servlet.MockMvc;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
-@WebMvcTest(RegistrationRestController.class)
+@ExtendWith(MockitoExtension.class)
 class RegistrationRestControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @MockBean
+	@Mock
     private RegistrationService registrationService;
 
+	@InjectMocks
+	private RegistrationRestController registrationRestController;
+	
     private Registration registration;
     private User user;
     private Event event;
@@ -58,55 +60,60 @@ class RegistrationRestControllerTest {
     }
 
     @Test
-    void testGetAllRegistrations() throws Exception {
+    void testGetAllRegistrations(){
         Mockito.when(registrationService.getAllRegistrations()).thenReturn(Arrays.asList(registration));
-
-        mockMvc.perform(get("/api/registrations"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()").value(1));
+        List<Registration> expectedRegistrations = Arrays.asList(registration);
+        ResponseEntity<List<Registration>> response = registrationRestController.getAllRegistrations();
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+		assertEquals(expectedRegistrations, response.getBody());
+		verify(registrationService).getAllRegistrations();
     }
 
     @Test
-    void testGetRegistrationById_Found() throws Exception {
+    void testGetRegistrationById_Found(){
         Mockito.when(registrationService.getRegistrationById(1L)).thenReturn(registration);
 
-        mockMvc.perform(get("/api/registrations/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.regId").value(1));
-    }
-
-
-    @Test
-    void testDeleteRegistration_Success() throws Exception {
-        Mockito.when(registrationService.deleteRegistration(1L)).thenReturn(true);
-
-        mockMvc.perform(delete("/api/registrations/1"))
-                .andExpect(status().isOk());
+        ResponseEntity<Registration> response = registrationRestController.getRegistrationById(1L);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+		assertEquals(registration, response.getBody());
+		verify(registrationService).getRegistrationById(1L);
     }
 
     @Test
-    void testDeleteRegistration_NotFound() throws Exception {
+    void testDeleteRegistration_Success(){
+       Mockito.when(registrationService.deleteRegistration(1L)).thenReturn(true);
+       ResponseEntity<Void> response = registrationRestController.deleteRegistration(1L);
+       assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+       assertEquals(null, response.getBody());
+       verify(registrationService, times(1)).deleteRegistration(1L);
+    }
+
+    @Test
+    void testDeleteRegistration_NotFound(){
         Mockito.when(registrationService.deleteRegistration(99L)).thenReturn(false);
-
-        mockMvc.perform(delete("/api/registrations/99"))
-                .andExpect(status().isNotFound());
+        ResponseEntity<Void> response = registrationRestController.deleteRegistration(99L);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertEquals(null, response.getBody());
+        verify(registrationService, times(1)).deleteRegistration(99L);
     }
 
     @Test
-    void testGetRegistrationsByUserId() throws Exception {
+    void testGetRegistrationsByUserId(){
         Mockito.when(registrationService.getRegistrationsByUserId(1L)).thenReturn(Collections.singletonList(registration));
-
-        mockMvc.perform(get("/api/registrations/user/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()").value(1));
+        List<Registration> expectedRegistrations = Arrays.asList(registration);
+        ResponseEntity<List<Registration>> response = registrationRestController.getRegistrationsByUserId(1L);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+		assertEquals(expectedRegistrations, response.getBody());
+		verify(registrationService).getRegistrationsByUserId(1L);
     }
 
     @Test
-    void testGetRegistrationsByEventId() throws Exception {
+    void testGetRegistrationsByEventId(){
         Mockito.when(registrationService.getRegistrationsByEventId(1L)).thenReturn(Collections.singletonList(registration));
-
-        mockMvc.perform(get("/api/registrations/event/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()").value(1));
+        List<Registration> expectedRegistrations = Arrays.asList(registration);
+        ResponseEntity<List<Registration>> response = registrationRestController.getRegistrationsByEventId(1L);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+		assertEquals(expectedRegistrations, response.getBody());
+		verify(registrationService).getRegistrationsByEventId(1L);
     }
 }
