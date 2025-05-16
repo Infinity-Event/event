@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import com.capgemini.event.controllers.EventController;
@@ -40,7 +41,7 @@ class EventControllerTest {
         when(eventService.getAllEvents()).thenReturn(Arrays.asList(event1, event2));
 
         ResponseEntity<List<Event>> response = eventController.getAllEvents();
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(2, response.getBody().size());
     }
 
@@ -50,7 +51,7 @@ class EventControllerTest {
         when(eventService.getEventById(1L)).thenReturn(event);
 
         ResponseEntity<Event> response = eventController.getEventById(1L);
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
     }
 
@@ -70,7 +71,7 @@ class EventControllerTest {
         when(eventService.updateEvent(eq(1L), any())).thenReturn(updated);
 
         ResponseEntity<Event> response = eventController.updateEvent(1L, updated);
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
@@ -78,6 +79,6 @@ class EventControllerTest {
         when(eventService.deleteEvent(1L)).thenReturn(true);
 
         ResponseEntity<Void> response = eventController.deleteEvent(1L);
-        assertEquals(204, response.getStatusCodeValue());
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
     }
 }
