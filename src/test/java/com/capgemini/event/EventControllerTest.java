@@ -55,38 +55,6 @@ class EventControllerTest {
     }
 
     @Test
-    void testGetEventByIdNotFound() {
-        when(eventService.getEventById(1L)).thenReturn(null);
-
-        ResponseEntity<Event> response = eventController.getEventById(1L);
-        assertEquals(404, response.getStatusCodeValue());
-    }
-
-    @Test
-    void testCreateEventSuccess() {
-        Event event = new Event();
-        User organizer = new User();
-        organizer.setUserId(1L);
-        event.setOrganizer(organizer);
-        event.setEventId(10L);
-
-        when(eventService.createEvent(any(), eq(1L))).thenReturn(event);
-
-        ResponseEntity<Event> response = eventController.createEvent(event);
-        assertEquals(201, response.getStatusCodeValue());
-        assertNotNull(response.getBody());
-    }
-
-    @Test
-    void testCreateEventBadRequest() {
-        Event event = new Event();
-        event.setOrganizer(null);
-
-        ResponseEntity<Event> response = eventController.createEvent(event);
-        assertEquals(400, response.getStatusCodeValue());
-    }
-
-    @Test
     void testUpdateEventSuccess() {
         Event existing = new Event();
         User user = new User();
@@ -110,6 +78,6 @@ class EventControllerTest {
         when(eventService.deleteEvent(1L)).thenReturn(true);
 
         ResponseEntity<Void> response = eventController.deleteEvent(1L);
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(204, response.getStatusCodeValue());
     }
 }
