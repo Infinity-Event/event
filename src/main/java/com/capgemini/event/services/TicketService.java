@@ -13,7 +13,7 @@ public interface TicketService {
 
 	Ticket updateTicket(Long ticketId, Ticket ticket);
 	
-//	Ticket patchTicket(Long ticketId, Ticket ticket);
+	Ticket patchTicket(Long ticketId, Ticket ticket);
 	
 	void deleteTicket(Long ticketId);
 }
