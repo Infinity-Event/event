@@ -42,9 +42,6 @@ public class EventController {
 
     @PostMapping("/users/{organizerId}")
     public ResponseEntity<Event> createEvent(@Valid @RequestBody Event event, @PathVariable Long organizerId ) {
-    	if (organizerId == null) {
-            throw new IllegalArgumentException("Organizer ID cannot be null");
-        }
         log.info("Received request to create event: {}", event.getTitle());
         Event createdEvent = eventService.createEvent(event, organizerId);
         log.debug("Successfully created event with ID: {}", createdEvent.getEventId());

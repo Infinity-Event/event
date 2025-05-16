@@ -16,7 +16,7 @@ import com.capgemini.event.repositories.TicketRepo;
 import com.capgemini.event.services.TicketServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
-public class TicketServiceImplTest {
+class TicketServiceImplTest {
 	@Mock
 	private TicketRepo ticketRepo;
 
@@ -24,7 +24,7 @@ public class TicketServiceImplTest {
 	private TicketServiceImpl ticketService;
 
 	@Test
-	public void testGetAllTickets() {
+	void testGetAllTickets() {
 		List<Ticket> mockTickets = Arrays.asList(new Ticket(1L, /* set fields */ null, null, null),
 				new Ticket(2L, null, null, null));
 
@@ -37,7 +37,7 @@ public class TicketServiceImplTest {
 	}
 
 	@Test
-	public void testGetTicketById() {
+	void testGetTicketById() {
 		Ticket mockTicket = new Ticket(1L, null, null, null);
 		when(ticketRepo.findById(1L)).thenReturn(Optional.of(mockTicket));
 
@@ -49,7 +49,7 @@ public class TicketServiceImplTest {
 	}
 
 	@Test
-	public void testCreateTicket() {
+	void testCreateTicket() {
 		Ticket newTicket = new Ticket(null, null, null, null);
 		Ticket savedTicket = new Ticket(1L, null, null, null);
 
