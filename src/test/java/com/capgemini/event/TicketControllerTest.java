@@ -22,7 +22,7 @@ import com.capgemini.event.services.TicketService;
 
 @ExtendWith(MockitoExtension.class)
 class TicketControllerTest {
-//
+
 	@Mock
 	private TicketService ticketService;
 
