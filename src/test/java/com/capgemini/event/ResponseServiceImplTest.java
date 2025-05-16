@@ -44,7 +44,7 @@ class ResponseServiceImplTest {
 		sampleResponse.setResponseId(1L);
 		sampleResponse.setResponseBody("This is a response body");
 		sampleResponse.setResponseDate(LocalDate.now());
-		sampleResponse.setEvent(event);
+		
 	}
 
 

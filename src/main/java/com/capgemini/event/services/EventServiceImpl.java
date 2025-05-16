@@ -6,7 +6,8 @@ import com.capgemini.event.entities.UserType;
 import com.capgemini.event.repositories.EventRepo;
 import com.capgemini.event.repositories.UserRepo;
 import com.capgemini.event.services.EventService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,57 +15,70 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-//Service Implementation for EventService
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class EventServiceImpl implements EventService {
 
     private final EventRepo eventRepo;
     private final UserRepo userRepo;
 
-    @Autowired
-    public EventServiceImpl(EventRepo eventRepo, UserRepo userRepo) {
-        this.eventRepo = eventRepo;
-        this.userRepo = userRepo;
-    }
-
     @Override
     @Transactional
     public Event createEvent(Event event, Long organizerId) {
+        log.info("Attempting to create event titled '{}' for organizer ID: {}", event.getTitle(), organizerId);
+
         Optional<User> organizerOptional = userRepo.findById(organizerId);
-        if (organizerOptional.isEmpty() || organizerOptional.get().getType() != UserType.ORGANIZER) {
+        if (organizerOptional.isEmpty()) {
+            log.warn("Failed to create event: Organizer not found with ID: {}", organizerId);
             return null;
         }
-        event.setOrganizer(organizerOptional.get());
+        User organizer = organizerOptional.get();
+        if (organizer.getType() != UserType.ORGANIZER) {
+            log.warn("Failed to create event: User with ID {} is not an ORGANIZER. Actual type: {}", organizerId, organizer.getType());
+            return null;
+        }
+        event.setOrganizer(organizer);
         event.setEventId(null);
-        return eventRepo.save(event);
+        Event savedEvent = eventRepo.save(event);
+        log.info("Successfully created event with ID: {} and title: '{}'", savedEvent.getEventId(), savedEvent.getTitle());
+        return savedEvent;
     }
 
     @Override
     public Event getEventById(Long eventId) {
-        return eventRepo.findById(eventId).orElse(null);
+        log.debug("Fetching event by ID: {}", eventId);
+        Optional<Event> eventOptional = eventRepo.findById(eventId);
+        if (eventOptional.isEmpty()) {
+            log.warn("Event not found with ID: {}", eventId);
+            return null;
+        }
+        Event event = eventOptional.get();
+        log.debug("Found event: {}", event.getTitle());
+        return event;
     }
 
     @Override
     public List<Event> getAllEvents() {
-        return eventRepo.findAll();
+        log.debug("Fetching all events");
+        List<Event> events = eventRepo.findAll();
+        log.debug("Found {} events", events.size());
+        return events;
     }
 
     @Override
-    public List<Event> getEventsByOrganizer(Long organizerId) {
-        Optional<User> organizerOptional = userRepo.findById(organizerId);
-        if (organizerOptional.isEmpty()) {
-            return Collections.emptyList();
-        }
-        return eventRepo.findByOrganizer(organizerOptional.get());
-    }
-
-    @Override
+    @Transactional
     public Event updateEvent(Long eventId, Event eventDetails) {
+        log.info("Attempting to update event with ID: {}", eventId);
         Optional<Event> eventOptional = eventRepo.findById(eventId);
         if (eventOptional.isEmpty()) {
+            log.warn("Failed to update event: Event not found with ID: {}", eventId);
             return null;
         }
         Event existingEvent = eventOptional.get();
+        log.debug("Updating event '{}'. Original details: {}", existingEvent.getTitle(), existingEvent);
+        log.debug("New details for update: {}", eventDetails);
+
         existingEvent.setTitle(eventDetails.getTitle());
         existingEvent.setDescription(eventDetails.getDescription());
         existingEvent.setDate(eventDetails.getDate());
@@ -72,16 +86,25 @@ public class EventServiceImpl implements EventService {
         existingEvent.setLocation(eventDetails.getLocation());
         existingEvent.setCapacity(eventDetails.getCapacity());
         existingEvent.setCategory(eventDetails.getCategory());
-        return eventRepo.save(existingEvent);
+        
+        Event updatedEvent = eventRepo.save(existingEvent);
+        log.info("Successfully updated event with ID: {}. New title: '{}'", updatedEvent.getEventId(), updatedEvent.getTitle());
+        return updatedEvent;
     }
 
     @Override
+    @Transactional
     public Event patchEvent(Long eventId, Event partialEventDetails) {
+        log.info("Attempting to patch event with ID: {}", eventId);
         Optional<Event> eventOptional = eventRepo.findById(eventId);
         if (eventOptional.isEmpty()) {
+            log.warn("Failed to patch event: Event not found with ID: {}", eventId);
             return null;
         }
         Event existingEvent = eventOptional.get();
+        log.debug("Patching event '{}'. Original details: {}", existingEvent.getTitle(), existingEvent);
+        log.debug("Partial details for patch: {}", partialEventDetails);
+
         if (partialEventDetails.getTitle() != null) existingEvent.setTitle(partialEventDetails.getTitle());
         if (partialEventDetails.getDescription() != null) existingEvent.setDescription(partialEventDetails.getDescription());
         if (partialEventDetails.getDate() != null) existingEvent.setDate(partialEventDetails.getDate());
@@ -89,15 +112,35 @@ public class EventServiceImpl implements EventService {
         if (partialEventDetails.getLocation() != null) existingEvent.setLocation(partialEventDetails.getLocation());
         if (partialEventDetails.getCapacity() != null) existingEvent.setCapacity(partialEventDetails.getCapacity());
         if (partialEventDetails.getCategory() != null) existingEvent.setCategory(partialEventDetails.getCategory());
-        return eventRepo.save(existingEvent);
+        
+        Event patchedEvent = eventRepo.save(existingEvent);
+        log.info("Successfully patched event with ID: {}. Current title: '{}'", patchedEvent.getEventId(), patchedEvent.getTitle());
+        return patchedEvent;
     }
 
     @Override
+    @Transactional
     public boolean deleteEvent(Long eventId) {
+        log.info("Attempting to delete event with ID: {}", eventId);
         if (!eventRepo.existsById(eventId)) {
+            log.warn("Failed to delete event: Event not found with ID: {}", eventId);
             return false;
         }
         eventRepo.deleteById(eventId);
+        log.info("Successfully deleted event with ID: {}", eventId);
         return true;
+    }
+
+    @Override
+    public List<Event> getEventsByOrganizer(Long organizerId) {
+        log.debug("Fetching events for organizer ID: {}", organizerId);
+        Optional<User> organizerOptional = userRepo.findById(organizerId);
+        if (organizerOptional.isEmpty()) {
+            log.warn("Cannot fetch events by organizer: Organizer not found with ID: {}", organizerId);
+            return Collections.emptyList();
+        }
+        List<Event> events = eventRepo.findByOrganizer(organizerOptional.get());
+        log.debug("Found {} events for organizer ID: {}", events.size(), organizerId);
+        return events;
     }
 }

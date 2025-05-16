@@ -18,6 +18,7 @@ import com.capgemini.event.entities.Category;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -29,9 +30,12 @@ import com.capgemini.event.entities.Event;
 import com.capgemini.event.entities.Query;
 import com.capgemini.event.entities.User;
 import com.capgemini.event.entities.UserType;
+import com.capgemini.event.security.CustomUserDetailsService;
+import com.capgemini.event.security.JwtUtils;
 import com.capgemini.event.services.QueryService;
 
 @WebMvcTest(QueryController.class)
+@AutoConfigureMockMvc(addFilters = false)
 class QueryControllerTest {
 
 	@Autowired
@@ -39,6 +43,12 @@ class QueryControllerTest {
 
 	@MockBean
 	private QueryService queryService;
+	
+	@MockBean
+	private JwtUtils jwtUtils;
+	
+	@MockBean 
+	private CustomUserDetailsService customUserDetailsService;
 
 	private Query query1;
 	private Query query2;
