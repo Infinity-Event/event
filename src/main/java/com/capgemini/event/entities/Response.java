@@ -32,11 +32,6 @@ public class Response {
 	@NotNull(message = "Response date must not be null")
 	@Column(name = "response_date")
 	private LocalDate responseDate;
-
-	@ManyToOne(optional = false)
-	@JoinColumn(name = "event_id")
-	@NotNull(message = "Event must be specified")
-	private Event event;
 	
 	@OneToOne(mappedBy = "response")
 	private Query query;
@@ -45,11 +40,10 @@ public class Response {
 	}
 	
 
-	public Response(Long responseId, String responseBody, LocalDate responseDate, Event event) {
+	public Response(Long responseId, String responseBody, LocalDate responseDate) {
 		this.responseId = responseId;
 		this.responseBody = responseBody;
 		this.responseDate = responseDate;
-		this.event = event;
 	}
 
 
@@ -78,16 +72,6 @@ public class Response {
 	}
 
 
-	public Event getEvent() {
-		return event;
-	}
-
-
-	public void setEvent(Event event) {
-		this.event = event;
-	}
-
-
 	public Query getQuery() {
 		return query;
 	}
@@ -101,7 +85,7 @@ public class Response {
 	@Override
 	public String toString() {
 		return "Response [responseId=" + responseId + ", responseBody=" + responseBody + ", responseDate="
-				+ responseDate + ", event=" + event + ", query=" + query + "]";
+				+ responseDate + ", query=" + query + "]";
 	}
 
 	

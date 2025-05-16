@@ -27,6 +27,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
 	}
 	
+	@ExceptionHandler(UserAlreadyExistsException.class)
+	public ResponseEntity<Object> handleUserAlreadyExists(UserAlreadyExistsException ex) {
+		Map<String, Object> errorDetails = new HashMap<>();
+		errorDetails.put("timestamp", LocalDateTime.now());
+		errorDetails.put("message", ex.getMessage());
+		errorDetails.put("status", HttpStatus.NOT_FOUND.value());
+		return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+	}
+	
 	@ExceptionHandler(UserNotFoundException.class)
 	public ResponseEntity<Object> handleUserNotFound(UserNotFoundException ex) {
 		Map<String, Object> errorDetails = new HashMap<>();
@@ -65,6 +74,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	
 	@ExceptionHandler(FeedbackNotFoundException.class)
 	public ResponseEntity<Object> handleQueryNotFound(FeedbackNotFoundException ex) {
+		Map<String, Object> errorDetails = new HashMap<>();
+		errorDetails.put("timestamp", LocalDateTime.now());
+		errorDetails.put("message", ex.getMessage());
+		errorDetails.put("status", HttpStatus.NOT_FOUND.value());
+		return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+	}
+	
+	@ExceptionHandler(TicketNotFoundException.class)
+	public ResponseEntity<Object> handleQueryNotFound(TicketNotFoundException ex) {
 		Map<String, Object> errorDetails = new HashMap<>();
 		errorDetails.put("timestamp", LocalDateTime.now());
 		errorDetails.put("message", ex.getMessage());
