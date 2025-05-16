@@ -17,4 +17,5 @@ public interface FeedbackService {
     Feedback patchFeedback(Long feedbackId, Feedback feedback);
 
     void deleteFeedback(Long feedbackId);
+    
 }

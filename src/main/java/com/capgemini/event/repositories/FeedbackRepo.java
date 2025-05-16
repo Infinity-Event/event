@@ -6,4 +6,5 @@ import com.capgemini.event.entities.Feedback;
 
 public interface FeedbackRepo extends JpaRepository<Feedback, Long>{
 
+	
 }

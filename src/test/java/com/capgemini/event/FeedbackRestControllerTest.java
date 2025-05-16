@@ -119,4 +119,5 @@ public class FeedbackRestControllerTest {
         mockMvc.perform(delete("/api/feedbacks/1"))
                 .andExpect(status().isOk());
     }
+    
 }
