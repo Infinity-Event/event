@@ -1,60 +1,80 @@
 package com.capgemini.event.controllers;
 
-import com.capgemini.event.entities.Feedback;
-import com.capgemini.event.services.FeedbackService;
-import jakarta.validation.Valid;
+import java.net.URI;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
-import java.util.List;
+import com.capgemini.event.entities.Feedback;
+import com.capgemini.event.services.FeedbackService;
+
+import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/api/feedbacks")
+@Slf4j
 public class FeedbackRestController {
 
-	private final FeedbackService feedbackService;
-
-	@Autowired
-	public FeedbackRestController(FeedbackService feedbackService) {
+    private final FeedbackService feedbackService;
+    
+    @Autowired
+    public FeedbackRestController(FeedbackService feedbackService) {
 		this.feedbackService = feedbackService;
 	}
 
 	@GetMapping
-	public ResponseEntity<List<Feedback>> getAllFeedbacks() {
-		return ResponseEntity.ok(feedbackService.getAllFeedbacks());
-	}
+    public ResponseEntity<List<Feedback>> getAllFeedbacks() {
+        log.info("Fetching all feedbacks");
+        List<Feedback> feedbacks = feedbackService.getAllFeedbacks();
+        log.debug("Total feedbacks found: {}", feedbacks.size());
+        return ResponseEntity.ok(feedbacks);
+    }
 
-	@GetMapping("/{id}")
-	public ResponseEntity<Feedback> getFeedbackById(@PathVariable Long id) {
-		return ResponseEntity.ok(feedbackService.getFeedbackById(id));
-	}
+    @GetMapping("/{feedbackId}")
+    public ResponseEntity<Feedback> getFeedbackById(@PathVariable Long feedbackId) {
+        log.info("Fetching feedback with ID: {}", feedbackId);
+        Feedback feedback = feedbackService.getFeedbackById(feedbackId);
+        log.debug("Feedback fetched: {}", feedback);
+        return ResponseEntity.ok(feedback);
+    }
 
-	@PostMapping
-	public ResponseEntity<Feedback> createFeedback(@Valid @RequestBody Feedback feedback, BindingResult bindingResult) {
-		if (bindingResult.hasErrors()) {
-			throw new IllegalArgumentException(bindingResult.getFieldErrors().toString());
-		}
-		Feedback created = feedbackService.createFeedback(feedback);
-		return ResponseEntity.created(URI.create("/api/feedbacks/" + created.getFeedbackId())).body(created);
-	}
+    @PostMapping
+    public ResponseEntity<Feedback> createFeedback(@Valid @RequestBody Feedback feedback, BindingResult bindingResult) {
+        log.info("Creating feedback: {}", feedback);
+        if (bindingResult.hasErrors()) {
+            log.warn("Invalid feedback data: {}", bindingResult.getAllErrors());
+            throw new IllegalArgumentException("Invalid Data");
+        }
+        Feedback created = feedbackService.createFeedback(feedback);
+        log.debug("Created feedback with ID: {}", created.getFeedbackId());
+        return ResponseEntity.created(URI.create("/api/feedbacks/" + created.getFeedbackId())).body(created);
+    }
 
-	@PutMapping("/{id}")
-	public ResponseEntity<Feedback> updateFeedback(@PathVariable Long id, @Valid @RequestBody Feedback feedback) {
-		return ResponseEntity.ok(feedbackService.updateFeedback(id, feedback));
-	}
+    @PutMapping("/{feedbackId}")
+    public ResponseEntity<Feedback> updateFeedback(@PathVariable Long feedbackId, @Valid @RequestBody Feedback feedback) {
+        log.info("Updating feedback with ID: {}", feedbackId);
+        Feedback updated = feedbackService.updateFeedback(feedbackId, feedback);
+        log.debug("Updated feedback with ID: {}", updated.getFeedbackId());
+        return ResponseEntity.ok(updated);
+    }
 
-	@PatchMapping("/{id}")
-	public ResponseEntity<Feedback> patchFeedback(@PathVariable Long id, @RequestBody Feedback feedback) {
-		return ResponseEntity.ok(feedbackService.patchFeedback(id, feedback));
-	}
+    @PatchMapping("/{feedbackId}")
+    public ResponseEntity<Feedback> patchFeedback(@PathVariable Long feedbackId, @RequestBody Feedback feedback) {
+        log.info("Patching feedback with ID: {}", feedbackId);
+        Feedback patched = feedbackService.patchFeedback(feedbackId, feedback);
+        log.debug("Patched feedback with ID: {}", patched.getFeedbackId());
+        return ResponseEntity.ok(patched);
+    }
 
-	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> deleteFeedback(@PathVariable Long id) {
-		feedbackService.deleteFeedback(id);
-		return ResponseEntity.ok().build();
-	}
+    @DeleteMapping("/{feedbackId}")
+    public ResponseEntity<Void> deleteFeedback(@PathVariable Long feedbackId) {
+        log.info("Deleting feedback with ID: {}", feedbackId);
+        feedbackService.deleteFeedback(feedbackId);
+        log.info("Deleted feedback with ID: {}", feedbackId);
+        return ResponseEntity.ok().build();
+    }
 }
