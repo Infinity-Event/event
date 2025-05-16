@@ -43,9 +43,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	@ExceptionHandler(UserNotFoundException.class)
 	public ResponseEntity<Object> handleUserNotFound(UserNotFoundException ex) {
 		Map<String, Object> errorDetails = new HashMap<>();
-		errorDetails.put("timestamp", LocalDateTime.now());
-		errorDetails.put("message", ex.getMessage());
-		errorDetails.put("status", HttpStatus.NOT_FOUND.value());
+		errorDetails.put(TIMESTAMP, LocalDateTime.now());
+		errorDetails.put(MESSAGE, ex.getMessage());
+		errorDetails.put(STATUS, HttpStatus.NOT_FOUND.value());
 		return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
 	}
 	
@@ -79,9 +79,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	@ExceptionHandler(FeedbackNotFoundException.class)
 	public ResponseEntity<Object> handleFeedbackNotFound(FeedbackNotFoundException ex) {
 		Map<String, Object> errorDetails = new HashMap<>();
-		errorDetails.put("timestamp", LocalDateTime.now());
-		errorDetails.put("message", ex.getMessage());
-		errorDetails.put("status", HttpStatus.NOT_FOUND.value());
+		errorDetails.put(TIMESTAMP, LocalDateTime.now());
+		errorDetails.put(MESSAGE, ex.getMessage());
+		errorDetails.put(STATUS, HttpStatus.NOT_FOUND.value());
 		return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
 	}
 	
