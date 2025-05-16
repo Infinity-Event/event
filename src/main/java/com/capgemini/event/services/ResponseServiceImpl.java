@@ -18,6 +18,12 @@ public class ResponseServiceImpl implements ResponseService{
     }
     
     @Override
+    public Response getResponseByQueryId(Long queryId) {
+        return responseRepo.findByQueryQueryId(queryId)
+                .orElseThrow(() -> new RuntimeException("No response found for Query ID: " + queryId));
+    }
+    
+    @Override
     public Response createResponse(Response response) {
         return responseRepo.save(response);
     }
@@ -25,7 +31,7 @@ public class ResponseServiceImpl implements ResponseService{
     @Override
     public Response getResponseById(Long responseId) {
         Optional<Response> optionalResponse = responseRepo.findById(responseId);
-        return optionalResponse.orElse(null); // Or throw exception if preferred
+        return optionalResponse.orElse(null);
     }
 
     @Override

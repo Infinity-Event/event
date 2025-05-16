@@ -7,10 +7,12 @@ import com.capgemini.event.exceptions.QueryNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.capgemini.event.entities.Event;
 
+import org.springframework.stereotype.Service;
 import com.capgemini.event.entities.Query;
 import com.capgemini.event.entities.User;
-
+import com.capgemini.event.repositories.EventRepo;
 import com.capgemini.event.repositories.QueryRepo;
 import com.capgemini.event.repositories.UserRepo;
 
@@ -19,11 +21,13 @@ public class QueryServiceImpl implements QueryService {
 	
 	private QueryRepo queryRepo;
 	private UserRepo userRepo;
+	private EventRepo eventRepo;
 	
 	@Autowired
-	public QueryServiceImpl(QueryRepo queryRepo,  UserRepo userRepo) {
+	public QueryServiceImpl(QueryRepo queryRepo,  UserRepo userRepo, EventRepo eventRepo) {
 		this.queryRepo = queryRepo;
 		this.userRepo = userRepo;
+		this.eventRepo = eventRepo;
 	}
 
 	@Override
@@ -32,8 +36,10 @@ public class QueryServiceImpl implements QueryService {
 	}
 	
 	@Override
-	public Query createEventQuery(Query query, Long userId) {
+	public Query createEventQuery(Query query, Long userId, Long eventId) {
 		User user = userRepo.findById(userId).orElseThrow(() -> new UserNotFoundException("User Not Found!"));
+		Event event= eventRepo.findById(userId).orElseThrow(() -> new RuntimeException("Event Not Found!"));
+		query.setEvent(event);
 		query.setUser(user);
 		return queryRepo.save(query);
 	}
