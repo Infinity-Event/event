@@ -41,6 +41,23 @@ public class FeedbackRestController {
         log.debug("Feedback fetched: {}", feedback);
         return ResponseEntity.ok(feedback);
     }
+    
+    @GetMapping("/event/{eventId}")
+    public ResponseEntity<List<Feedback>> getFeedbacksByEventId(@PathVariable Long eventId) {
+        log.info("Fetching feedbacks for event ID: {}", eventId);
+        List<Feedback> feedbacks = feedbackService.getFeedbacksByEventId(eventId);
+        log.debug("Total feedbacks for event {}: {}", eventId, feedbacks.size());
+        return ResponseEntity.ok(feedbacks);
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<Feedback>> getFeedbacksByUserId(@PathVariable Long userId) {
+        log.info("Fetching feedbacks for user ID: {}", userId);
+        List<Feedback> feedbacks = feedbackService.getFeedbacksByUserId(userId); 
+        log.debug("Total feedbacks for user {}: {}", userId, feedbacks.size());
+        return ResponseEntity.ok(feedbacks);
+    }
+
 
     @PostMapping
     public ResponseEntity<Feedback> createFeedback(@Valid @RequestBody Feedback feedback, BindingResult bindingResult) {
