@@ -48,7 +48,7 @@ class QueryServiceImplTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        event = new Event("Tech Talk: AI & Future","AI description",  LocalDate.of(2024, 5, 1),LocalTime.of(10, 0), "Mumbai Hall A", 150,Category.CONFERENCE, null);
+        event = new Event("Tech Talk: AI & Future","AI description",  LocalDate.of(2024, 5, 1),LocalTime.of(10, 0), "Mumbai Hall A", 150, Category.CONFERENCE);
 		event.setEventId(1L);
         user = new User(1L, "Alice", "alice@example.com", "pass", "1234567890", UserType.NORMAL);
         query1 = new Query(1L, "Query 1", "Open", LocalDate.now(), null, user, event);

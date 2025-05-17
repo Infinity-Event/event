@@ -46,7 +46,8 @@ class EventServiceImplTest {
         sampleOrganizer.setEmail("organizer@example.com");
         sampleOrganizer.setType(UserType.ORGANIZER);
 
-        sampleEvent = new Event("Sample Event", "Event Description", LocalDate.now(), LocalTime.now(), "Event Location", 100, null, sampleOrganizer);
+        sampleEvent = new Event("Sample Event", "Event Description", LocalDate.now(), LocalTime.now(), "Event Location", 100, null);
+        sampleEvent.setOrganizer(sampleOrganizer);      
         sampleEvent.setEventId(1L);
     }
 
@@ -55,7 +56,8 @@ class EventServiceImplTest {
         when(userRepo.findById(1L)).thenReturn(Optional.of(sampleOrganizer));
         when(eventRepo.save(any(Event.class))).thenReturn(sampleEvent);
 
-        Event eventToCreate = new Event("New Event", "New Desc", LocalDate.now().plusDays(5), LocalTime.now().plusHours(2), "New Location", 50, null, sampleOrganizer);
+        Event eventToCreate = new Event("New Event", "New Desc", LocalDate.now().plusDays(5), LocalTime.now().plusHours(2), "New Location", 50, null);
+        eventToCreate.setOrganizer(sampleOrganizer);
         Event createdEvent = eventService.createEvent(eventToCreate, 1L);
 
         assertNotNull(createdEvent);
@@ -77,7 +79,10 @@ class EventServiceImplTest {
 
     @Test
     void getAllEvents() {
-        List<Event> events = Arrays.asList(sampleEvent, new Event("Event 2", "Desc 2", LocalDate.now(), LocalTime.now(), "Loc 2", 20, null, sampleOrganizer));
+    	Event event1 = new Event("Event 2", "Desc 2", LocalDate.now(), LocalTime.now(), "Loc 2", 20, null);
+    	event1.setOrganizer(sampleOrganizer);
+        List<Event> events = Arrays.asList(sampleEvent, event1);
+       
         when(eventRepo.findAll()).thenReturn(events);
 
         List<Event> foundEvents = eventService.getAllEvents();
@@ -103,9 +108,10 @@ class EventServiceImplTest {
 
     @Test
     void updateEvent_success() {
-        Event eventDetailsToUpdate = new Event("Updated Title", "Updated Desc", LocalDate.now().plusDays(1), LocalTime.now().plusHours(1), "New Location", 150, null, sampleOrganizer);
-        
-        Event existingEvent = new Event("Original Title", "Original Desc", LocalDate.now(), LocalTime.now(), "Original Location", 100, null, sampleOrganizer);
+        Event eventDetailsToUpdate = new Event("Updated Title", "Updated Desc", LocalDate.now().plusDays(1), LocalTime.now().plusHours(1), "New Location", 150, null);
+        eventDetailsToUpdate.setOrganizer(sampleOrganizer);
+        Event existingEvent = new Event("Original Title", "Original Desc", LocalDate.now(), LocalTime.now(), "Original Location", 100, null);
+        existingEvent.setOrganizer(sampleOrganizer);
         existingEvent.setEventId(1L);
 
         when(eventRepo.findById(1L)).thenReturn(Optional.of(existingEvent));
@@ -129,7 +135,8 @@ class EventServiceImplTest {
         Event partialDetails = new Event();
         partialDetails.setTitle("Patched Title");
 
-        Event existingEvent = new Event("Original Title", "Original Desc", LocalDate.now(), LocalTime.now(), "Original Location", 100, null, sampleOrganizer);
+        Event existingEvent = new Event("Original Title", "Original Desc", LocalDate.now(), LocalTime.now(), "Original Location", 100, null);
+        existingEvent.setOrganizer(sampleOrganizer);
         existingEvent.setEventId(1L);
 
         when(eventRepo.findById(1L)).thenReturn(Optional.of(existingEvent));
