@@ -18,4 +18,7 @@ public interface FeedbackService {
 
     void deleteFeedback(Long feedbackId);
     
+    List<Feedback> getFeedbacksByEventId(Long eventId);
+    List<Feedback> getFeedbacksByUserId(Long userId);
+    
 }
