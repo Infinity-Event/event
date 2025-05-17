@@ -69,15 +69,14 @@ public class Event {
 
 
     public Event(String title, String description, LocalDate date, LocalTime time, String location, Integer capacity,
-                 Category category, User organizer) {
+                 Category category) {
         this.title = title;
         this.description = description;
         this.date = date;
         this.time = time;
         this.location = location;
         this.capacity = capacity;
-        this.category = category;
-        this.organizer = organizer;
+        this.category =category;
     }
 
     public Long getEventId() {

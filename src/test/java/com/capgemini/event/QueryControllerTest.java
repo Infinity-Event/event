@@ -52,7 +52,8 @@ class QueryControllerTest {
 	void setUp() {
 		user = new User(1L, "Alice", "alice@example.com", "pass1", "1234567890", UserType.NORMAL);
 		user1 = new User(2L, "Alice1", "alice1@example.com", "pass2", "9234567890", UserType.ORGANIZER);
-		event = new Event("Tech Talk: AI & Future","AI description",  LocalDate.of(2024, 5, 1),LocalTime.of(10, 0), "Mumbai Hall A", 150,Category.CONFERENCE, user1);
+		event = new Event("Tech Talk: AI & Future","AI description",  LocalDate.of(2024, 5, 1),LocalTime.of(10, 0), "Mumbai Hall A", 150, Category.CONFERENCE);
+		event.setOrganizer(user1);
 		event.setEventId(1L);
 		query1 = new Query(1L, "Query 1 body", "Open", LocalDate.of(2024, 5, 1), null, user, event);
 		query2 = new Query(2L, "Query 2 body", "Closed", LocalDate.of(2024, 5, 2), null, user, event);
