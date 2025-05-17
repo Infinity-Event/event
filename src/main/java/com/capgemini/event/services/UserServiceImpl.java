@@ -1,6 +1,7 @@
 package com.capgemini.event.services;
 
 import com.capgemini.event.entities.User;
+
 import com.capgemini.event.exceptions.UserNotFoundException;
 import com.capgemini.event.repositories.UserRepo;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +13,6 @@ import java.util.List;
 @Service
 @Slf4j
 public class UserServiceImpl implements UserService {
-
 
 	private final UserRepo userRepository;
 
@@ -68,22 +68,21 @@ public class UserServiceImpl implements UserService {
 		log.debug("User with ID {} deleted from repository", id);
 	}
 
-  @Override
-    public boolean existsByEmail(String email) {
+	@Override
+	public boolean existsByEmail(String email) {
 
-    	return userRepository.existsByEmail(email);
-    }
-    
-    @Override
-    public boolean existsByName(String name) {
-    	return userRepository.existsByName(name);
-    }
-    
-    @Override
-    public User findByEmailOrName(String email, String name) {
+		return userRepository.existsByEmail(email);
+	}
 
-    	return userRepository.findByEmailOrName(email, name)
-				.orElseThrow(()->new UserNotFoundException("Username or Email not Found !"));
-    }
+	@Override
+	public boolean existsByName(String name) {
+		return userRepository.existsByName(name);
+	}
+
+	@Override
+	public User findByEmailOrName(String email, String name) {
+
+		return userRepository.findByEmailOrName(email, name)
+				.orElseThrow(() -> new UserNotFoundException("Username or Email not Found !"));
+	}
 }
-
