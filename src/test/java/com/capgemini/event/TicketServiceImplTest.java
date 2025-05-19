@@ -3,6 +3,7 @@ package com.capgemini.event;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.time.LocalDate;
 import java.util.*;
 
 import org.junit.jupiter.api.Test;
@@ -11,7 +12,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.capgemini.event.entities.Event;
 import com.capgemini.event.entities.Ticket;
+import com.capgemini.event.entities.User;
 import com.capgemini.event.repositories.TicketRepo;
 import com.capgemini.event.services.TicketServiceImpl;
 
@@ -49,17 +52,60 @@ class TicketServiceImplTest {
 	}
 
 	@Test
-	void testCreateTicket() {
-		Ticket newTicket = new Ticket(null, null, null, null);
-		Ticket savedTicket = new Ticket(1L, null, null, null);
+	void createTicket_shouldSaveAndReturnTicket() {
+		User user = new User();
+		Event event = new Event();
+		Ticket ticket = new Ticket(1L, LocalDate.now(), user, event);
+	    when(ticketRepo.save(ticket)).thenReturn(ticket);
 
-		when(ticketRepo.save(newTicket)).thenReturn(savedTicket);
+	    Ticket result = ticketService.createTicket(ticket);
 
-		Ticket result = ticketService.createTicket(newTicket);
+	    assertEquals(ticket, result);
+	    verify(ticketRepo).save(ticket);
+	}
 
-		assertNotNull(result);
-		assertEquals(1L, result.getTicketId());
-		verify(ticketRepo).save(newTicket);
+
+	@Test
+	void updateTicket_shouldUpdateAndReturnTicket() {
+		User user = new User();
+		Event event = new Event();
+		Ticket ticket = new Ticket(1L, LocalDate.now(), user, event);
+		Ticket updatedTicket = new Ticket(1L, LocalDate.now().plusDays(1), user, event);
+
+		when(ticketRepo.findById(1L)).thenReturn(Optional.of(ticket));
+		when(ticketRepo.save(any(Ticket.class))).thenReturn(updatedTicket);
+
+		Ticket result = ticketService.updateTicket(1L, updatedTicket);
+
+		assertEquals(updatedTicket.getDate(), result.getDate());
+		verify(ticketRepo).save(ticket);
+	}
+
+	@Test
+	void patchTicket_shouldPatchAndReturnTicket() {
+		User user = new User();
+		Event event = new Event();
+		Ticket ticket = new Ticket(1L, LocalDate.now(), user, event);
+		Ticket patch = new Ticket(LocalDate.now().plusDays(5), null, null);
+
+		when(ticketRepo.findById(1L)).thenReturn(Optional.of(ticket));
+		when(ticketRepo.save(any(Ticket.class))).thenReturn(ticket);
+
+		Ticket result = ticketService.patchTicket(1L, patch);
+
+		assertEquals(patch.getDate(), result.getDate());
+		verify(ticketRepo).save(ticket);
+	}
+
+	void deleteTicket_shouldDeleteTicket() {
+		User user = new User();
+		Event event = new Event();
+		Ticket ticket = new Ticket(1L, LocalDate.now(), user, event);
+		when(ticketRepo.findById(1L)).thenReturn(Optional.of(ticket));
+
+		ticketService.deleteTicket(1L);
+
+		verify(ticketRepo).delete(ticket);
 	}
 
 }
