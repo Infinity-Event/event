@@ -66,6 +66,41 @@ class FeedbackRestControllerTest {
         assertThat(response.getBody().getFeedbackId()).isEqualTo(1L);
         verify(feedbackService).getFeedbackById(1L);
     }
+    
+    @Test
+    void getFeedbacksByEventId_ShouldReturnList() {
+        Feedback f1 = new Feedback();
+        f1.setFeedbackId(1L);
+        Feedback f2 = new Feedback();
+        f2.setFeedbackId(2L);
+        List<Feedback> feedbacks = Arrays.asList(f1, f2);
+
+        when(feedbackService.getFeedbacksByEventId(100L)).thenReturn(feedbacks);
+
+        ResponseEntity<List<Feedback>> response = controller.getFeedbacksByEventId(100L);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).hasSize(2);
+        verify(feedbackService).getFeedbacksByEventId(100L);
+    }
+    
+    @Test
+    void getFeedbacksByUserId_ShouldReturnList() {
+        Feedback f1 = new Feedback();
+        f1.setFeedbackId(3L);
+        Feedback f2 = new Feedback();
+        f2.setFeedbackId(4L);
+        List<Feedback> feedbacks = Arrays.asList(f1, f2);
+
+        when(feedbackService.getFeedbacksByUserId(200L)).thenReturn(feedbacks);
+
+        ResponseEntity<List<Feedback>> response = controller.getFeedbacksByUserId(200L);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).hasSize(2);
+        verify(feedbackService).getFeedbacksByUserId(200L);
+    }
+
 
     @Test
     void createFeedback_WithValidFeedback_ShouldCreate() {
