@@ -61,7 +61,7 @@ class TicketControllerTest {
 	}
 
 	@Test
-	void createTicket_shouldReturnCreatedTicket() {
+	void createTicket() {
 		Ticket input = new Ticket();
 		Ticket created = new Ticket();
 		when(ticketService.createTicket(input)).thenReturn(created);

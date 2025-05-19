@@ -52,7 +52,7 @@ class TicketServiceImplTest {
 	}
 
 	@Test
-	void createTicket_shouldSaveAndReturnTicket() {
+	void createTicket() {
 		User user = new User();
 		Event event = new Event();
 		Ticket ticket = new Ticket(1L, LocalDate.now(), user, event);
@@ -66,7 +66,7 @@ class TicketServiceImplTest {
 
 
 	@Test
-	void updateTicket_shouldUpdateAndReturnTicket() {
+	void updateTicket() {
 		User user = new User();
 		Event event = new Event();
 		Ticket ticket = new Ticket(1L, LocalDate.now(), user, event);
@@ -82,7 +82,7 @@ class TicketServiceImplTest {
 	}
 
 	@Test
-	void patchTicket_shouldPatchAndReturnTicket() {
+	void patchTicket() {
 		User user = new User();
 		Event event = new Event();
 		Ticket ticket = new Ticket(1L, LocalDate.now(), user, event);
@@ -97,7 +97,7 @@ class TicketServiceImplTest {
 		verify(ticketRepo).save(ticket);
 	}
 
-	void deleteTicket_shouldDeleteTicket() {
+	void deleteTicket() {
 		User user = new User();
 		Event event = new Event();
 		Ticket ticket = new Ticket(1L, LocalDate.now(), user, event);
