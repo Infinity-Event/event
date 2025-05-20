@@ -18,10 +18,10 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-	private static final String TIMESTAMP ="timestamp";
-	private static final String MESSAGE ="message";
-	private static final String STATUS ="status";
-	
+	private static final String TIMESTAMP = "timestamp";
+	private static final String MESSAGE = "message";
+	private static final String STATUS = "status";
+
 	@ExceptionHandler(QueryNotFoundException.class)
 	public ResponseEntity<Object> handleQueryNotFound(QueryNotFoundException ex) {
 		Map<String, Object> errorDetails = new HashMap<>();
@@ -30,7 +30,16 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		errorDetails.put(STATUS, HttpStatus.NOT_FOUND.value());
 		return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
 	}
-	
+
+	@ExceptionHandler(InvalidPasswordException.class)
+	public ResponseEntity<Object> handleInvalidPassword(InvalidPasswordException ex) {
+		Map<String, Object> errorDetails = new HashMap<>();
+		errorDetails.put(TIMESTAMP, LocalDateTime.now());
+		errorDetails.put(MESSAGE, ex.getMessage());
+		errorDetails.put(STATUS, HttpStatus.NOT_FOUND.value());
+		return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+	}
+
 	@ExceptionHandler(UserAlreadyExistsException.class)
 	public ResponseEntity<Object> handleUserAlreadyExists(UserAlreadyExistsException ex) {
 		Map<String, Object> errorDetails = new HashMap<>();
@@ -39,7 +48,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		errorDetails.put(STATUS, HttpStatus.NOT_FOUND.value());
 		return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
 	}
-	
+
 	@ExceptionHandler(UserNotFoundException.class)
 	public ResponseEntity<Object> handleUserNotFound(UserNotFoundException ex) {
 		Map<String, Object> errorDetails = new HashMap<>();
@@ -48,7 +57,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		errorDetails.put(STATUS, HttpStatus.NOT_FOUND.value());
 		return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
 	}
-	
+
 	@ExceptionHandler(RegistrationNotFoundException.class)
 	public ResponseEntity<Object> handleRegistrationNotFound(RegistrationNotFoundException ex) {
 		Map<String, Object> errorDetails = new HashMap<>();
@@ -57,7 +66,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		errorDetails.put(STATUS, HttpStatus.NOT_FOUND.value());
 		return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
 	}
-	
+
 	@ExceptionHandler(EventNotFoundException.class)
 	public ResponseEntity<Object> handleEventNotFound(EventNotFoundException ex) {
 		Map<String, Object> errorDetails = new HashMap<>();
@@ -66,7 +75,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		errorDetails.put(STATUS, HttpStatus.NOT_FOUND.value());
 		return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
 	}
-	
+
 	@ExceptionHandler(ResponseNotFoundException.class)
 	public ResponseEntity<Object> handleResponseNotFound(ResponseNotFoundException ex) {
 		Map<String, Object> errorDetails = new HashMap<>();
@@ -75,7 +84,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		errorDetails.put(STATUS, HttpStatus.NOT_FOUND.value());
 		return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
 	}
-	
+
 	@ExceptionHandler(FeedbackNotFoundException.class)
 	public ResponseEntity<Object> handleFeedbackNotFound(FeedbackNotFoundException ex) {
 		Map<String, Object> errorDetails = new HashMap<>();
@@ -84,7 +93,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		errorDetails.put(STATUS, HttpStatus.NOT_FOUND.value());
 		return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
 	}
-	
+
 	@ExceptionHandler(TicketNotFoundException.class)
 	public ResponseEntity<Object> handleTicketNotFound(TicketNotFoundException ex) {
 		Map<String, Object> errorDetails = new HashMap<>();
@@ -117,5 +126,5 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		errorDetails.put("details", ex.getMessage());
 		return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
-	
+
 }

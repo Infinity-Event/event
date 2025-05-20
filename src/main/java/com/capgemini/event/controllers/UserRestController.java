@@ -1,10 +1,13 @@
 package com.capgemini.event.controllers;
 
+import com.capgemini.event.dto.ProfileUpdateDto;
 import com.capgemini.event.entities.User;
 import com.capgemini.event.services.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -62,5 +65,11 @@ public class UserRestController {
         userService.deleteUser(id);
         log.info("User with ID {} successfully deleted", id);
         return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/{id}/edit-profile")
+    public ResponseEntity<User> updateUserProfile(@PathVariable Long id, @Valid @RequestBody ProfileUpdateDto newUser) {
+        User updated = userService.editProfile(id, newUser);
+        return ResponseEntity.status(HttpStatus.OK).body(updated);
     }
 }

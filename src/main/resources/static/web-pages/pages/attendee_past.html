@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Past Events - EventSys Attendee</title> <!-- Updated Title -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        /* Styles copied from attendee_myregs.html for consistency */
+         body {
+            padding-top: 56px;
+            background-color: #f8f9fa;
+            font-family: sans-serif;
+        }
+        .sidebar {
+            position: fixed;
+            top: 56px;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            padding: 20px 0;
+            box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+            background-color: #212529;
+            width: 220px;
+        }
+        .sidebar .nav-link {
+            font-weight: 500;
+            color: rgba(255, 255, 255, .7);
+            padding: .75rem 1.25rem;
+            display: flex;
+            align-items: center;
+        }
+        .sidebar .nav-link .bi {
+            margin-right: 10px;
+            font-size: 1.1rem;
+            width: 20px;
+            text-align: center;
+        }
+        .sidebar .nav-link:hover {
+            color: #fff;
+            background-color: #343a40;
+        }
+        .sidebar .nav-link.active {
+            color: #fff;
+            background-color: #0a58ca;
+        }
+        .main-content {
+            margin-left: 220px;
+            padding: 20px;
+            min-height: calc(100vh - 56px);
+            display: flex;
+            flex-direction: column;
+        }
+        .navbar {
+            box-shadow: 0 2px 3px rgba(0,0,0,.1);
+            z-index: 101;
+        }
+        .navbar-brand img {
+            height: 53px;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            padding-left: 1rem;
+        }
+        /* Style for list items */
+        .list-group-item small {
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+         <div class="container-fluid">
+            <a class="navbar-brand" href="attendee.html">
+                EventSys Attendee
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#topNav" aria-controls="topNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="topNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <span class="navbar-text me-3" id="user_name_display">
+                            Welcome, Attendee!
+                        </span>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-outline-light btn-sm" id="logoutBtn">Logout</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+                 <div class="position-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="attendee.html">
+                                <i class="bi bi-calendar3-event"></i>
+                                Available Events
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="attendee_myregs.html">
+                                <i class="bi bi-person-check-fill"></i>
+                                My Registrations
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="attendee_past.html"> <!-- Set active -->
+                                <i class="bi bi-calendar-check"></i>
+                                Past Events
+                            </a>
+                        </li>
+                         <li class="nav-item">
+                            <a class="nav-link" href="attendee_profile.html">
+                                <i class="bi bi-person-circle"></i>
+                                Profile
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Main Content Area -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                     <h1 class="h2">Past Events</h1> <!-- Updated Heading -->
+                </div>
+
+                <!-- Container for Past Events content -->
+                <div id="past_events_container">
+                    <div class="text-center py-3">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2">Loading your past attended events...</p>
+                    </div>
+                </div>
+
+                 <footer class="mt-auto py-3 bg-light text-muted text-center border-top">
+                    <div class="container">
+                        &copy; 2024 EventSys. Your event history.
+                    </div>
+                </footer>
+            </main>
+        </div>
+    </div>
+    <script src="../js/script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const baseApiUrl = 'http://localhost:8080/api/registrations';
+        let userId = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            if (getUserType() === "NORMAL") {
+            userId = getUserId();
+
+            const nameDisplay = document.getElementById("user_name_display");
+            if (nameDisplay) {
+                nameDisplay.textContent = `Welcome, ${getUserName()}!`;
+            }
+            loadPastEvents();
+        } else {
+            alert("Access denied. Please login as an attendee.");
+            window.location.href = "../login.html";
+            }
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            localStorage.removeItem('token');
+            window.location.href = '../login.html';
+        });
+
+        async function loadPastEvents() {
+            fetch(`${baseApiUrl}/events/users/${userId}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': getAuthorization()
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error fetching past events');
+                }
+                return response.json();
+            })
+            .then(data=>{
+                const container = document.getElementById('past_events_container');
+                container.innerHTML = ''; // Clear loading message
+                const listGroup = document.createElement('ul');
+                listGroup.className = 'list-group shadow-sm';
+                const listItem = document.createElement('li');
+                listItem.className = `list-group-item d-flex flex-column flex-sm-row justify-content-between align-items-sm-center list-group-item-light`;
+
+                data.forEach(event =>{
+                    listItem.innerHTML = `
+                    <div class="mb-2 mb-sm-0">
+                        <h5 class="mb-1">${event.title || 'No Title Available'} <span class="badge bg-secondary ms-2">Past</span></h5>
+                        <small>
+                            <i class="bi bi-calendar-date"></i> ${event.date} |
+                            <i class="bi bi-clock"></i> ${event.time} |
+                            <i class="bi bi-geo-alt"></i> ${event.location || 'Location not specified'} |
+                            <i class="bi bi-person"></i> ${event.name}
+                        </small>
+                        ${event.category ? `
+                        <br><small><i class="bi bi-tag"></i> ${event.category}</small>
+                        ` : ''}
+                        <br><small><i class="bi bi-calendar-check"></i> Registered on: ${event.regDate || 'Date not available'}</small>
+                        <br>
+                        <button id="feedback-btn" onclick="window.location.href='feedbackform.html'">
+                            Feedback
+                        </button>
+                    </div>
+                    <div class="ms-sm-3 mt-2 mt-sm-0">
+                        <span class="badge bg-light text-dark border">Attended</span>
+                    </div>
+                `;
+                listGroup.appendChild(listItem);
+                });
+                if (listGroup.children.length === 0) {
+                    container.innerHTML = '<p class="text-muted text-center mt-3">No past events found.</p>';
+                } else {
+                    container.appendChild(listGroup);
+                }
+            })
+            .catch(error => {
+                console.error('Error loading past events:', error);
+                const container = document.getElementById('past_events_container');
+                container.innerHTML = '<div class="alert alert-danger">Error loading past events. Please try again later.</div>';
+            });
+
+
+        }
+    </script>
+</body>
+</html>

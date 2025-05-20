@@ -7,13 +7,13 @@ import com.capgemini.event.entities.User;
 
 public interface UserRepo extends JpaRepository<User, Long> {
 
-    User findByEmail(String email);
-    
+    Optional<User> findByEmail(String email);
+
     Optional<User> findByEmailOrName(String email, String name);
-    
+
     Optional<User> findByName(String name);
 
-	boolean existsByName(String name);
+    boolean existsByName(String name);
 
-	boolean existsByEmail(String email);
+    boolean existsByEmail(String email);
 }

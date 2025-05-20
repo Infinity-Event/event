@@ -29,12 +29,12 @@ import static org.mockito.Mockito.verify;
 @ExtendWith(MockitoExtension.class)
 class RegistrationRestControllerTest {
 
-	@Mock
+    @Mock
     private RegistrationService registrationService;
 
-	@InjectMocks
-	private RegistrationRestController registrationRestController;
-	
+    @InjectMocks
+    private RegistrationRestController registrationRestController;
+
     private Registration registration;
     private User user;
     private Event event;
@@ -48,7 +48,7 @@ class RegistrationRestControllerTest {
         event.setEventId(1L);
         event.setCapacity(20);
         event.setCategory(Category.WEBINAR);
-        event.setDate(LocalDate.of(2020,5,12));
+        event.setDate(LocalDate.of(2020, 5, 12));
         event.setDescription("Event 1");
         event.setLocation("Mumbai");
 
@@ -60,36 +60,36 @@ class RegistrationRestControllerTest {
     }
 
     @Test
-    void testGetAllRegistrations(){
+    void testGetAllRegistrations() {
         Mockito.when(registrationService.getAllRegistrations()).thenReturn(Arrays.asList(registration));
         List<Registration> expectedRegistrations = Arrays.asList(registration);
         ResponseEntity<List<Registration>> response = registrationRestController.getAllRegistrations();
         assertEquals(HttpStatus.OK, response.getStatusCode());
-		assertEquals(expectedRegistrations, response.getBody());
-		verify(registrationService).getAllRegistrations();
+        assertEquals(expectedRegistrations, response.getBody());
+        verify(registrationService).getAllRegistrations();
     }
 
     @Test
-    void testGetRegistrationById_Found(){
+    void testGetRegistrationById_Found() {
         Mockito.when(registrationService.getRegistrationById(1L)).thenReturn(registration);
 
         ResponseEntity<Registration> response = registrationRestController.getRegistrationById(1L);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-		assertEquals(registration, response.getBody());
-		verify(registrationService).getRegistrationById(1L);
+        assertEquals(registration, response.getBody());
+        verify(registrationService).getRegistrationById(1L);
     }
 
     @Test
-    void testDeleteRegistration_Success(){
-       Mockito.when(registrationService.deleteRegistration(1L)).thenReturn(true);
-       ResponseEntity<Void> response = registrationRestController.deleteRegistration(1L);
-       assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-       assertEquals(null, response.getBody());
-       verify(registrationService, times(1)).deleteRegistration(1L);
+    void testDeleteRegistration_Success() {
+        Mockito.when(registrationService.deleteRegistration(1L)).thenReturn(true);
+        ResponseEntity<Void> response = registrationRestController.deleteRegistration(1L);
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+        assertEquals(null, response.getBody());
+        verify(registrationService, times(1)).deleteRegistration(1L);
     }
 
     @Test
-    void testDeleteRegistration_NotFound(){
+    void testDeleteRegistration_NotFound() {
         Mockito.when(registrationService.deleteRegistration(99L)).thenReturn(false);
         ResponseEntity<Void> response = registrationRestController.deleteRegistration(99L);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -98,22 +98,24 @@ class RegistrationRestControllerTest {
     }
 
     @Test
-    void testGetRegistrationsByUserId(){
-        Mockito.when(registrationService.getRegistrationsByUserId(1L)).thenReturn(Collections.singletonList(registration));
+    void testGetRegistrationsByUserId() {
+        Mockito.when(registrationService.getRegistrationsByUserId(1L))
+                .thenReturn(Collections.singletonList(registration));
         List<Registration> expectedRegistrations = Arrays.asList(registration);
         ResponseEntity<List<Registration>> response = registrationRestController.getRegistrationsByUserId(1L);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-		assertEquals(expectedRegistrations, response.getBody());
-		verify(registrationService).getRegistrationsByUserId(1L);
+        assertEquals(expectedRegistrations, response.getBody());
+        verify(registrationService).getRegistrationsByUserId(1L);
     }
 
     @Test
-    void testGetRegistrationsByEventId(){
-        Mockito.when(registrationService.getRegistrationsByEventId(1L)).thenReturn(Collections.singletonList(registration));
+    void testGetRegistrationsByEventId() {
+        Mockito.when(registrationService.getRegistrationsByEventId(1L))
+                .thenReturn(Collections.singletonList(registration));
         List<Registration> expectedRegistrations = Arrays.asList(registration);
         ResponseEntity<List<Registration>> response = registrationRestController.getRegistrationsByEventId(1L);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-		assertEquals(expectedRegistrations, response.getBody());
-		verify(registrationService).getRegistrationsByEventId(1L);
+        assertEquals(expectedRegistrations, response.getBody());
+        verify(registrationService).getRegistrationsByEventId(1L);
     }
 }

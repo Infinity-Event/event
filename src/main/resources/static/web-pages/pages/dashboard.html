@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Event Management System</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom CSS -->
+    <style>
+        body {
+            padding-top: 56px;
+            background-color: #f8f9fa;
+            font-family: sans-serif;
+        }
+        .sidebar {
+            position: fixed;
+            top: 56px;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            padding: 20px 0;
+            box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+            background-color: #343a40;
+            width: 220px;
+        }
+        .sidebar .nav-link {
+            font-weight: 500;
+            color: rgba(255, 255, 255, .65);
+            padding: .75rem 1.25rem;
+            display: flex;
+            align-items: center;
+        }
+        .sidebar .nav-link i {
+            margin-right: 10px;
+            font-size: 1.1rem;
+            width: 20px;
+            text-align: center;
+        }
+        .sidebar .nav-link:hover {
+            color: #fff;
+            background-color: #343a40;
+        }
+        .sidebar .nav-link.active {
+            color: #fff;
+            background-color: #0d6efd;
+        }
+        .main-content {
+            margin-left: 220px;
+            padding: 25px;
+            min-height: calc(100vh - 56px);
+        }
+        .navbar {
+            box-shadow: 0 2px 3px rgba(0,0,0,.1);
+            z-index: 101;
+        }
+        .stat-card {
+            background-color: #ffffff;
+            border: none;
+            padding: 20px;
+            margin-bottom: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,.05);
+        }
+        .stat-card h5 {
+            color: #6c757d;
+            font-size: 0.8rem;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+        .stat-card h3 {
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+        h2, h4 {
+            color: #343a40;
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+        }
+        .section-card {
+            background-color: #fff;
+            border: none;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,.05);
+        }
+        .section-card .card-header {
+            background-color: transparent;
+            border-bottom: 1px solid #e9ecef;
+            font-weight: 600;
+            color: #343a40;
+            padding: 1rem 1.25rem;
+            font-size: 1rem;
+        }
+        .section-card .card-body {
+             padding: 1.25rem;
+        }
+        .event-item {
+            padding: 15px;
+            border-bottom: 1px solid #f1f3f5;
+        }
+        .event-item:last-child {
+            border-bottom: none;
+        }
+        .event-date {
+            text-align: center;
+            padding: 5px;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+        }
+        .event-date .day {
+            font-size: 20px;
+            font-weight: 700;
+        }
+        .event-date .month {
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+        .badge {
+            font-weight: 500;
+            padding: 0.35em 0.65em;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-calendar-check"></i> Event Management System
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <span class="navbar-text me-3" id="username">
+                            Welcome, Organizer!
+                        </span>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-outline-light btn-sm" onclick="logout()">Logout</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+                <div class="position-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link active" id="dashboard-link">
+                                <i class="bi bi-speedometer2"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" id="my-events-link">
+                                <i class="bi bi-calendar-event"></i> My Events
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" id="create-event-link">
+                                <i class="bi bi-plus-circle"></i> Add New Event
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" id="reports-link">
+                                <i class="bi bi-file-earmark-text"></i> Reports
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" id="queries-link">
+                                <i class="bi bi-question-circle"></i> Queries
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" id="feedback-link">
+                                <i class="bi bi-chat-left-text"></i> Feedback
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h2>Dashboard</h2>
+                    <div>
+                        <button class="btn btn-primary btn-sm" id="refreshData">
+                            <i class="bi bi-arrow-clockwise"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Stats Row -->
+                <div class="row">
+                    <div class="col-md-3 col-sm-6">
+                        <div class="stat-card">
+                            <div class="text-primary mb-2">
+                                <i class="bi bi-calendar3 fs-3"></i>
+                            </div>
+                            <h3 id="total-events">0</h3>
+                            <h5>Total Events</h5>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="stat-card">
+                            <div class="text-success mb-2">
+                                <i class="bi bi-people fs-3"></i>
+                            </div>
+                            <h3 id="total-registrations">0</h3>
+                            <h5>Registrations</h5>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="stat-card">
+                            <div class="text-warning mb-2">
+                                <i class="bi bi-calendar-check fs-3"></i>
+                            </div>
+                            <h3 id="upcoming-events">0</h3>
+                            <h5>Upcoming Events</h5>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="stat-card">
+                            <div class="text-info mb-2">
+                                <i class="bi bi-star fs-3"></i>
+                            </div>
+                            <h3 id="popular-category">None</h3>
+                            <h5>Popular Category</h5>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Upcoming Events and Popular Events -->
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="section-card">
+                            <div class="card-header">
+                                <i class="bi bi-calendar-week"></i> Upcoming Events
+                            </div>
+                            <div class="card-body p-0">
+                                <div id="upcoming-events-list">
+                                    <!-- Events will be loaded here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="section-card">
+                            <div class="card-header">
+                                <i class="bi bi-bar-chart-line"></i> Popular Events
+                            </div>
+                            <div class="card-body p-0">
+                                <ul class="list-group list-group-flush" id="popular-events">
+                                    <!-- Popular events by registrations -->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Footer -->
+                <footer class="pt-4 my-4 text-muted border-top">
+                    <p class="small text-center">© 2025 Event Management System. All rights reserved.</p>
+                </footer>
+            </main>
+        </div>
+    </div>
+
+    <!-- Bootstrap and JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in
+            if (!localStorage.getItem('token')) {
+                window.location.href = '../login.html';
+                return;
+            }
+            
+            // Set user info - Fix the undefined username issue
+            let userName = "Organizer"; // Default fallback
+            
+            try {
+                // Try to get from token first
+                const token = localStorage.getItem('token');
+                
+                // Decode token and log the payload for debugging
+                const decoded = decodeJWT(token);
+                
+                // Check multiple possible field names for username
+                if (decoded && (decoded.username || decoded.name || decoded.sub)) {
+                    userName = decoded.username || decoded.name || decoded.sub;
+                    document.getElementById('username').textContent = 'Welcome, ' + userName + '!';
+                } else {
+                    // If username not in token, fetch from API
+                    const userId = getUserId();
+                    console.log("Fetching user data for ID:", userId);
+                    
+                    if (userId) {
+                        fetch(`http://localhost:8080/api/users/${userId}`, {
+                            headers: {
+                                'Authorization': getAuthorization()
+                            }
+                        })
+                        .then(response => {
+                            if (!response.ok) throw new Error('Failed to fetch user data');
+                            return response.json();
+                        })
+                        .then(userData => {
+                            console.log("User data retrieved:", userData);
+                            if (userData && userData.name) {
+                                userName = userData.name;
+                                document.getElementById('username').textContent = 'Welcome, ' + userName + '!';
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Error fetching user data:", error);
+                        });
+                    }
+                }
+            } catch (error) {
+                console.error("Error processing user information:", error);
+                document.getElementById('username').textContent = 'Welcome, Organizer!';
+            }
+            
+            // Check if user is an organizer
+            const userType = getUserType();
+            if (userType !== 'ORGANIZER') {
+                window.location.href = 'home.html';
+                return;
+            }
+            
+            // Load dashboard data
+            loadDashboardData();
+            
+            // Add event listeners
+            document.getElementById('refreshData').addEventListener('click', loadDashboardData);
+            
+            // Set up navigation
+            const navLinks = document.querySelectorAll('.sidebar .nav-link');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Handle navigation based on id
+                    if (this.id === 'create-event-link') {
+                        // Redirect to create event page
+                        window.location.href = 'create-event.html';
+                    } else if (this.id === 'my-events-link') {
+                        // Redirect to my events page
+                        window.location.href = 'myevents.html';
+                    } else if (this.id === 'registrations-link') {
+                        window.location.href = 'registrations.html';
+                    } else if (this.id === 'queries-link') {
+                        window.location.href = 'queries.html';
+                    } else if (this.id === 'feedback-link') {
+                        window.location.href = 'feedback.html';
+                    } else if (this.id === 'reports-link') {
+                        window.location.href = 'reports.html';
+                    }
+                    // No redirection for dashboard as we're already there
+                });
+            });
+        });
+        
+        function getUserId() {
+            try {
+                const token = localStorage.getItem('token');
+                const decoded = decodeJWT(token);
+                
+                // For the dashboard, let's prefer the email if available
+                if (decoded.email) {
+                    return decoded.email;
+                }
+                
+                // Next try to get numeric userId
+                if (decoded.userId && !isNaN(decoded.userId)) {
+                    return decoded.userId;
+                }
+                
+                if (decoded.userid && !isNaN(decoded.userid)) {
+                    return decoded.userid;
+                }
+                
+                // If we have a sub field (often contains email)
+                if (decoded.sub) {
+                    return decoded.sub;
+                }
+                console.warn("No suitable identifier found in token");
+                return null;
+            } catch (error) {
+                console.error('Error getting user ID:', error);
+                return null;
+            }
+        }
+        
+        function loadDashboardData() {
+            const organizerId = getUserId();
+            if (!organizerId) {
+                console.error("No organizer ID available - cannot load dashboard data");
+                showError("Cannot load dashboard data - login information missing");
+                return;
+            }
+            
+            // Fetch events by organizer
+            fetch(`http://localhost:8080/api/events/organizer/${organizerId}`, {
+                headers: { 'Authorization': getAuthorization() }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch events: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(events => {
+                document.getElementById('total-events').textContent = events.length;
+                
+                // Filter upcoming events
+                const today = new Date();
+                const upcomingEvents = events.filter(event => {
+                    const eventDate = new Date(event.date);
+                    return eventDate >= today;
+                });
+                
+                document.getElementById('upcoming-events').textContent = upcomingEvents.length;
+                
+                // Populate upcoming events list
+                const upcomingEventsContainer = document.getElementById('upcoming-events-list');
+                upcomingEventsContainer.innerHTML = '';
+                
+                if (upcomingEvents.length === 0) {
+                    upcomingEventsContainer.innerHTML = '<div class="p-4 text-center text-muted">No upcoming events</div>';
+                } else {
+                    upcomingEvents.slice(0, 5).forEach(event => {
+                        const eventDate = new Date(event.date);
+                        const month = eventDate.toLocaleString('default', { month: 'short' });
+                        const day = eventDate.getDate();
+                        
+                        upcomingEventsContainer.innerHTML += `
+                            <div class="event-item">
+                                <div class="row align-items-center">
+                                    <div class="col-auto">
+                                        <div class="event-date">
+                                            <div class="day">${day}</div>
+                                            <div class="month">${month}</div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <h5 class="mb-1">${event.title}</h5>
+                                        <p class="mb-1 small text-muted">
+                                            <i class="bi bi-geo-alt"></i> ${event.location} | 
+                                            <i class="bi bi-clock"></i> ${event.time}
+                                        </p>
+                                        <div>
+                                            <span class="badge bg-primary">${event.category || 'Uncategorized'}</span>
+                                            <span class="badge bg-secondary">Capacity: ${event.capacity}</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <button class="btn btn-sm btn-outline-primary" onclick="viewEvent(${event.eventId})">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-secondary" onclick="editEvent(${event.eventId})">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+                
+                // compute and display most popular category
+                const counts = {};
+                events.forEach(evt => {
+                    const cat = evt.category || 'Uncategorized';
+                    counts[cat] = (counts[cat] || 0) + 1;
+                });
+                let topCat = 'None', topCount = 0;
+                Object.entries(counts).forEach(([cat, cnt]) => {
+                    if (cnt > topCount) {
+                        topCat = cat;
+                        topCount = cnt;
+                    }
+                });
+                document.getElementById('popular-category').textContent = 
+                    `${topCat} (${topCount})`;
+                    
+                // Now fetch registrations for each event
+                fetchRegistrationsForEvents(events);
+            })
+            .catch(error => {
+                console.error('Error fetching events:', error);
+                document.getElementById('total-events').textContent = '0';
+                document.getElementById('upcoming-events').textContent = '0';
+                document.getElementById('upcoming-events-list').innerHTML = 
+                    `<div class="p-4 text-center text-danger">Error loading events: ${error.message}</div>`;
+                document.getElementById('total-registrations').textContent = '0';
+                document.getElementById('popular-events').innerHTML = 
+                    '<li class="list-group-item text-center text-danger">Cannot fetch registrations: no events available</li>';
+            });
+        }          function fetchRegistrationsForEvents(events) {
+            const eventIds = events.map(event => event.eventId);
+            
+            if (eventIds.length === 0) {
+                document.getElementById('total-registrations').textContent = '0';
+                document.getElementById('popular-events').innerHTML = '<li class="list-group-item text-center text-muted">No events available</li>';
+                return;
+            }
+            
+            // Create a mapping of event IDs to titles for later use
+            const eventTitles = {};
+            events.forEach(event => {
+                eventTitles[event.eventId] = event.title;
+            });
+            
+            // Track total registrations across all events
+            let totalRegistrations = 0;
+            const eventRegistrationCounts = {};
+            
+            // Using sequential processing to avoid issues with lazy loading
+            const processEvents = async () => {
+                for (const eventId of eventIds) {
+                    try {
+                        const response = await fetch(`http://localhost:8080/api/registrations/event/${eventId}`, {
+                            headers: { 'Authorization': getAuthorization() }
+                        });
+                        
+                        if (!response.ok) {
+                            console.warn(`Error fetching registrations for event ${eventId}: ${response.status}`);
+                            continue;
+                        }
+                        
+                        const text = await response.text();
+                        
+                        // If the response is empty, assume 0 registrations
+                        if (!text.trim()) {
+                            eventRegistrationCounts[eventId] = 0;
+                            continue;
+                        }
+                        
+                        try {
+                            // Try to parse as JSON
+                            const registrations = JSON.parse(text);
+                            
+                            // Handle if we got a valid array response
+                            if (Array.isArray(registrations)) {
+                                const count = registrations.length;
+                                totalRegistrations += count;
+                                eventRegistrationCounts[eventId] = count;
+                            } else {
+                                // If not an array, we didn't get what we expected
+                                console.warn(`Unexpected response format for event ${eventId}:`, registrations);
+                                eventRegistrationCounts[eventId] = 0;
+                            }
+                        } catch (jsonError) {
+                            // If JSON parsing fails, try to check if the response contains registration data
+                            // by counting occurrences of 'regId' in the response
+                            const regIdMatches = text.match(/regId/g);
+                            const count = regIdMatches ? regIdMatches.length : 0;
+                            totalRegistrations += count;
+                            eventRegistrationCounts[eventId] = count;
+                        }
+                    } catch (error) {
+                        console.error(`Error processing event ${eventId}:`, error);
+                        eventRegistrationCounts[eventId] = 0;
+                    }
+                }
+                
+                // Update the UI with registration data
+                document.getElementById('total-registrations').textContent = totalRegistrations;
+                
+                // Sort events by registration count (descending) and take top 5
+                const topEvents = Object.entries(eventRegistrationCounts)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 5);
+                
+                // Display popular events
+                const popularEventsElement = document.getElementById('popular-events');
+                popularEventsElement.innerHTML = '';
+                
+                if (topEvents.length === 0 || topEvents.every(([_, count]) => count === 0)) {
+                    popularEventsElement.innerHTML = '<li class="list-group-item text-center text-muted">No registrations available</li>';
+                } else {
+                    topEvents.forEach(([eventId, count]) => {
+                        if (count > 0) {
+                            const eventTitle = eventTitles[eventId] || 'Unknown Event';
+                            popularEventsElement.innerHTML += `
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    ${eventTitle}
+                                    <span class="badge bg-primary rounded-pill">${count}</span>
+                                </li>`;
+                        }
+                    });
+                    
+                                        if (popularEventsElement.innerHTML === '') {
+                        popularEventsElement.innerHTML = '<li class="list-group-item text-center text-muted">No registrations available</li>';
+                    }
+                }
+            };
+            
+            // Execute the sequential processing and handle errors
+            processEvents().catch(error => {
+                console.error('Error fetching registration data:', error);
+                document.getElementById('total-registrations').textContent = '0';
+                document.getElementById('popular-events').innerHTML = 
+                    `<li class="list-group-item text-center text-danger">Error: ${error.message}</li>`;
+            });
+        }
+        
+        function viewEvent(eventId) {
+            // Redirect to event details page
+            window.location.href = `event-details.html?id=${eventId}`;
+        }
+        
+        function editEvent(eventId) {
+            // Redirect to edit event page
+            window.location.href = `edit-event.html?id=${eventId}`;
+        }
+        
+        function showError(message) {
+            const mainContent = document.querySelector('.main-content');
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-danger alert-dismissible fade show';
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            mainContent.insertBefore(alertDiv, mainContent.firstChild);
+        }
+    </script>
+</body>
+</html>

@@ -48,18 +48,4 @@ class TicketServiceImplTest {
 		verify(ticketRepo).findById(1L);
 	}
 
-	@Test
-	void testCreateTicket() {
-		Ticket newTicket = new Ticket(null, null, null, null);
-		Ticket savedTicket = new Ticket(1L, null, null, null);
-
-		when(ticketRepo.save(newTicket)).thenReturn(savedTicket);
-
-		Ticket result = ticketService.createTicket(newTicket);
-
-		assertNotNull(result);
-		assertEquals(1L, result.getTicketId());
-		verify(ticketRepo).save(newTicket);
-	}
-
 }

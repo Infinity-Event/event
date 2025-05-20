@@ -9,11 +9,11 @@ public interface TicketService {
 
 	Ticket getTicketById(Long ticketId);
 
-	Ticket createTicket(Ticket ticket);
+	Ticket createTicket(Ticket ticket, Long eventId, Long userId);
 
 	Ticket updateTicket(Long ticketId, Ticket ticket);
-	
+
 	Ticket patchTicket(Long ticketId, Ticket ticket);
-	
+
 	void deleteTicket(Long ticketId);
 }

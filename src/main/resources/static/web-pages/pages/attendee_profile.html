@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Profile - EventSys Attendee</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+    <style>
+      body {
+        padding-top: 56px;
+        background-color: #f8f9fa;
+        font-family: sans-serif;
+      }
+      .sidebar {
+        position: fixed;
+        top: 56px;
+        bottom: 0;
+        left: 0;
+        z-index: 100;
+        padding: 20px 0;
+        box-shadow: inset -1px 0 0 rgba(0, 0, 0, 0.1);
+        background-color: #212529;
+        width: 220px;
+      }
+      .sidebar .nav-link {
+        font-weight: 500;
+        color: rgba(255, 255, 255, 0.7);
+        padding: 0.75rem 1.25rem;
+        display: flex;
+        align-items: center;
+      }
+      .sidebar .nav-link .bi {
+        margin-right: 10px;
+        font-size: 1.1rem;
+        width: 20px;
+        text-align: center;
+      }
+      .sidebar .nav-link:hover {
+        color: #fff;
+        background-color: #343a40;
+      }
+      .sidebar .nav-link.active {
+        color: #fff;
+        background-color: #0a58ca;
+      }
+      .main-content {
+        margin-left: 220px;
+        padding: 20px;
+        min-height: calc(100vh - 56px);
+        display: flex;
+        flex-direction: column;
+      }
+      .navbar {
+        box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+        z-index: 101;
+      }
+      .navbar-brand img {
+        height: 53px;
+        margin-right: 8px;
+        vertical-align: middle;
+      }
+      .navbar-brand {
+        font-weight: bold;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        padding-left: 1rem;
+      }
+      .profile-section {
+        max-width: 600px;
+        margin-bottom: 2rem;
+        padding: 1rem 0;
+      }
+      .section-header {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #dee2e6;
+        display: flex;
+        align-items: center;
+      }
+      .section-header i {
+        margin-right: 8px;
+        color: #6c757d;
+      }
+      .form-label {
+        font-weight: 500;
+        font-size: 0.9rem;
+      }
+      .form-control,
+      .form-select {
+        font-size: 0.9rem;
+        padding: 0.4rem 0.8rem;
+      }
+      .form-text {
+        font-size: 0.8rem;
+      }
+      .btn {
+        font-size: 0.9rem;
+        padding: 0.35rem 0.75rem;
+        border-radius: 4px;
+        border: 1px solid #ced4da;
+        background-color: transparent;
+        color: #212529;
+        transition: background-color 0.15s ease-in-out,
+          border-color 0.15s ease-in-out, color 0.15s ease-in-out;
+      }
+      .btn:hover {
+        background-color: #e9ecef;
+        border-color: #adb5bd;
+        color: #000;
+      }
+      .btn-primary,
+      .btn-warning,
+      .btn-secondary,
+      .btn-outline-secondary {
+        color: #212529;
+        border-color: #ced4da;
+        background-color: transparent;
+      }
+      .btn-primary:hover,
+      .btn-warning:hover,
+      .btn-secondary:hover,
+      .btn-outline-secondary:hover {
+        background-color: #e9ecef;
+        border-color: #adb5bd;
+        color: #000;
+      }
+
+      .navbar #logoutBtn.btn-outline-light {
+        color: rgba(255, 255, 255, 0.55);
+        border-color: rgba(255, 255, 255, 0.15);
+        background-color: transparent;
+        font-size: 0.875rem;
+        padding: 0.25rem 0.5rem;
+      }
+      .navbar #logoutBtn.btn-outline-light:hover {
+        color: rgba(255, 255, 255, 0.75);
+        background-color: rgba(255, 255, 255, 0.05);
+        border-color: rgba(255, 255, 255, 0.15);
+      }
+
+      .btn i {
+        margin-right: 4px;
+      }
+
+      #profileMessage,
+      #passwordMessage {
+        min-height: 1.5em;
+        margin-top: 10px;
+        font-size: 0.85rem;
+      }
+      #passwordFields {
+        display: none;
+        margin-top: 1rem;
+        border-top: 1px solid #dee2e6;
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        padding: 1.25rem;
+      }
+      #passwordMessage {
+        margin-top: 1rem;
+        padding: 0.5rem;
+        border-radius: 4px;
+      }
+      .text-danger {
+        color: #dc3545;
+      }
+      .text-success {
+        color: #198754;
+      }
+
+      footer.footer {
+        font-size: 0.85rem;
+        color: #6c757d;
+        background-color: #f8f9fa;
+        border-top: 1px solid #dee2e6;
+        margin-top: auto;
+        padding: 1rem 0;
+      }
+      .main-content h1.h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+      }
+      .main-content .border-bottom {
+        border-bottom-width: 1px !important;
+        border-color: #dee2e6 !important;
+      }
+    </style>
+  </head>
+  <body>
+    <nav
+      class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top"
+      aria-label="Main navigation"
+    >
+      <div class="container-fluid">
+        <a class="navbar-brand" href="attendee.html">
+          EventSys Attendee
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#topNav"
+          aria-controls="topNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="topNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <span class="navbar-text me-3" id="user_name_display">
+                Welcome, Attendee!
+              </span>
+            </li>
+            <li class="nav-item">
+              <button class="btn btn-outline-light btn-sm" id="logoutBtn">
+                Logout
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+        <!-- Sidebar -->
+        <nav
+          id="sidebarMenu"
+          class="col-md-3 col-lg-2 d-md-block sidebar collapse"
+          aria-label="Sidebar navigation"
+        >
+          <div class="position-sticky pt-3">
+            <ul class="nav flex-column">
+              <li class="nav-item">
+                <a class="nav-link" href="attendee.html">
+                  <i class="bi bi-calendar3-event"></i>
+                  Available Events
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="attendee_myregs.html">
+                  <i class="bi bi-person-check-fill"></i>
+                  My Registrations
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="attendee_past.html">
+                  <i class="bi bi-calendar-check"></i>
+                  Past Events
+                </a>
+              </li>
+              <li class="nav-item">
+                <a
+                  class="nav-link active"
+                  aria-current="page"
+                  href="attendee_profile.html"
+                >
+                  <i class="bi bi-person-circle"></i>
+                  Profile
+                </a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+          <div
+            class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
+          >
+            <h1 class="h2">My Profile</h1>
+          </div>
+
+          <div class="col-md-6 mt-0 mb-4">
+            <div class="card shadow-sm rounded-4 border-0 bg-light">
+              <div class="card-body p-4">
+                <ul class="list-unstyled mb-0">
+                  <li class="mb-2">
+                    <strong>Name:</strong>
+                    <span class="text-dark" id="name"></span>
+                  </li>
+                  <li class="mb-2">
+                    <strong>Email Id:</strong>
+                    <span class="text-dark" id="email"></span>
+                  </li>
+                  <li class="mb-2">
+                    <strong>Phone Number:</strong>
+                    <span class="text-dark" id="phone"></span>
+                  </li>
+                  <li class="mb-2">
+                    <strong>User Type:</strong>
+                    <span class="text-dark" id="userType"></span>
+                  </li>
+                </ul>
+                <div class="d-flex justify-content-between mt-4">
+                  <button
+                    type="button"
+                    id="edit"
+                    class="btn btn-"
+                    data-bs-toggle="modal"
+                    data-bs-target="#applyModal"
+                  >
+                    Edit Profile
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-warning"
+                    onclick="logout()"
+                  >
+                    <i class="bi bi-box-arrow-right me-1"></i> Logout
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="modal fade"
+            id="applyModal"
+            tabindex="-1"
+            aria-labelledby="applyModalLabel"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                  <h5 class="modal-title fw-bold" id="applyModalLabel">
+                    Update Profile
+                  </h5>
+                  <button
+                    type="button"
+                    class="btn-close"
+                    id="closeModal"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                  ></button>
+                </div>
+                <div class="modal-body">
+                  <form id="profileForm" novalidate>
+                    <div class="mb-3">
+                      <label for="formName" class="form-label">Name</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="formName"
+                        required
+                      />
+                      <div class="invalid-feedback">
+                        Enter at least 3 characters.
+                      </div>
+                    </div>
+                    <div class="mb-3">
+                      <label for="formEmail" class="form-label">Email</label>
+                      <input
+                        type="email"
+                        class="form-control"
+                        id="formEmail"
+                        readonly
+                        required
+                      />
+                    </div>
+                    <div class="mb-3">
+                      <label for="oldPassword" class="form-label"
+                        >Current Password</label
+                      >
+                      <input
+                        type="password"
+                        class="form-control"
+                        id="oldPassword"
+                        required
+                      />
+                      <input type="checkbox" class="togglePassword" onclick="myPassword('oldPassword')"/>
+                      Show Password
+                      <div class="invalid-feedback">Enter valid password.</div>
+                    </div>
+                    <div class="mb-3 position-relative">
+                      <label for="newPassword" class="form-label"
+                        >New Password</label
+                      >
+                      <input
+                        type="password"
+                        class="form-control pe-5"
+                        id="newPassword"
+                        required
+                      />
+                      <input type="checkbox" class="togglePassword" onclick="myPassword('newPassword')"/>
+                      Show Password
+                      <div class="invalid-feedback">Enter valid password.</div>
+                    </div>
+                    <div class="mb-3">
+                      <label for="formPhone" class="form-label"
+                        >Phone Number</label
+                      >
+                      <input
+                        type="tel"
+                        class="form-control"
+                        id="formPhone"
+                        required
+                      />
+                      <div class="invalid-feedback">
+                        Please enter 10 digit number or invalid Phone Number
+                      </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                      Update Profile
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <footer class="mt-auto py-3 footer text-center">
+            <div class="container">
+              &copy; 2024 EventSys. Manage your profile.
+            </div>
+          </footer>
+        </main>
+      </div>
+    </div>
+    <script src="../js/script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      // const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser'));
+      if (getUserType() === "NORMAL") {
+        userId = getUserId();
+        const nameDisplay = document.getElementById("user_name_display");
+        if (nameDisplay) {
+          nameDisplay.textContent = `Welcome, ${getUserName()}!`;
+        }
+      } else {
+        alert("Access denied. Please login as an attendee.");
+        window.location.href = "../login.html";
+      }
+      document.getElementById('logoutBtn').addEventListener('click', function() {
+            localStorage.removeItem('token');
+            window.location.href = '../login.html';
+        });
+      document.getElementById("name").textContent = getUserName();
+      document.getElementById("email").textContent = getUserEmail();
+      document.getElementById("phone").textContent = getPhone();
+      document.getElementById("userType").textContent = getUserType();
+
+      const username = document.getElementById("formName");
+      const email = document.getElementById("formEmail");
+      const phone = document.getElementById("formPhone");
+      const oldPassword = document.getElementById("oldPassword");
+      const newPassword = document.getElementById("newPassword");
+      const form = document.getElementById("profileForm");
+      const apiUrl = "http://localhost:8080/api/users";
+
+      email.value = getUserEmail();
+      phone.value = getPhone();
+      username.value = getUserName();
+
+      window.myPassword = function (id) {
+        const passwordField = document.getElementById(id);
+        // var passwordToggle = document.querySelector(`#${id} + .togglePassword`);
+
+        if (passwordField.type === "password") {
+          passwordField.type = "text";
+        } else {
+          passwordField.type = "password";
+        }
+      };
+      function clearValidation() {
+        username.classList.remove("is-valid", "is-invalid");
+        newPassword.classList.remove("is-valid", "is-invalid");
+        oldPassword.classList.remove("is-valid", "is-invalid");
+        phone.classList.remove("is-valid", "is-invalid");
+      }
+
+      function validateUsername() {
+        if (username.value.trim().length >= 3) {
+          username.classList.add("is-valid");
+          username.classList.remove("is-invalid");
+          return true;
+        } else {
+          username.classList.add("is-invalid");
+          username.classList.remove("is-valid");
+          return false;
+        }
+      }
+
+      function validateNewPassword() {
+        const passVal = newPassword.value;
+        const passRegex = /^(?=.*[a-z])(?=.*\W).{8,}$/;
+        if (passRegex.test(passVal)) {
+          newPassword.classList.add("is-valid");
+          newPassword.classList.remove("is-invalid");
+          return true;
+        } else {
+          newPassword.classList.add("is-invalid");
+          newPassword.classList.remove("is-valid");
+          return false;
+        }
+      }
+
+      function validateOldPassword() {
+        const passVal = oldPassword.value;
+        const passRegex = /^(?=.*[a-z])(?=.*\W).{8,}$/;
+        if (passRegex.test(passVal)) {
+          oldPassword.classList.add("is-valid");
+          oldPassword.classList.remove("is-invalid");
+          return true;
+        } else {
+          oldPassword.classList.add("is-invalid");
+          oldPassword.classList.remove("is-valid");
+          return false;
+        }
+      }
+
+      function validateMobile() {
+        const mobileRegex = /^\d{10}$/;
+        if (mobileRegex.test(phone.value.trim())) {
+          phone.classList.add("is-valid");
+          phone.classList.remove("is-invalid");
+          return true;
+        } else {
+          phone.classList.add("is-invalid");
+          phone.classList.remove("is-valid");
+          return false;
+        }
+      }
+
+      username.addEventListener("blur", validateUsername);
+      phone.addEventListener("blur", validateMobile);
+      newPassword.addEventListener("blur", validateNewPassword);
+      oldPassword.addEventListener("blur", validateOldPassword);
+
+      form.addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        const valid =
+          validateUsername() &&
+          validateNewPassword() &&
+          validateOldPassword() &&
+          validateMobile();
+
+        if (valid) {
+          const editId = getUserId();
+          const user = {
+            name: username.value.trim(),
+            email: email.value.trim(),
+            phone: phone.value.trim(),
+            newPassword: newPassword.value.trim(),
+            oldPassword: oldPassword.value.trim(),
+          };
+
+          fetch(`${apiUrl}/${editId}/edit-profile`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: getAuthorization(),
+            },
+            body: JSON.stringify(user),
+          })
+            .then((response) => {
+              if (!response.ok) {
+                console.log(response)
+                return response.json().then((data) => {
+                  // Show the backend error message
+                  throw new Error(data.message || "Update failed.");
+                });
+              }
+              alert("Profile updated successfully.");
+              const existingModal = bootstrap.Modal.getInstance(
+                document.getElementById("applyModal")
+              );
+              existingModal.hide();
+              logout();
+              clearValidation();
+              document
+                .querySelectorAll(".form-control")
+                .forEach((el) => el.classList.remove("is-valid"));
+            })
+            .catch((error) => {
+              alert(
+                "Error updating profile. Please try again or " + error.message
+              );
+              console.error("Error:", error);
+            });
+        }
+      });
+    </script>
+  </body>
+</html>

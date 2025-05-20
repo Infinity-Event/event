@@ -102,4 +102,9 @@ public class User {
 		return "User [userId=" + userId + ", name=" + name + ", email=" + email + ", password=" + password + ", phone="
 				+ phone + ", userType=" + userType + "]";
 	}
+
+	public User orElseThrow(Object object) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'orElseThrow'");
+	}
 }

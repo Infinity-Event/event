@@ -5,9 +5,14 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.capgemini.event.entities.Event;
 import com.capgemini.event.entities.Ticket;
+import com.capgemini.event.entities.User;
+import com.capgemini.event.exceptions.EventNotFoundException;
 import com.capgemini.event.exceptions.TicketNotFoundException;
+import com.capgemini.event.repositories.EventRepo;
 import com.capgemini.event.repositories.TicketRepo;
+import com.capgemini.event.repositories.UserRepo;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -16,10 +21,14 @@ import lombok.extern.slf4j.Slf4j;
 public class TicketServiceImpl implements TicketService {
 
 	TicketRepo ticketRepo;
+	EventRepo eventRepo;
+	UserRepo userRepo;
 
 	@Autowired
-	public TicketServiceImpl(TicketRepo ticketRepo) {
+	public TicketServiceImpl(TicketRepo ticketRepo, EventRepo eventRepo, UserRepo userRepo) {
 		this.ticketRepo = ticketRepo;
+		this.eventRepo = eventRepo;
+		this.userRepo = userRepo;
 	}
 
 	@Override
@@ -40,7 +49,13 @@ public class TicketServiceImpl implements TicketService {
 	}
 
 	@Override
-	public Ticket createTicket(Ticket ticket) {
+	public Ticket createTicket(Ticket ticket, Long eventId, Long userId) {
+		Event event = eventRepo.findById(eventId)
+				.orElseThrow(() -> new EventNotFoundException("Event not found with Id: " + eventId));
+		User user = userRepo.findById(userId)
+				.orElseThrow(() -> new EventNotFoundException("Event not found with Id: " + userId));
+		ticket.setUser(user);
+		ticket.setEvent(event);
 		log.info("Creating new ticket: {}", ticket);
 		Ticket saved = ticketRepo.save(ticket);
 		log.debug("Created ticket with ID: {}", saved.getTicketId());
@@ -96,4 +111,3 @@ public class TicketServiceImpl implements TicketService {
 	}
 
 }
-

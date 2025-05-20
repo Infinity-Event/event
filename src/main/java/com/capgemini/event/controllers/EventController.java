@@ -18,10 +18,10 @@ import java.util.List;
 public class EventController {
 
     private EventService eventService;
-    
+
     @Autowired
     public EventController(EventService eventService) {
-    	this.eventService = eventService;
+        this.eventService = eventService;
     }
 
     @GetMapping
@@ -41,7 +41,7 @@ public class EventController {
     }
 
     @PostMapping("/users/{organizerId}")
-    public ResponseEntity<Event> createEvent(@Valid @RequestBody Event event, @PathVariable Long organizerId ) {
+    public ResponseEntity<Event> createEvent(@Valid @RequestBody Event event, @PathVariable Long organizerId) {
         log.info("Received request to create event: {}", event.getTitle());
         Event createdEvent = eventService.createEvent(event, organizerId);
         log.debug("Successfully created event with ID: {}", createdEvent.getEventId());
@@ -59,7 +59,7 @@ public class EventController {
     @PatchMapping("/{id}")
     public ResponseEntity<Event> patchEvent(@PathVariable Long id, @RequestBody Event partialEventDetails) {
         log.info("Received request to patch event with ID: {}", id);
-        Event patchedEvent = eventService.patchEvent(id, partialEventDetails); 
+        Event patchedEvent = eventService.patchEvent(id, partialEventDetails);
         log.debug("Successfully patched event with ID: {}", patchedEvent.getEventId());
         return ResponseEntity.ok(patchedEvent);
     }
@@ -67,8 +67,28 @@ public class EventController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteEvent(@PathVariable Long id) {
         log.info("Received request to delete event with ID: {}", id);
-        eventService.deleteEvent(id); 
+        eventService.deleteEvent(id);
         log.debug("Event with ID {} successfully deleted", id);
-        return ResponseEntity.noContent().build(); 
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/organizer/{organizerId}")
+    public ResponseEntity<List<Event>> getEventsByOrganizer(@PathVariable String organizerId) {
+        log.info("Received request to get events for organizer: {}", organizerId);
+
+        List<Event> events;
+        try {
+            // Try to parse as Long first for ID-based lookup
+            Long organizerIdLong = Long.parseLong(organizerId);
+            events = eventService.getEventsByOrganizer(organizerIdLong);
+            log.debug("Found {} events for organizer ID: {}", events.size(), organizerIdLong);
+        } catch (NumberFormatException e) {
+            // If not numeric, assume it's an email
+            log.debug("organizerId is not numeric, treating as email: {}", organizerId);
+            events = eventService.getEventsByOrganizerEmail(organizerId);
+            log.debug("Found {} events for organizer email: {}", events.size(), organizerId);
+        }
+
+        return ResponseEntity.ok(events);
     }
 }
