@@ -34,6 +34,29 @@ public class FeedbackServiceImpl implements FeedbackService {
                     return new FeedbackNotFoundException(FEEDBACK_NOT_FOUND_MSG + feedbackId);
                 });
     }
+    
+    @Override
+    public List<Feedback> getFeedbacksByEventId(Long eventId) {
+        log.debug("Getting feedbacks for event ID: {}", eventId);
+        List<Feedback> feedbacks = feedbackRepo.findByEvent_EventId(eventId);
+        if (feedbacks.isEmpty()) {
+            log.warn("No feedbacks found for event ID {}", eventId);
+            throw new FeedbackNotFoundException("No feedbacks found for event ID: " + eventId);
+        }
+        return feedbacks;
+    }
+
+    @Override
+    public List<Feedback> getFeedbacksByUserId(Long userId) {
+        log.debug("Getting feedbacks for user ID: {}", userId);
+        List<Feedback> feedbacks = feedbackRepo.findByUser_UserId(userId);
+        if (feedbacks.isEmpty()) {
+            log.warn("No feedbacks found for user ID {}", userId);
+            throw new FeedbackNotFoundException("No feedbacks found for user ID: " + userId);
+        }
+        return feedbacks;
+    }
+
 
     @Override
     public Feedback createFeedback(Feedback feedback) {

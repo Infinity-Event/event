@@ -23,5 +23,4 @@ public interface UserService {
   User findByEmailOrName(String email, String name);
 
   User editProfile(Long id, ProfileUpdateDto profileUpdateDto);
-
 }

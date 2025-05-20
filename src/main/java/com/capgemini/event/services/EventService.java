@@ -3,7 +3,6 @@ package com.capgemini.event.services;
 import com.capgemini.event.entities.Event;
 import java.util.List;
 
-//service
 public interface EventService {
     Event createEvent(Event event, Long organizerId);
 
