@@ -2,6 +2,8 @@ package com.capgemini.event.entities;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -34,6 +36,7 @@ public class Query {
 
 	@OneToOne
 	@JoinColumn(name = "response_id")
+	@JsonManagedReference
 	private Response response;
 
 	@ManyToOne(optional = false)

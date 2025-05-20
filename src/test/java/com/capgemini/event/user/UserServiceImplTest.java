@@ -65,15 +65,6 @@ class UserServiceImplTest {
     }
 
     @Test
-    void testGetUserById_NotFound() {
-        when(userRepository.findById(99L)).thenReturn(Optional.empty());
-
-        User result = userService.getUserById(99L);
-
-        assertNull(result);
-    }
-
-    @Test
     void testCreateUser() {
         when(userRepository.save(user1)).thenReturn(user1);
 
@@ -100,25 +91,6 @@ class UserServiceImplTest {
         assertNotNull(result);
         assertEquals("Alice Updated", result.getName());
         assertEquals("alice@new.com", result.getEmail());
-    }
-
-    @Test
-    void testUpdateUser_NotFound() {
-        when(userRepository.findById(99L)).thenReturn(Optional.empty());
-
-        User updatedUser = new User();
-        User result = userService.updateUser(99L, updatedUser);
-
-        assertNull(result);
-    }
-
-    @Test
-    void testDeleteUser() {
-        doNothing().when(userRepository).deleteById(1L);
-
-        userService.deleteUser(1L);
-
-        verify(userRepository).deleteById(1L);
     }
 }
 

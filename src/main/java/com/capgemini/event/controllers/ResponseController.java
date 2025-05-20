@@ -60,14 +60,14 @@ public class ResponseController {
 		}
 	}
 
-	@PostMapping
-	public ResponseEntity<Response> createResponse(@Valid @RequestBody Response response, BindingResult bindingResult) {
+	@PostMapping("/query/{queryId}")
+	public ResponseEntity<Response> createResponse(@Valid @RequestBody Response response, @PathVariable Long queryId, BindingResult bindingResult) {
 		log.info("Creating new response: {}", response);
 		if (bindingResult.hasErrors()) {
 			log.error("Validation errors while creating response: {}", bindingResult.getAllErrors());
 			throw new IllegalArgumentException(bindingResult.getFieldErrors().toString());
 		}
-		Response created = responseService.createResponse(response);
+		Response created = responseService.createResponse(response, queryId);
 		log.debug("Response created: {}", created);
 		return ResponseEntity.status(HttpStatus.CREATED).body(created);
 	}

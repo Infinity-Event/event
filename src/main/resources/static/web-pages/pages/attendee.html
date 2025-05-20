@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Available Events - EventSys Attendee</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+    <style>
+      body {
+        padding-top: 56px;
+        background-color: #f8f9fa;
+        font-family: sans-serif;
+      }
+      .sidebar {
+        position: fixed;
+        top: 56px;
+        bottom: 0;
+        left: 0;
+        z-index: 100;
+        padding: 20px 0;
+        box-shadow: inset -1px 0 0 rgba(0, 0, 0, 0.1);
+        background-color: #212529;
+        width: 220px;
+      }
+      .sidebar .nav-link {
+        font-weight: 500;
+        color: rgba(255, 255, 255, 0.7);
+        padding: 0.75rem 1.25rem;
+        display: flex;
+        align-items: center;
+      }
+      .sidebar .nav-link .bi {
+        margin-right: 10px;
+        font-size: 1.1rem;
+        width: 20px;
+        text-align: center;
+      }
+      .sidebar .nav-link:hover {
+        color: #fff;
+        background-color: #343a40;
+      }
+      .sidebar .nav-link.active {
+        color: #fff;
+        background-color: #0a58ca;
+      }
+      .main-content {
+        margin-left: 220px;
+        padding: 20px;
+        min-height: calc(100vh - 56px);
+        display: flex;
+        flex-direction: column;
+      }
+      .navbar {
+        box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+        z-index: 101;
+      }
+      .navbar-brand img {
+        height: 53px;
+        margin-right: 8px;
+        vertical-align: middle;
+      }
+      .navbar-brand {
+        font-weight: bold;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        padding-left: 1rem;
+      }
+      .event-card {
+        background: white;
+        border: 1px solid #e9ecef;
+        border-radius: 6px;
+        margin-bottom: 15px;
+        transition: box-shadow 0.15s ease-in-out;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+      }
+      .event-header {
+        padding: 10px 15px;
+        border-bottom: 1px solid #e9ecef;
+        background-color: #fff;
+      }
+      .event-title {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 600;
+      }
+      .event-body {
+        padding: 15px;
+        flex-grow: 1;
+      }
+      .event-detail {
+        display: flex;
+        align-items: center;
+        margin-bottom: 6px;
+        font-size: 0.85rem;
+        color: #495057;
+      }
+      .event-detail i {
+        width: 16px;
+        margin-right: 8px;
+        color: #6c757d;
+        flex-shrink: 0;
+      }
+      .event-footer {
+        background: #fff;
+        padding: 10px 15px;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        border-top: 1px solid #e9ecef;
+        margin-top: auto;
+      }
+      .event-footer .btn {
+        font-size: 0.8rem;
+        padding: 0.25rem 0.6rem;
+      }
+      .event-footer .btn i {
+        margin-right: 4px;
+      }
+      .search-container {
+        max-width: 400px;
+        min-width: 200px;
+        flex-grow: 1;
+      }
+      .filter-container {
+        max-width: 250px;
+      }
+      .sort-container {
+        max-width: 250px;
+      }
+      .filter-controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        align-items: flex-end;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="attendee.html">
+          EventSys Attendee
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#topNav"
+          aria-controls="topNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="topNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <span class="navbar-text me-3" id="attendee_name_display">
+                Welcome, Attendee!
+              </span>
+            </li>
+            <li class="nav-item">
+              <button class="btn btn-outline-light btn-sm" id="logoutBtn">
+                Logout
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+        <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+          <div class="position-sticky pt-3">
+            <ul class="nav flex-column">
+              <li class="nav-item">
+                <a
+                  class="nav-link active"
+                  aria-current="page"
+                  href="attendee.html"
+                >
+                  <i class="bi bi-calendar3-event"></i>
+                  Available Events
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="attendee_myregs.html">
+                  <i class="bi bi-person-check-fill"></i>
+                  My Registrations
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="attendee_past.html">
+                  <i class="bi bi-calendar-check"></i>
+                  Past Events
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="attendee_profile.html">
+                  <i class="bi bi-person-circle"></i>
+                  Profile
+                </a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+          <div
+            class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
+          >
+            <h1 class="h2">Available Events</h1>
+          </div>
+          <div class="container mt-4">
+            <div id="eventCards" class="row g-4">
+              <!-- Cards will be dynamically inserted here -->
+            </div>
+          </div>
+          <div class="modal fade" id="ticketModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <!-- Ticket Content -->
+          <div class="card border-light-subtle">
+            <div
+              class="card-header d-flex justify-content-between align-items-center bg-light"
+            >
+              <h5 class="mb-0" id="event-title">Summer Music Festival 2023</h5>
+              <span class="badge bg-success rounded-pill" >Active</span>
+            </div>
+
+            <div class="card-body">
+              <div class="mb-3">
+                <p class="mb-1">
+                  Registered to: <strong id="attendee-name">John Doe</strong>
+                </p>
+                <p class="mb-1">
+                  Ticket ID: <strong class="text-primary" id="ticket-id">#TKT-548962</strong>
+                </p>
+              </div>
+
+              <div class="row">
+                <div class="col-8">
+                  <div class="border-top border-bottom py-2">
+                    <p class="mb-1" data-date="August 25, 2023">
+                      <small class="text-muted">Date:</small><br /><span id="event-date">August 25, 2023</span>
+                    </p>
+                    <p class="mb-0" data-venue="Central Park, NYC">
+                      <small class="text-muted">Venue:</small><br /><span id="event-venue">Central Park, NYC</span>
+                    </p>
+                  </div>
+                </div>
+
+                <div class="col-4 text-center">
+                  <div id="qr-code" class="bg-white rounded mb-3"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Modal Footer with Close Button -->
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="downloadPdfBtn">
+              Download
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+              id="close-btn"
+              onclick="window.location.reload()"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+          <footer
+            class="mt-auto py-3 bg-light text-muted text-center border-top"
+          >
+            <div class="container">
+              &copy; 2024 EventSys. Browse and enjoy events!
+            </div>
+          </footer>
+        </main>
+      </div>
+    </div>
+
+    <div class="modal fade" id="registrationModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalTitle">Registration Status</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body" id="modalBody">
+            Processing registration...
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="../js/script.js"></script>
+    <script>
+      const baseApiUrl = "http://localhost:8080/api";
+      const eventsContainer = document.getElementById("events_container");
+      const searchInput = document.getElementById("eventSearchInput");
+      const categoryFilter = document.getElementById("categoryFilter");
+      const sortFilter = document.getElementById("sortFilter");
+      const clearFiltersBtn = document.getElementById("clearFiltersBtn");
+      let userId = getUserId();
+      let registrationModal;
+      let registrationCount = [];
+      let myRegistrations = [];
+      let allUpcomingEvents = [];
+      let allCategories = new Set();
+
+      document.addEventListener("DOMContentLoaded", function () {
+        // const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser'));
+        if (getUserType() === "NORMAL") {
+          userId = getUserId();
+          const nameDisplay = document.getElementById("attendee_name_display");
+          if (nameDisplay) {
+            nameDisplay.textContent = `Welcome, ${getUserName()}!`;
+          }
+
+          registrationModal = new bootstrap.Modal(
+            document.getElementById("registrationModal")
+          );
+          fetchEventDetails();
+        } else {
+          alert("Access denied. Please login as an attendee.");
+          window.location.href = "../login.html";
+        }
+      });
+
+      document
+        .getElementById("logoutBtn")
+        .addEventListener("click", function () {
+          localStorage.removeItem("token");
+          window.location.href = "../login.html";
+        });
+
+        fetch(`${baseApiUrl}/registrations/my-events/users/${userId}`,{
+            method:"GET",
+            headers:{
+                "Content-Type": "application/json",
+                Authorization: getAuthorization(),
+            }
+        })
+        .then(res=>res.json())
+        .then(data=>{
+            myRegistrations= data;
+        })
+
+      async function fetchEventDetails() {
+        try {
+          const response = await fetch(`${baseApiUrl}/events`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: getAuthorization(), // Assuming this adds your Bearer token
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const event = await response.json();
+          const upcomingEvents = filterAndSortEvents(event);
+
+          renderEventCards(upcomingEvents);
+        } catch (error) {
+          console.error("Failed to fetch event details:", error);
+        }
+      }
+
+      function loadData(processData) {
+        fetch(`${baseApiUrl}/registrations/count`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: getAuthorization(),
+          },
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            data.forEach((item) => {
+            });
+            registrationCount = data;
+          });
+      }
+      loadData((registrationCount) => {
+        console.log("Data received:", registrationCount); 
+});
+      function filterAndSortEvents(events) {
+        const now = new Date();
+        // Normalize today's date to midnight for fair comparison
+        const today = new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate()
+        );
+        const filteredSortedEvents = events
+          .filter((event) => {
+            const eventDate = new Date(event.date);
+            return eventDate >= today; // event date is before or equal to today
+          })
+          .sort((a, b) => new Date(a.date) - new Date(b.date)); // sort ascending
+
+        return filteredSortedEvents;
+      }
+
+      function renderEventCards(events) {
+        const container = document.getElementById("eventCards");
+        container.innerHTML = ""; // Clear previous
+
+        if (!events.length) {
+          container.innerHTML = `<div class="col"><p>No upcoming events found.</p></div>`;
+          return;
+        }
+
+        events.forEach((event) => {
+            loadData();
+            const isRegistered = myRegistrations.some(reg => {
+                const match = reg.title === event.title;
+                return match;
+            });
+            const regCount = registrationCount.find(e => e.eventId === event.eventId);
+            const count = regCount ? regCount.count : 0;
+            const isFull = event.capacity && event.registrationCount >= event.capacity;
+
+                let actionButton = '';
+                if (isRegistered) {
+                    actionButton = `<button class="btn btn-sm btn-success w-45"disabled>
+                                    <i class="bi bi-check-circle-fill me-1"></i> Registered
+                                  </button>
+                                  <button type="button" class="btn btn-sm btn-primary w-45" data-bs-toggle="modal" data-bs-target="#ticketModal">
+                                  <i class="bi bi-eye"></i>  View Ticket
+                                  </button>
+
+                                  `;
+                } else if (isFull) {
+                    actionButton = `<button class="btn btn-sm btn-secondary w-100" disabled>
+                                    <i class="bi bi-slash-circle-fill me-1"></i> Full
+                                  </button>`;
+                } else {
+                    actionButton = `<button class="btn btn-sm btn-primary register-btn w-100" data-event-id="${event.eventId}">
+                                    <i class="bi bi-pencil-square me-1"></i> Register
+                                  </button>`;
+                }
+          const card = document.createElement("div");
+          card.className = "col-md-4";
+
+          card.innerHTML = `
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h5 class="card-title">${event.title}</h5>
+          <p class="card-text">${event.description}</p>
+          <p class="card-text">
+            <strong>Date:</strong> ${event.date} <br>
+            <strong>Time:</strong> ${event.time} <br>
+            <strong>Location:</strong> ${event.location}
+          </p>
+        </div>
+        <div class="card-footer bg-transparent border-top-0">
+          ${actionButton}
+        </div>
+      </div>
+    `;
+
+          container.appendChild(card);
+
+          
+        });
+        document.querySelectorAll(".register-btn").forEach((btn) => {
+                    btn.addEventListener("click", () => {
+                    const id = btn.getAttribute("data-event-id");
+                    console.log("id", id);
+                    register(id);
+                });
+            });
+      }
+
+      function register(id) {
+        const reg ={
+            regDate: new Date().toLocaleDateString('en-CA'),
+            status: "Successfully Registered"
+        }
+        const ticket = {
+            date:new Date().toLocaleDateString('en-CA')
+        }
+        if (confirm("Are you sure you want to register for this event?")) {
+        fetch(`${baseApiUrl}/registrations/event/${id}/user/${userId}`, {
+            method: "POST",
+            headers: {
+                "Content-Type":"application/json",
+                Authorization: getAuthorization(),
+        },
+        body: JSON.stringify(reg),
+      })
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error("Failed to register event.");
+          }
+          return res.json();
+          
+        })
+        .then((data)=>{
+            return fetch(`${baseApiUrl}/tickets/events/${id}/users/${userId}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: getAuthorization(),
+            },
+            body: JSON.stringify(ticket),
+            });
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("Second fetch done:", data);
+            alert("Registered successfully!");
+            location.reload();
+        })
+        .catch((err) => console.error("Error in registering in the event:", err));
+    }
+  }
+  const { jsPDF } = window.jspdf;
+    // Generate QR Code when modal is shown
+    document.getElementById('ticketModal').addEventListener('shown.bs.modal', () => {
+        
+        new QRCode(document.getElementById("qr-code"), {
+            text: "TKT-548962",
+            width: 130,
+            height: 130
+        });
+    },
+    );
+
+    function generatePDF() {
+        const doc = new window.jspdf.jsPDF({
+            orientation: "portrait",
+            unit: "mm",
+            format: "a5"
+        });
+
+        const pageWidth = doc.internal.pageSize.getWidth();
+
+        const eventName = document.querySelector('.card-header h5').textContent;
+        const attendeeName = document.getElementById('attendee-name').textContent;
+        const ticketId = document.querySelector('.card-body .text-primary').textContent;
+
+        const dateElement = document.querySelector('.col-8 p:nth-child(1)');
+        const date = dateElement.getAttribute('data-date');
+
+        const venueElement = document.querySelector('.col-8 p:nth-child(2)');
+        const venue = venueElement.getAttribute('data-venue');
+
+        doc.setFontSize(18);
+        doc.text(eventName, pageWidth / 2, 20, { align: "center" });
+
+        doc.setFontSize(12);
+        doc.text(`Registered to: ${attendeeName}`, pageWidth / 2, 30, { align: "center" });
+        doc.text(`Ticket ID: ${ticketId}, pageWidth` / 2, 40, { align: "center" });
+        doc.text(`Date: ${date}`, pageWidth / 2, 50, { align: "center" });
+        doc.text(`Venue: ${venue}`, pageWidth / 2, 60, { align: "center" });
+
+        const qrCodeCanvas = document.querySelector('#qr-code canvas');
+        let qrCodeDataURL = null;
+        if (qrCodeCanvas) {
+            qrCodeDataURL = qrCodeCanvas.toDataURL();
+        } else {
+            const qrCodeImg = document.querySelector('#qr-code img');
+            if (qrCodeImg) {
+                qrCodeDataURL = qrCodeImg.src;
+            }
+        }
+        if (qrCodeDataURL) {
+            const qrWidth = 50;
+            const qrX = (pageWidth - qrWidth) / 2;
+            doc.addImage(qrCodeDataURL, 'PNG', qrX, 70, qrWidth, qrWidth);
+        }
+
+        doc.save('event-ticket.pdf');
+    }
+
+    // Attach download handler
+    document.getElementById('downloadPdfBtn').addEventListener('click', generatePDF);
+    </script>
+  </body>
+</html>

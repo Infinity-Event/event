@@ -1,5 +1,8 @@
 package com.capgemini.event.controllers;
 
+import com.capgemini.event.dto.MyRegistrationDto;
+import com.capgemini.event.dto.PastEventDto;
+import com.capgemini.event.dto.RegistrationCountDto;
 import com.capgemini.event.entities.Registration;
 import com.capgemini.event.services.RegistrationService;
 
@@ -28,7 +31,7 @@ public class RegistrationRestController {
 	public RegistrationRestController(RegistrationService registrationService) {
 		this.registrationService = registrationService;
 	}
-	
+
 	@GetMapping
 	public ResponseEntity<List<Registration>> getAllRegistrations() {
 		log.info("Received request to fetch all registrations");
@@ -48,10 +51,43 @@ public class RegistrationRestController {
 		return ResponseEntity.ok(registration);
 	}
 
+	@GetMapping("/users/{userId}")
+	public ResponseEntity<List<Registration>> getRegistrationByUserId(@PathVariable Long userId) {
+		log.info("Received request to fetch registrations for user ID: {}", userId);
+		List<Registration> registrations = registrationService.getRegistrationByUserId(userId);
+
+		log.debug("Returning {} registrations", registrations.size());
+		return ResponseEntity.ok(registrations);
+	}
+
+	@GetMapping("/my-events/users/{userId}")
+	public ResponseEntity<List<MyRegistrationDto>> getMyRegistrations(@PathVariable Long userId) {
+		log.info("Received request to fetch registrations for user ID: {}", userId);
+		List<MyRegistrationDto> registrations = registrationService.getMyRegistration(userId);
+
+		log.debug("Returning {} registrations", registrations.size());
+		return ResponseEntity.ok(registrations);
+	}
+
+	@GetMapping("/events/users/{userId}")
+	public ResponseEntity<List<PastEventDto>> getPastEventRegistration(@PathVariable Long userId) {
+		log.info("Received request to fetch registrations for user ID: {}", userId);
+		List<PastEventDto> registrations = registrationService.getPastEventRegistration(userId);
+		log.debug("Returning {} registrations", registrations.size());
+		return ResponseEntity.ok(registrations);
+	}
+
+	@GetMapping("/count")
+	public ResponseEntity<List<RegistrationCountDto>> getRegistrationCountPerEvent() {
+		log.info("Received request to fetch registration count per event");
+		List<RegistrationCountDto> registrations = registrationService.getRegistrationCountPerEvent();
+		return ResponseEntity.ok(registrations);
+	}
+
 	@PostMapping("event/{eventId}/user/{userId}")
 	public ResponseEntity<Registration> createRegistration(@Valid @RequestBody Registration registration,
 			BindingResult bindingResult, @PathVariable Long eventId, @PathVariable Long userId) {
-		
+
 		log.info("Received request to create registration: {}", registration);
 		if (bindingResult.hasErrors()) {
 			throw new IllegalArgumentException(bindingResult.getFieldErrors().toString());

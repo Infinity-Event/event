@@ -32,16 +32,18 @@ public class EventServiceImpl implements EventService {
         Optional<User> organizerOptional = userRepo.findById(organizerId);
         if (organizerOptional.isEmpty()) {
             log.warn("Failed to create event: Organizer not found with ID: {}", organizerId);
-            throw new UserNotFoundException("Organizer not found with Id: "+organizerId);
+            throw new UserNotFoundException("Organizer not found with Id: " + organizerId);
         }
         User organizer = organizerOptional.get();
         if (organizer.getType() != UserType.ORGANIZER) {
-            log.warn("Failed to create event: User with ID {} is not an ORGANIZER. Actual type: {}", organizerId, organizer.getType());
+            log.warn("Failed to create event: User with ID {} is not an ORGANIZER. Actual type: {}", organizerId,
+                    organizer.getType());
             throw new UserNotFoundException("Organizer not found");
         }
         event.setOrganizer(organizer);
         Event savedEvent = eventRepo.save(event);
-        log.info("Successfully created event with ID: {} and title: '{}'", savedEvent.getEventId(), savedEvent.getTitle());
+        log.info("Successfully created event with ID: {} and title: '{}'", savedEvent.getEventId(),
+                savedEvent.getTitle());
         return savedEvent;
     }
 
@@ -51,7 +53,7 @@ public class EventServiceImpl implements EventService {
         Optional<Event> eventOptional = eventRepo.findById(eventId);
         if (eventOptional.isEmpty()) {
             log.warn("Event not found with ID: {}", eventId);
-            throw new EventNotFoundException("Event with id "+eventId+" not found");
+            throw new EventNotFoundException("Event with id " + eventId + " not found");
         }
         Event event = eventOptional.get();
         log.debug("Found event: {}", event.getTitle());
@@ -85,9 +87,10 @@ public class EventServiceImpl implements EventService {
         existingEvent.setLocation(eventDetails.getLocation());
         existingEvent.setCapacity(eventDetails.getCapacity());
         existingEvent.setCategory(eventDetails.getCategory());
-        
+
         Event updatedEvent = eventRepo.save(existingEvent);
-        log.info("Successfully updated event with ID: {}. New title: '{}'", updatedEvent.getEventId(), updatedEvent.getTitle());
+        log.info("Successfully updated event with ID: {}. New title: '{}'", updatedEvent.getEventId(),
+                updatedEvent.getTitle());
         return updatedEvent;
     }
 
@@ -98,21 +101,29 @@ public class EventServiceImpl implements EventService {
         Optional<Event> eventOptional = eventRepo.findById(eventId);
         if (eventOptional.isEmpty()) {
             log.warn("Failed to patch event: Event not found with ID: {}", eventId);
-            throw new EventNotFoundException("Event with id "+eventId+" not found");
+            throw new EventNotFoundException("Event with id " + eventId + " not found");
         }
         Event existingEvent = eventOptional.get();
         log.debug("Patching event '{}'. Original details: {}", existingEvent.getTitle(), existingEvent);
         log.debug("Partial details for patch: {}", partialEventDetails);
 
-        if (partialEventDetails.getTitle() != null) existingEvent.setTitle(partialEventDetails.getTitle());
-        else if (partialEventDetails.getDescription() != null) existingEvent.setDescription(partialEventDetails.getDescription());
-        else if (partialEventDetails.getDate() != null) existingEvent.setDate(partialEventDetails.getDate());
-        else if (partialEventDetails.getTime() != null) existingEvent.setTime(partialEventDetails.getTime());
-        else if (partialEventDetails.getLocation() != null) existingEvent.setLocation(partialEventDetails.getLocation());
-        else if (partialEventDetails.getCapacity() != null) existingEvent.setCapacity(partialEventDetails.getCapacity());
-        else if (partialEventDetails.getCategory() != null) existingEvent.setCategory(partialEventDetails.getCategory());
+        if (partialEventDetails.getTitle() != null)
+            existingEvent.setTitle(partialEventDetails.getTitle());
+        else if (partialEventDetails.getDescription() != null)
+            existingEvent.setDescription(partialEventDetails.getDescription());
+        else if (partialEventDetails.getDate() != null)
+            existingEvent.setDate(partialEventDetails.getDate());
+        else if (partialEventDetails.getTime() != null)
+            existingEvent.setTime(partialEventDetails.getTime());
+        else if (partialEventDetails.getLocation() != null)
+            existingEvent.setLocation(partialEventDetails.getLocation());
+        else if (partialEventDetails.getCapacity() != null)
+            existingEvent.setCapacity(partialEventDetails.getCapacity());
+        else if (partialEventDetails.getCategory() != null)
+            existingEvent.setCategory(partialEventDetails.getCategory());
         Event patchedEvent = eventRepo.save(existingEvent);
-        log.info("Successfully patched event with ID: {}. Current title: '{}'", patchedEvent.getEventId(), patchedEvent.getTitle());
+        log.info("Successfully patched event with ID: {}. Current title: '{}'", patchedEvent.getEventId(),
+                patchedEvent.getTitle());
         return patchedEvent;
     }
 
@@ -139,6 +150,19 @@ public class EventServiceImpl implements EventService {
         }
         List<Event> events = eventRepo.findByOrganizer(organizerOptional.get());
         log.debug("Found {} events for organizer ID: {}", events.size(), organizerId);
+        return events;
+    }
+
+    @Override
+    public List<Event> getEventsByOrganizerEmail(String organizerEmail) {
+        log.debug("Fetching events for organizer email: {}", organizerEmail);
+        Optional<User> organizerOptional = userRepo.findByEmail(organizerEmail);
+        if (organizerOptional.isEmpty()) {
+            log.warn("Cannot fetch events by organizer: Organizer not found with email: {}", organizerEmail);
+            return Collections.emptyList();
+        }
+        List<Event> events = eventRepo.findByOrganizer(organizerOptional.get());
+        log.debug("Found {} events for organizer email: {}", events.size(), organizerEmail);
         return events;
     }
 }

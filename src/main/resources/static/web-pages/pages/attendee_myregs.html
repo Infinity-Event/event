@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Registrations - EventSys</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        body {
+            padding-top: 56px;
+            background-color: #f8f9fa;
+            font-family: sans-serif;
+        }
+        .sidebar {
+            position: fixed;
+            top: 56px;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            padding: 20px 0;
+            box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+            background-color: #212529;
+            width: 220px;
+        }
+        .sidebar .nav-link {
+            font-weight: 500;
+            color: rgba(255, 255, 255, .7);
+            padding: .75rem 1.25rem;
+            display: flex;
+            align-items: center;
+        }
+        .sidebar .nav-link .bi {
+            margin-right: 10px;
+            font-size: 1.1rem;
+            width: 20px;
+            text-align: center;
+        }
+        .sidebar .nav-link:hover {
+            color: #fff;
+            background-color: #343a40;
+        }
+        .sidebar .nav-link.active {
+            color: #fff;
+            background-color: #0a58ca;
+        }
+        .main-content {
+            margin-left: 220px;
+            padding: 20px;
+            min-height: calc(100vh - 56px);
+            display: flex;
+            flex-direction: column;
+        }
+        .navbar {
+            box-shadow: 0 2px 3px rgba(0,0,0,.1);
+            z-index: 101;
+        }
+        .navbar-brand img {
+            height: 53px;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            padding-left: 1rem;
+        }
+        .list-group {
+            border: none;
+            box-shadow: none;
+        }
+        .list-group-item {
+            border: none;
+            border-bottom: 1px solid #e9ecef;
+            padding: 1rem 0.5rem;
+            background-color: transparent;
+        }
+        .list-group-item:last-child {
+            border-bottom: none;
+        }
+        .list-group-item h5 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem !important;
+        }
+        .list-group-item small {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+        .list-group-item small i {
+            margin-right: 4px;
+        }
+        .list-group-item .btn {
+            font-size: 0.8rem;
+            padding: 0.25rem 0.6rem;
+        }
+        .list-group-item .btn i {
+            margin-right: 4px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+         <div class="container-fluid">
+            <a class="navbar-brand" href="attendee.html">
+                EventSys Attendee
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#topNav" aria-controls="topNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="topNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <span class="navbar-text me-3" id="user_name_display">
+                            Welcome, Attendee!
+                        </span>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-outline-light btn-sm" id="logoutBtn">Logout</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+                 <div class="position-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="attendee.html">
+                                <i class="bi bi-calendar3-event"></i>
+                                Available Events
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="attendee_myregs.html">
+                                <i class="bi bi-person-check-fill"></i>
+                                My Registrations
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="attendee_past.html">
+                                <i class="bi bi-calendar-check"></i>
+                                Past Events
+                            </a>
+                        </li>
+                         <li class="nav-item">
+                            <a class="nav-link" href="attendee_profile.html">
+                                <i class="bi bi-person-circle"></i>
+                                Profile
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                     <h1 class="h2">My Registrations</h1>
+                </div>
+
+                <div id="my_registrations_container">
+                    <div class="text-center py-3">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2">Loading your registered events...</p>
+                    </div>
+                </div>
+
+                 <footer class="mt-auto py-3 bg-light text-muted text-center border-top">
+                    <div class="container">
+                        &copy; 2024 EventSys. Manage your registrations.
+                    </div>
+                </footer>
+            </main>
+        </div>
+    </div>
+    <script src="../js/script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const baseApiUrl = 'http://localhost:8080/api';
+        let userId = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser'));
+            if (getUserType() === 'NORMAL') {
+                userId = getUserId();
+                const nameDisplay = document.getElementById('user_name_display');
+                if (nameDisplay) {
+                    nameDisplay.textContent = `Welcome, ${getUserName()}!`;
+                }
+               loadRegistrations();
+            } else {
+                alert('Access denied. Please login as an attendee.');
+                window.location.href = '../login.html';
+            }
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            sessionStorage.removeItem('loggedInUser');
+            window.location.href = '../login.html';
+        });
+
+        async function loadRegistrations() {
+            const container = document.getElementById('my_registrations_container');
+            container.innerHTML = `
+                <div class="text-center py-3">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">Loading your upcoming registered events...</p>
+                </div>`;
+
+            if (!userId) {
+                container.innerHTML = '<div class="alert alert-danger">Cannot load registrations: User ID not found.</div>';
+                return;
+            }
+
+            try {
+                // Get current user's registrations
+                const userRegsResponse = await fetch(`${baseApiUrl}/registrations/my-events/users/${userId}`,{
+                    method: 'GET',
+                    headers:{
+                        'Content-Type': 'application/json',
+                        'Authorization': getAuthorization()
+                    }
+                });
+                if (!userRegsResponse.ok) throw new Error('Failed to fetch registrations');
+                const userRegistrations = await userRegsResponse.json();
+
+                if (userRegistrations.length === 0) {
+                    container.innerHTML = '<div class="alert alert-info">You have not registered for any upcoming events yet. Go to "Available Events" to register.</div>';
+                    return;
+                }
+
+                // Now display the events
+                displayRegisteredEvents(userRegistrations);
+            } catch (error) {
+                console.error('Error loading registrations:', error);
+                container.innerHTML = '<div class="alert alert-danger">Error loading your registrations. Please try again later.</div>';
+            }
+        }
+
+        function displayRegisteredEvents(userRegistrations) {
+            console.log(userRegistrations);
+            const container = document.getElementById('my_registrations_container');
+            container.innerHTML = '';
+            const listGroup = document.createElement('ul');
+            listGroup.className = 'list-group list-group-flush';
+
+            userRegistrations.forEach(event => {
+                const listItem = document.createElement('li');
+                listItem.className = `list-group-item d-flex flex-column flex-sm-row justify-content-between align-items-sm-center`;
+
+                listItem.innerHTML = `
+                    <div class="mb-2 mb-sm-0">
+                        <h5 class="mb-1">${event.title || 'Untitled Event'}</h5>
+                        <small>
+                            <i class="bi bi-calendar-date"></i> ${event.date || 'N/A'} |
+                            <i class="bi bi-clock"></i> ${event.time || 'N/A'} |
+                            <i class="bi bi-geo-alt"></i> ${event.location || 'N/A'} |
+                            By: ${event.name}
+                        </small>
+                        <br><small>Registered on: ${event.regDate || 'N/A'}</small>
+                    </div>
+                    <div class="ms-sm-3 mt-2 mt-sm-0">
+                        <button class="btn btn-sm btn-outline-danger cancelBtn" data-reg-id="${event.regId}" title="Cancel Registration">
+                           <i class="bi bi-x-circle"></i> Cancel
+                        </button>
+                    </div>
+                `;
+                listGroup.appendChild(listItem);
+            });
+
+            if (listGroup.children.length === 0) {
+                container.innerHTML = '<div class="alert alert-warning">Found registrations, but could not display upcoming event details.</div>';
+            } else {
+                container.appendChild(listGroup);
+            }
+
+            container.addEventListener('click', function(e) {
+                const cancelBtn = e.target.closest('.cancelBtn');
+                if (cancelBtn) {
+                    const regId = cancelBtn.getAttribute('data-reg-id');
+                    if (regId) {
+                        cancelRegistration(regId);
+                    } else {
+                        alert("Could not cancel registration: ID missing.");
+                    }
+                }
+            });
+        }
+
+        async function cancelRegistration(registrationId) {
+            try {
+                const response = await fetch(`${baseApiUrl}/registrations/${registrationId}`, {
+                    method: 'DELETE',
+                    headers:{
+                        Authorization:getAuthorization()
+                    }
+                });
+
+                if (response.ok) {
+                    alert('Registration cancelled successfully');
+                    loadRegistrations();
+                } else {
+                    throw new Error('Failed to cancel registration');
+                }
+            } catch (error) {
+                console.error('Error cancelling registration:', error);
+                alert('Failed to cancel registration. Please try again.');
+            }
+        }
+    </script>
+</body>
+</html>

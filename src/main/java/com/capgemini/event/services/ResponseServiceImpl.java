@@ -44,7 +44,11 @@ public class ResponseServiceImpl implements ResponseService {
     }
 
     @Override
-    public Response createResponse(Response response) {
+    public Response createResponse(Response response, Long queryId) {
+    	Query query = queryRepo.findById(queryId)
+    			.orElseThrow(()-> new QueryNotFoundException("Query not found"));
+    	query.setResponse(response);
+    	response.setQuery(query);
         log.info("Creating new response for Query ID: {}", response.getQuery().getQueryId());
         Response savedResponse = responseRepo.save(response);
         log.debug("Response saved with ID: {}", savedResponse.getResponseId());

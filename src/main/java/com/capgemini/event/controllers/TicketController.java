@@ -50,14 +50,15 @@ public class TicketController {
 		return ResponseEntity.status(HttpStatus.OK).body(ticket);
 	}
 
-	@PostMapping
-	public ResponseEntity<Ticket> createTicket(@Valid @RequestBody Ticket ticket, BindingResult bindingResult) {
+	@PostMapping("/events/{eventId}/users/{userId}")
+	public ResponseEntity<Ticket> createTicket(@Valid @RequestBody Ticket ticket, @PathVariable Long eventId,
+			@PathVariable Long userId, BindingResult bindingResult) {
 		log.info("POST /api/tickets - Creating new ticket");
 		if (bindingResult.hasErrors()) {
 			log.error("Validation failed for ticket: {}", bindingResult.getFieldErrors());
 			throw new IllegalArgumentException(bindingResult.getFieldErrors().toString());
 		}
-		Ticket created = ticketService.createTicket(ticket);
+		Ticket created = ticketService.createTicket(ticket, eventId, userId);
 		log.debug("Created ticket: {}", created);
 		return ResponseEntity.status(HttpStatus.CREATED).body(created);
 	}

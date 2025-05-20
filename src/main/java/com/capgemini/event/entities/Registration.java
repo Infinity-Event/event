@@ -4,7 +4,6 @@ import java.time.LocalDate;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -23,12 +22,12 @@ public class Registration {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "reg_id")
 	private Long regId;
-  
-	@ManyToOne(fetch = FetchType.LAZY, optional =false)
+
+	@ManyToOne(optional = false)
 	@JoinColumn(name = "user_id")
 	private User user;
 
-	@ManyToOne(fetch = FetchType.LAZY, optional=false)
+	@ManyToOne(optional = false)
 	@JoinColumn(name = "event_id")
 	private Event event;
 
@@ -36,9 +35,9 @@ public class Registration {
 	@Column(name = "reg_date")
 	private LocalDate regDate;
 
-	@NotBlank(message="Status must not be blank")
-	@Column(name ="status")
-	private String status; 
+	@NotBlank(message = "Status must not be blank")
+	@Column(name = "status")
+	private String status;
 
 	public Registration() {
 	}
@@ -50,7 +49,6 @@ public class Registration {
 		this.user = user;
 		this.event = event;
 	}
-
 
 	public Long getRegId() {
 		return regId;

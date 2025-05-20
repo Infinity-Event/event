@@ -2,6 +2,9 @@ package com.capgemini.event.entities;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -31,7 +34,8 @@ public class Response {
 	@Column(name = "response_date")
 	private LocalDate responseDate;
 	
-	@OneToOne(mappedBy = "response")
+	@OneToOne(mappedBy = "response", cascade = {CascadeType.PERSIST,CascadeType.MERGE})
+	@JsonBackReference
 	private Query query;
 
 	public Response() {

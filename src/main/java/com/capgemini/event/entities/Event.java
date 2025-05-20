@@ -67,9 +67,8 @@ public class Event {
     public Event() {
     }
 
-
     public Event(String title, String description, LocalDate date, LocalTime time, String location, Integer capacity,
-                 Category category, User organizer) {
+            Category category) {
         this.title = title;
         this.description = description;
         this.date = date;
@@ -77,7 +76,6 @@ public class Event {
         this.location = location;
         this.capacity = capacity;
         this.category = category;
-        this.organizer = organizer;
     }
 
     public Long getEventId() {

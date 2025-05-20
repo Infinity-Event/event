@@ -1,5 +1,8 @@
 package com.capgemini.event.services;
 
+import com.capgemini.event.dto.MyRegistrationDto;
+import com.capgemini.event.dto.PastEventDto;
+import com.capgemini.event.dto.RegistrationCountDto;
 import com.capgemini.event.entities.Event;
 import com.capgemini.event.entities.Registration;
 import com.capgemini.event.entities.User;
@@ -128,5 +131,44 @@ public class RegistrationServiceImpl implements RegistrationService {
 		List<Registration> registrations = registrationRepo.findByEvent(eventOptional.get());
 		log.debug("Found {} registrations for event ID: {}", registrations.size(), eventId);
 		return registrations;
+	}
+
+	@Override
+	public List<Registration> getRegistrationByUserId(Long userId) {
+		log.info("Fetching registrations for user ID: {}", userId);
+		Optional<User> userOptional = userRepo.findById(userId);
+		if (userOptional.isEmpty()) {
+			log.warn("User not found with ID: {}", userId);
+			throw new UserNotFoundException("User Not Found!");
+		}
+		return registrationRepo.findByUserUserId(userId);
+	}
+
+	@Override
+	public List<PastEventDto> getPastEventRegistration(Long userId) {
+		log.info("Fetching past event registrations for User ID: {}", userId);
+		Optional<User> userOptional = userRepo.findById(userId);
+		if (!userOptional.isPresent()) {
+			log.warn("User not found with ID: {}", userId);
+			throw new UserNotFoundException("User Not Found!");
+		}
+		return registrationRepo.findPastRegistrations(userId);
+	}
+
+	@Override
+	public List<MyRegistrationDto> getMyRegistration(Long userId) {
+		log.info("Fetching my events registrations for User ID: {}", userId);
+		Optional<User> userOptional = userRepo.findById(userId);
+		if (!userOptional.isPresent()) {
+			log.warn("User not found with ID: {}", userId);
+			throw new UserNotFoundException("User Not Found!");
+		}
+		return registrationRepo.findMyRegistrations(userId);
+	}
+
+	@Override
+	public List<RegistrationCountDto> getRegistrationCountPerEvent() {
+		log.info("Fetching events details as per count of registration");
+		return registrationRepo.getRegistrationCountPerEvent();
 	}
 }

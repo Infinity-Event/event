@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Events - Event Management System</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Custom CSS -->
+    <style>
+        body {
+            padding-top: 56px;
+            background-color: #f8f9fa;
+            font-family: sans-serif;
+        }
+        .sidebar {
+            position: fixed;
+            top: 56px;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            padding: 20px 0;
+            box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+            background-color: #343a40;
+            width: 220px;
+        }
+        .sidebar .nav-link {
+            font-weight: 500;
+            color: rgba(255, 255, 255, .65);
+            padding: .75rem 1.25rem;
+            display: flex;
+            align-items: center;
+        }
+        .sidebar .nav-link i {
+            margin-right: 10px;
+            font-size: 1.1rem;
+            width: 20px;
+            text-align: center;
+        }
+        .sidebar .nav-link:hover {
+            color: #fff;
+            background-color: #343a40;
+        }
+        .sidebar .nav-link.active {
+            color: #fff;
+            background-color: #0d6efd;
+        }
+        .main-content {
+            margin-left: 220px;
+            padding: 25px;
+            min-height: calc(100vh - 56px);
+        }
+        .navbar {
+            box-shadow: 0 2px 3px rgba(0,0,0,.1);
+            z-index: 101;
+        }
+        h2, h4 {
+            color: #343a40;
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+        }
+        .section-card {
+            background-color: #fff;
+            border: none;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,.05);
+        }
+        .section-card .card-header {
+            background-color: transparent;
+            border-bottom: 1px solid #e9ecef;
+            font-weight: 600;
+            color: #343a40;
+            padding: 1rem 1.25rem;
+            font-size: 1rem;
+        }
+        .section-card .card-body {
+             padding: 1.25rem;
+        }
+        .event-item {
+            padding: 15px;
+            border-bottom: 1px solid #f1f3f5;
+            transition: background-color 0.3s;
+        }
+        .event-item:last-child {
+            border-bottom: none;
+        }
+        .event-item:hover {
+            background-color: #f8f9fa;
+        }
+        .event-date {
+            text-align: center;
+            padding: 5px;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+        }
+        .event-date .day {
+            font-size: 20px;
+            font-weight: 700;
+        }
+        .event-date .month {
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+        .badge {
+            font-weight: 500;
+            padding: 0.35em 0.65em;
+        }
+        .event-controls {
+            display: flex;
+            gap: 5px;
+        }
+        .filter-bar {
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-calendar-check"></i> Event Management System
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <span class="navbar-text me-3" id="username">
+                            Welcome, Organizer!
+                        </span>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-outline-light btn-sm" onclick="logout()">Logout</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+                <div class="position-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a href="dashboard.html" class="nav-link" id="dashboard-link">
+                                <i class="bi bi-speedometer2"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="myevents.html" class="nav-link active" id="my-events-link">
+                                <i class="bi bi-calendar-event"></i> My Events
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="create-event.html" class="nav-link" id="create-event-link">
+                                <i class="bi bi-plus-circle"></i> Add New Event
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="reports.html" class="nav-link" id="reports-link">
+                                <i class="bi bi-file-earmark-text"></i> Reports
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="queries.html" class="nav-link" id="queries-link">
+                                <i class="bi bi-question-circle"></i> Queries
+                                <span class="badge bg-danger rounded-pill ms-1" id="queries-badge">0</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="feedback.html" class="nav-link" id="feedback-link">
+                                <i class="bi bi-chat-left-text"></i> Feedback
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h2>My Events</h2>
+                    <div>
+                        <a href="create-event.html" class="btn btn-success">
+                            <i class="bi bi-plus-lg"></i> Add New Event
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Search bar -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Search events..." id="search-input">
+                            <button class="btn btn-outline-secondary" type="button" id="search-button">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Upcoming/Ongoing Events -->
+                <h4>Ongoing / Upcoming Events</h4>
+                <div class="table-responsive mb-5">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Date & Time</th>
+                                <th>Location</th>
+                                <th>Registrations</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ongoing_events_tbody">
+                            <tr><td colspan="5" class="text-center text-muted p-4">Loading events...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Past Events -->
+                <h4 class="mt-5">Past Events</h4>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Date</th>
+                                <th>Location</th>
+                                <th>Final Registrations</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="past_events_tbody">
+                            <tr><td colspan="5" class="text-center text-muted p-4">Loading events...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Footer -->
+                <footer class="pt-4 my-4 text-muted border-top">
+                    <p class="small text-center">© 2025 Event Management System. All rights reserved.</p>
+                </footer>
+            </main>
+        </div>
+    </div>
+
+    <!-- Bootstrap and JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in
+            if (!localStorage.getItem('token')) {
+                window.location.href = '../login.html';
+                return;
+            }
+            
+            // Set user info - Same username display logic from dashboard
+            let userName = "Organizer"; // Default fallback
+            
+            try {
+                // Try to get from token first
+                const token = localStorage.getItem('token');
+                
+                // Decode token
+                const decoded = decodeJWT(token);
+                
+                // Check multiple possible field names for username
+                if (decoded && (decoded.username || decoded.name || decoded.sub)) {
+                    userName = decoded.username || decoded.name || decoded.sub;
+                    document.getElementById('username').textContent = 'Welcome, ' + userName + '!';
+                } else {
+                    // If username not in token, fetch from API
+                    const userId = getUserId();
+                    
+                    if (userId) {
+                        fetch(`http://localhost:8080/api/users/${userId}`, {
+                            headers: {
+                                'Authorization': getAuthorization()
+                            }
+                        })
+                        .then(response => {
+                            if (!response.ok) throw new Error('Failed to fetch user data');
+                            return response.json();
+                        })
+                        .then(userData => {
+                            if (userData && userData.name) {
+                                userName = userData.name;
+                                document.getElementById('username').textContent = 'Welcome, ' + userName + '!';
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Error fetching user data:", error);
+                        });
+                    }
+                }
+            } catch (error) {
+                console.error("Error processing user information:", error);
+                document.getElementById('username').textContent = 'Welcome, Organizer!';
+            }
+            
+            // Check if user is an organizer
+            const userType = getUserType();
+            if (userType !== 'ORGANIZER') {
+                window.location.href = 'home.html';
+                return;
+            }
+            
+            // Load events data
+            loadOrganizerEvents();
+            
+            // Add event listeners for search
+            document.getElementById('search-button').addEventListener('click', filterEvents);
+            document.getElementById('search-input').addEventListener('keyup', function(e) {
+                if (e.key === 'Enter') {
+                    filterEvents();
+                }
+            });
+            
+            // Fetch pending queries count for badge
+            fetchQueryCount();
+        });
+        
+        function loadOrganizerEvents() {
+            const organizerId = getUserId();
+            const ongoingTbody = document.getElementById('ongoing_events_tbody');
+            const pastTbody = document.getElementById('past_events_tbody');
+            
+            // Reset tables
+            ongoingTbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted p-4">Loading events...</td></tr>';
+            pastTbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted p-4">Loading events...</td></tr>';
+            
+            // Get authorization token for request
+            const authHeader = getAuthorization();
+            
+            if (!authHeader || authHeader === 'Bearer null' || authHeader === 'Bearer undefined') {
+                console.error("Invalid authentication token");
+                ongoingTbody.innerHTML = '<tr><td colspan="5" class="text-center text-danger p-4">Authentication error: Please log in again</td></tr>';
+                pastTbody.innerHTML = '<tr><td colspan="5" class="text-center text-danger p-4">Authentication error: Please log in again</td></tr>';
+                return;
+            }
+            
+            // Use the correct endpoint - the one we added to EventController
+            fetch(`http://localhost:8080/api/events/organizer/${organizerId}`, {
+                headers: {
+                    'Authorization': authHeader
+                }
+            })
+            .then(response => {
+                if (response.status === 401 || response.status === 403) {
+                    throw new Error("Authentication failed. Please log in again.");
+                }
+                
+                if (!response.ok) {
+                    throw new Error(`Server returned status code ${response.status}`);
+                }
+                
+                return response.json();
+            })
+            .then(events => {
+                window.allEvents = events;
+                
+                // Sort events by date (newest first)
+                events.sort((a, b) => new Date(b.date + 'T' + (b.time || '00:00')) - new Date(a.date + 'T' + (a.time || '00:00')));
+                
+                // Fetch registrations to get counts
+                return fetchRegistrationsAndPopulateTables(events);
+            })
+            .catch(error => {
+                console.error('Error fetching events:', error);
+                
+                if (error.message.includes("Authentication failed")) {
+                    // Handle authentication errors specially
+                    localStorage.removeItem('token'); // Clear invalid token
+                    ongoingTbody.innerHTML = `<tr><td colspan="5" class="text-center text-danger p-4">${error.message}</td></tr>`;
+                    pastTbody.innerHTML = `<tr><td colspan="5" class="text-center text-danger p-4">${error.message}</td></tr>`;
+                    
+                    // Add a login button
+                    document.getElementById('ongoing_events_tbody').innerHTML += `
+                        <tr>
+                            <td colspan="5" class="text-center">
+                                <button class="btn btn-primary mt-3" onclick="window.location.href='../login.html'">
+                                    Log In Again
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                } else {
+                    // Handle other errors
+                    ongoingTbody.innerHTML = `<tr><td colspan="5" class="text-center text-danger p-4">Error loading events: ${error.message}</td></tr>`;
+                    pastTbody.innerHTML = `<tr><td colspan="5" class="text-center text-danger p-4">Error loading events.</td></tr>`;
+                    
+                    // Add a refresh button to try again
+                    document.getElementById('ongoing_events_tbody').innerHTML += `
+                        <tr>
+                            <td colspan="5" class="text-center">
+                                <button class="btn btn-primary mt-3" onclick="loadOrganizerEvents()">
+                                    <i class="bi bi-arrow-clockwise"></i> Try Again
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                }
+            });
+        }
+        
+        function fetchRegistrationsAndPopulateTables(events) {
+            // Fetch all registrations
+            fetch(`http://localhost:8080/api/registrations`, {
+                headers: {
+                    'Authorization': getAuthorization()
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return [];
+                }
+                return response.json();
+            })
+            .then(registrations => {
+                // Create a map of event IDs to registration counts
+                const regCounts = {};
+                registrations.forEach(reg => {
+                    regCounts[reg.event?.eventId] = (regCounts[reg.event?.eventId] || 0) + 1;
+                });
+                
+                populateEventTables(events, regCounts);
+            })
+            .catch(error => {
+                console.error('Error fetching registrations:', error);
+                // Still try to populate tables without registration counts
+                populateEventTables(events, {});
+            });
+        }
+        
+        function populateEventTables(events, regCounts) {
+            const ongoingTbody = document.getElementById('ongoing_events_tbody');
+            const pastTbody = document.getElementById('past_events_tbody');
+            
+            ongoingTbody.innerHTML = ''; 
+            pastTbody.innerHTML = '';
+            
+            if (!events || events.length === 0) {
+                ongoingTbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted p-4">No upcoming events found.</td></tr>';
+                pastTbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted p-4">No past events found.</td></tr>';
+                return;
+            }
+            
+            const now = new Date();
+            let upcomingFound = false;
+            let pastFound = false;
+            
+            events.forEach(event => {
+                try {
+                    // Skip events with missing critical data
+                    if (!event.title || !event.date) {
+                        console.warn("Skipping event with missing data:", event);
+                        return;
+                    }
+                    
+                    const eventDate = new Date(`${event.date}T${event.time || '00:00'}`);
+                    const count = regCounts[event.eventId] || 0;
+                    
+                    if (eventDate >= now) {
+                        // Upcoming/Ongoing event
+                        upcomingFound = true;
+                        
+                        ongoingTbody.innerHTML += `
+                            <tr>
+                                <td>${event.title}</td>
+                                <td>${formatDate(event.date)} ${event.time ? formatTime(event.time) : ''}</td>
+                                <td>${event.location || 'N/A'}</td>
+                                <td>${count} / ${event.capacity || 'Unlimited'}</td>
+                                <td>
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <button class="btn btn-outline-secondary" onclick="editEvent(${event.eventId})">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        <button class="btn btn-outline-danger" onclick="deleteEvent(${event.eventId})">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>`;
+                    } else {
+                        // Past event
+                        pastFound = true;
+                        
+                        pastTbody.innerHTML += `
+                            <tr>
+                                <td>${event.title}</td>
+                                <td>${formatDate(event.date)}</td>
+                                <td>${event.location || 'N/A'}</td>
+                                <td>${count} / ${event.capacity || 'Unlimited'}</td>
+                                <td>
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <button class="btn btn-outline-danger" onclick="deleteEvent(${event.eventId})">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>`;
+                    }
+                } catch (error) {
+                    console.error("Error processing event:", event, error);
+                }
+            });
+            
+            if (!upcomingFound) {
+                ongoingTbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted p-4">No upcoming events found.</td></tr>';
+            }
+            
+            if (!pastFound) {
+                pastTbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted p-4">No past events found.</td></tr>';
+            }
+        }
+        
+        function filterEvents() {
+            if (!window.allEvents) return;
+            
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            
+            if (!searchTerm) {
+                // If search is empty, just reload all events
+                populateEventTables(window.allEvents, {});
+                return;
+            }
+            
+            // Filter events based on search term
+            const filteredEvents = window.allEvents.filter(event => 
+                event.title.toLowerCase().includes(searchTerm) ||
+                event.description?.toLowerCase().includes(searchTerm) ||
+                event.location.toLowerCase().includes(searchTerm)
+            );
+            
+            // Populate tables with filtered events
+            populateEventTables(filteredEvents, {});
+        }
+        
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString(undefined, options);
+        }
+        
+        function formatTime(timeString) {
+            // Convert 24-hour time to 12-hour format
+            if (!timeString) return '';
+            let [hours, minutes] = timeString.split(':');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12; // the hour '0' should be '12'
+            return `${hours}:${minutes} ${ampm}`;
+        }
+        
+        function fetchQueryCount() {
+            const organizerId = getUserId();
+            
+            fetch(`http://localhost:8080/api/queries/pending/organizer/${organizerId}`, {
+                headers: {
+                    'Authorization': getAuthorization()
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return [];
+                }
+                return response.json();
+            })
+            .then(queries => {
+                const badge = document.getElementById('queries-badge');
+                if (queries.length > 0) {
+                    badge.textContent = queries.length;
+                    badge.style.display = 'inline-block';
+                } else {
+                    badge.style.display = 'none';
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching queries:', error);
+                document.getElementById('queries-badge').style.display = 'none';
+            });
+        }
+        
+        function viewEvent(eventId) {
+            window.location.href = `event-details.html?id=${eventId}`;
+        }
+        
+        function editEvent(eventId) {
+            window.location.href = `edit-event.html?id=${eventId}`;
+        }
+        
+        function viewRegistrations(eventId) {
+            window.location.href = `registrations.html?eventId=${eventId}`;
+        }
+        
+        function deleteEvent(eventId) {
+            if (confirm('Are you sure you want to delete this event? This action cannot be undone. Associated registrations will also be removed.')) {
+                const organizerId = getUserId();
+                
+                fetch(`http://localhost:8080/api/events/${eventId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': getAuthorization()
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to delete event');
+                    }
+                    
+                    alert('Event deleted successfully');
+                    // Reload the events
+                    loadOrganizerEvents();
+                })
+                .catch(error => {
+                    console.error('Error deleting event:', error);
+                    alert('Failed to delete event. Please try again.');
+                });
+            }
+        }
+    </script>
+</body>
+</html>

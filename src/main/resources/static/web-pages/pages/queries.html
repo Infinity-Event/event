@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Queries - Event Management System</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Custom CSS -->
+    <style>
+        body {
+            padding-top: 56px;
+            background-color: #f8f9fa;
+            font-family: sans-serif;
+        }
+        .sidebar {
+            position: fixed;
+            top: 56px;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            padding: 20px 0;
+            box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+            background-color: #343a40;
+            width: 220px;
+        }
+        .sidebar .nav-link {
+            font-weight: 500;
+            color: rgba(255, 255, 255, .65);
+            padding: .75rem 1.25rem;
+            display: flex;
+            align-items: center;
+        }
+        .sidebar .nav-link i {
+            margin-right: 10px;
+            font-size: 1.1rem;
+            width: 20px;
+            text-align: center;
+        }
+        .sidebar .nav-link:hover {
+            color: #fff;
+            background-color: #343a40;
+        }
+        .sidebar .nav-link.active {
+            color: #fff;
+            background-color: #0d6efd;
+        }
+        .main-content {
+            margin-left: 220px;
+            padding: 25px;
+            min-height: calc(100vh - 56px);
+        }
+        .navbar {
+            box-shadow: 0 2px 3px rgba(0,0,0,.1);
+            z-index: 101;
+        }
+        h2, h4 {
+            color: #343a40;
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+        }
+        .section-card {
+            background-color: #fff;
+            border: none;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,.05);
+        }
+        .section-card .card-header {
+            background-color: transparent;
+            border-bottom: 1px solid #e9ecef;
+            font-weight: 600;
+            color: #343a40;
+            padding: 1rem 1.25rem;
+            font-size: 1rem;
+        }
+        .section-card .card-body {
+            padding: 1.25rem;
+        }
+        .query-row {
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .query-row:hover {
+            background-color: #f8f9fa;
+        }
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        .status-answered {
+            background-color: #d1e7dd;
+            color: #0f5132;
+        }
+        .query-detail-card {
+            border-left: 5px solid #0d6efd;
+            background-color: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        .response-detail-card {
+            border-left: 5px solid #198754;
+            background-color: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-calendar-check"></i> Event Management System
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <span class="navbar-text me-3" id="username">
+                            Welcome, Organizer!
+                        </span>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-outline-light btn-sm" onclick="logout()">Logout</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+                <div class="position-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a href="dashboard.html" class="nav-link" id="dashboard-link">
+                                <i class="bi bi-speedometer2"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="myevents.html" class="nav-link" id="my-events-link">
+                                <i class="bi bi-calendar-event"></i> My Events
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="create-event.html" class="nav-link" id="create-event-link">
+                                <i class="bi bi-plus-circle"></i> Add New Event
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="reports.html" class="nav-link" id="reports-link">
+                                <i class="bi bi-file-earmark-text"></i> Reports
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="queries.html" class="nav-link active" id="queries-link">
+                                <i class="bi bi-question-circle"></i> Queries
+                                <span class="badge bg-danger rounded-pill ms-1" id="queries-badge">0</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="feedback.html" class="nav-link" id="feedback-link">
+                                <i class="bi bi-chat-left-text"></i> Feedback
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h2>Manage Queries</h2>
+                </div>
+                
+                <!-- Filter Options -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Search queries..." id="search-input">
+                            <button class="btn btn-outline-secondary" type="button" id="search-button">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex justify-content-end">
+                            <select class="form-select w-auto" id="status-filter">
+                                <option value="all">All Queries</option>
+                                <option value="PENDING">Pending</option>
+                                <option value="ANSWERED">Answered</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Queries Table -->
+                <div class="card section-card">
+                    <div class="card-header d-flex justify-content-between">
+                        <span>Queries</span>
+                        <span class="badge bg-primary rounded-pill" id="query-count">0</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Event</th>
+                                        <th>From User</th>
+                                        <th>Query</th>
+                                        <th>Date</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="queries-table-body">
+                                    <tr>
+                                        <td colspan="6" class="text-center">Loading queries...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Footer -->
+                <footer class="pt-4 my-4 text-muted border-top">
+                    <p class="small text-center">© 2025 Event Management System. All rights reserved.</p>
+                </footer>
+            </main>
+        </div>
+    </div>
+
+    <!-- Query Detail Modal -->
+    <div class="modal fade" id="queryDetailModal" tabindex="-1" aria-labelledby="queryDetailModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="queryDetailModalLabel">Query Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="query-info mb-4">
+                        <div class="query-detail-card">
+                            <div class="d-flex justify-content-between">
+                                <h6 class="mb-2">Query from <span id="modal-username">User</span></h6>
+                                <span class="text-muted" id="modal-date">Date</span>
+                            </div>
+                            <p class="mb-2" id="modal-query-body">Query content will appear here</p>
+                            <div class="text-muted small">
+                                <span>Event: <strong id="modal-event-title">Event Title</strong></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="existing-response-section" class="mb-4 d-none">
+                        <h6 class="mb-2">Your Response</h6>
+                        <div class="response-detail-card">
+                            <div class="d-flex justify-content-between">
+                                <strong>Responded on</strong>
+                                <span class="text-muted" id="modal-response-date">Date</span>
+                            </div>
+                            <p class="mb-0 mt-2" id="modal-response-body">Response content will appear here</p>
+                        </div>
+                    </div>
+                    
+                    <div id="response-form-section">
+                        <h6 class="mb-2">Provide Response</h6>
+                        <form id="response-form">
+                            <input type="hidden" id="query-id" name="queryId">
+                            <div class="mb-3">
+                                <textarea class="form-control" id="response-body" rows="4" placeholder="Type your response here..." required></textarea>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary">Submit Response</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap and JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/script.js"></script>
+    <script>
+        let organizerQueries = [];
+        let queryDetailModal;
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in
+            if (!localStorage.getItem('token')) {
+                window.location.href = '../login.html';
+                return;
+            }
+            
+            // Get user type
+            const userType = getUserType();
+            if (userType !== 'ORGANIZER') {
+                window.location.href = 'home.html';
+                return;
+            }
+            
+            // Set user info
+            let userName = "Organizer"; // Default fallback
+            
+            try {
+                // Try to get from token first
+                const token = localStorage.getItem('token');
+                
+                // Decode token
+                const decoded = decodeJWT(token);
+                
+                // Check multiple possible field names for username
+                if (decoded && (decoded.username || decoded.name || decoded.sub)) {
+                    userName = decoded.username || decoded.name || decoded.sub;
+                    document.getElementById('username').textContent = 'Welcome, ' + userName + '!';
+                } else {
+                    // If username not in token, fetch from API
+                    const userId = getUserId();
+                    
+                    if (userId) {
+                        fetch(`http://localhost:8080/api/users/${userId}`, {
+                            headers: {
+                                'Authorization': getAuthorization()
+                            }
+                        })
+                        .then(response => {
+                            if (!response.ok) throw new Error('Failed to fetch user data');
+                            return response.json();
+                        })
+                        .then(userData => {
+                            if (userData && userData.name) {
+                                userName = userData.name;
+                                document.getElementById('username').textContent = 'Welcome, ' + userName + '!';
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Error fetching user data:", error);
+                        });
+                    }
+                }
+            } catch (error) {
+                console.error("Error processing user information:", error);
+                document.getElementById('username').textContent = 'Welcome, Organizer!';
+            }
+            
+            // Initialize Bootstrap modal
+            queryDetailModal = new bootstrap.Modal(document.getElementById('queryDetailModal'));
+            
+            // Add event listeners
+            document.getElementById('search-button').addEventListener('click', filterQueries);
+            document.getElementById('search-input').addEventListener('keyup', function(e) {
+                if (e.key === 'Enter') {
+                    filterQueries();
+                }
+            });
+            
+            document.getElementById('status-filter').addEventListener('change', filterQueries);
+            
+            document.getElementById('response-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                submitResponse();
+            });
+            
+            // Load queries
+            loadOrganizerQueries();
+            
+            // Update query badge count
+            fetchQueryCount();
+        });
+        
+        function loadOrganizerQueries() {
+            const organizerId = getUserId();
+            const queriesTableBody = document.getElementById('queries-table-body');
+            
+            // Show loading
+            queriesTableBody.innerHTML = '<tr><td colspan="6" class="text-center">Loading queries...</td></tr>';
+            
+            // Fetch all queries for the organizer's events
+            fetch(`http://localhost:8080/api/queries/pending/organizer/${organizerId}`, {
+                headers: {
+                    'Authorization': getAuthorization()
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    if (response.status === 401 || response.status === 403) {
+                        throw new Error("Authentication failed. Please log in again.");
+                    }
+                    throw new Error(`Server returned status code ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(queries => {
+                organizerQueries = queries;
+                
+                // Update query count badge
+                document.getElementById('query-count').textContent = queries.length;
+                
+                // Display queries
+                displayQueries(queries);
+            })
+            .catch(error => {
+                console.error('Error fetching queries:', error);
+                
+                if (error.message.includes("Authentication failed")) {
+                    localStorage.removeItem('token'); // Clear invalid token
+                    queriesTableBody.innerHTML = `<tr><td colspan="6" class="text-center text-danger p-4">${error.message}</td></tr>`;
+                    
+                    // Add a login button
+                    queriesTableBody.innerHTML += `
+                        <tr>
+                            <td colspan="6" class="text-center">
+                                <button class="btn btn-primary mt-3" onclick="window.location.href='../login.html'">
+                                    Log In Again
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                } else {
+                    queriesTableBody.innerHTML = `<tr><td colspan="6" class="text-center text-danger p-4">Error loading queries: ${error.message}</td></tr>`;
+                    
+                    // Add a refresh button
+                    queriesTableBody.innerHTML += `
+                        <tr>
+                            <td colspan="6" class="text-center">
+                                <button class="btn btn-primary mt-3" onclick="loadOrganizerQueries()">
+                                    <i class="bi bi-arrow-clockwise"></i> Try Again
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                }
+            });
+        }
+        
+        function displayQueries(queries) {
+            const queriesTableBody = document.getElementById('queries-table-body');
+            
+            // Clear the table
+            queriesTableBody.innerHTML = '';
+            
+            if (queries.length === 0) {
+                queriesTableBody.innerHTML = '<tr><td colspan="6" class="text-center">No queries found.</td></tr>';
+                return;
+            }
+            
+            // Sort queries - pending first, then by date (newest first)
+            queries.sort((a, b) => {
+                if (a.status === 'PENDING' && b.status !== 'PENDING') return -1;
+                if (a.status !== 'PENDING' && b.status === 'PENDING') return 1;
+                
+                return new Date(b.queryDate) - new Date(a.queryDate);
+            });
+            
+            // Add each query to the table
+            queries.forEach(query => {
+                const statusClass = query.status === 'PENDING' ? 'status-pending' : 'status-answered';
+                const statusBadge = `<span class="badge ${query.status === 'PENDING' ? 'bg-warning text-dark' : 'bg-success'}">${query.status}</span>`;
+                
+                const row = document.createElement('tr');
+                row.className = 'query-row';
+                row.innerHTML = `
+                    <td>${query.event ? query.event.title : 'N/A'}</td>
+                    <td>${query.user ? query.user.name : 'Unknown User'}</td>
+                    <td>${truncateText(query.queryBody, 50)}</td>
+                    <td>${formatDate(query.queryDate)}</td>
+                    <td>${statusBadge}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary view-query-btn" data-query-id="${query.queryId}">
+                            ${query.status === 'PENDING' ? '<i class="bi bi-reply"></i> Respond' : '<i class="bi bi-eye"></i> View'}
+                        </button>
+                    </td>
+                `;
+                
+                queriesTableBody.appendChild(row);
+                
+                // Add click event to view details
+                row.querySelector('.view-query-btn').addEventListener('click', function() {
+                    viewQueryDetails(query.queryId);
+                });
+            });
+        }
+        
+        function viewQueryDetails(queryId) {
+            // Find the query in our cached data
+            const query = organizerQueries.find(q => q.queryId === queryId);
+            
+            if (!query) {
+                alert('Query details not found');
+                return;
+            }
+            
+            // Set query details in modal
+            document.getElementById('modal-username').textContent = query.user ? query.user.name : 'Unknown User';
+            document.getElementById('modal-date').textContent = formatDate(query.queryDate);
+            document.getElementById('modal-query-body').textContent = query.queryBody;
+            document.getElementById('modal-event-title').textContent = query.event ? query.event.title : 'N/A';
+            document.getElementById('query-id').value = query.queryId;
+            
+            // Check if query has a response
+            const existingResponseSection = document.getElementById('existing-response-section');
+            const responseFormSection = document.getElementById('response-form-section');
+            
+            if (query.status === 'ANSWERED' && query.response) {
+                // Show existing response
+                document.getElementById('modal-response-date').textContent = formatDate(query.response.responseDate);
+                document.getElementById('modal-response-body').textContent = query.response.responseBody;
+                
+                existingResponseSection.classList.remove('d-none');
+                responseFormSection.classList.add('d-none');
+            } else {
+                // Show response form
+                document.getElementById('response-body').value = '';
+                
+                existingResponseSection.classList.add('d-none');
+                responseFormSection.classList.remove('d-none');
+            }
+            
+            // Show the modal
+            queryDetailModal.show();
+        }
+        
+        function submitResponse() {
+            const queryId = document.getElementById('query-id').value;
+            const responseBody = document.getElementById('response-body').value.trim();
+            
+            if (!responseBody) {
+                alert('Please enter a response');
+                return;
+            }
+            
+            // Create response object
+            const response = {
+                responseBody: responseBody,
+                responseDate: new Date().toISOString().split('T')[0]
+            };
+            
+            // Submit response to server
+            fetch('http://localhost:8080/api/responses', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': getAuthorization()
+                },
+                body: JSON.stringify(response)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Server returned status code ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(createdResponse => {
+                // Now we need to update the query status and associate the response
+                return fetch(`http://localhost:8080/api/queries/${queryId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': getAuthorization()
+                    },
+                    body: JSON.stringify({
+                        status: 'ANSWERED',
+                        response: createdResponse
+                    })
+                });
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Failed to update query status`);
+                }
+                return response.json();
+            })
+            .then(updatedQuery => {
+                // Close the modal
+                queryDetailModal.hide();
+                
+                // Show success message
+                alert('Response submitted successfully');
+                
+                // Reload queries to update the UI
+                loadOrganizerQueries();
+                
+                // Update badge count
+                fetchQueryCount();
+            })
+            .catch(error => {
+                console.error('Error submitting response:', error);
+                alert('Failed to submit response: ' + error.message);
+            });
+        }
+        
+        function filterQueries() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const statusFilter = document.getElementById('status-filter').value;
+            
+            // Filter queries based on search term and status
+            const filteredQueries = organizerQueries.filter(query => {
+                const matchesSearch = 
+                    !searchTerm || 
+                    query.queryBody.toLowerCase().includes(searchTerm) || 
+                    (query.event && query.event.title.toLowerCase().includes(searchTerm)) || 
+                    (query.user && query.user.name.toLowerCase().includes(searchTerm));
+                
+                const matchesStatus = statusFilter === 'all' || query.status === statusFilter;
+                
+                return matchesSearch && matchesStatus;
+            });
+            
+            // Display filtered queries
+            displayQueries(filteredQueries);
+        }
+        
+        function fetchQueryCount() {
+            const organizerId = getUserId();
+            
+            fetch(`http://localhost:8080/api/queries/pending/organizer/${organizerId}`, {
+                headers: {
+                    'Authorization': getAuthorization()
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return [];
+                }
+                return response.json();
+            })
+            .then(queries => {
+                // Filter to only include pending queries
+                const pendingQueries = queries.filter(q => q.status === 'PENDING');
+                
+                const badge = document.getElementById('queries-badge');
+                if (pendingQueries.length > 0) {
+                    badge.textContent = pendingQueries.length;
+                    badge.style.display = 'inline-block';
+                } else {
+                    badge.style.display = 'none';
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching queries:', error);
+                document.getElementById('queries-badge').style.display = 'none';
+            });
+        }
+        
+        function truncateText(text, maxLength) {
+            if (!text) return '';
+            
+            if (text.length <= maxLength) return text;
+            
+            return text.substring(0, maxLength) + '...';
+        }
+        
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            
+            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString(undefined, options);
+        }
+    </script>
+</body>
+</html>

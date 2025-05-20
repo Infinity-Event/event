@@ -1,0 +1,468 @@
+/* Main Layout Styles */
+:root {
+    --sidebar-width: 250px;
+    --primary-color: #3498db;
+    --secondary-color: #2980b9;
+    --light-bg: #f8f9fa;
+    --dark-text: #343a40;
+    --danger-color: #e74c3c;
+    --success-color: #2ecc71;
+    --warning-color: #f39c12;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f7f9;
+    overflow-x: hidden;
+}
+
+.wrapper {
+    display: flex;
+    width: 100%;
+    align-items: stretch;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    min-width: var(--sidebar-width);
+    max-width: var(--sidebar-width);
+    background: #2c3e50;
+    color: #fff;
+    transition: all 0.3s;
+    height: 100vh;
+    position: fixed;
+    z-index: 999;
+}
+
+.sidebar.active {
+    margin-left: calc(var(--sidebar-width) * -1);
+}
+
+.sidebar .sidebar-header {
+    padding: 20px;
+    background: #1a2530;
+}
+
+.sidebar ul.components {
+    padding: 20px 0;
+    border-bottom: 1px solid #47748b;
+}
+
+.sidebar ul li a {
+    padding: 10px;
+    display: block;
+    color: #fff;
+    text-decoration: none;
+    transition: background 0.3s;
+}
+
+.sidebar ul li a:hover,
+.sidebar ul li a.active {
+    background: #3498db;
+}
+
+.sidebar ul li ul li a {
+    padding-left: 30px;
+}
+
+.sidebar-menu {
+    padding: 0;
+    list-style-type: none;
+}
+
+.sidebar-menu .menu-item {
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    color: white;
+    text-decoration: none;
+    transition: background-color 0.2s;
+    cursor: pointer;
+}
+
+.sidebar-menu .menu-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-menu .menu-item.active {
+    background-color: var(--primary-color);
+}
+
+.sidebar-menu .menu-item i {
+    margin-right: 10px;
+    width: 20px;
+    text-align: center;
+}
+
+/* Content Styles */
+.content {
+    width: 100%;
+    padding: 0;
+    min-height: 100vh;
+    transition: all 0.3s;
+    margin-left: var(--sidebar-width);
+}
+
+.content.active {
+    margin-left: 0;
+}
+
+/* Navbar Styles */
+.navbar {
+    padding: 15px 10px;
+    background: #fff;
+    border: none;
+    border-radius: 0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+#sidebarCollapse {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+#sidebarCollapse:hover {
+    background: var(--secondary-color);
+}
+
+/* Card Styles */
+.card {
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    border: none;
+}
+
+.card-header {
+    font-weight: 600;
+    background-color: #fff;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.card-body {
+    padding: 20px;
+}
+
+/* Forms */
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+}
+
+/* Auth Pages */
+.auth-card {
+    border-radius: 10px;
+    border: none;
+    overflow: hidden;
+}
+
+.auth-card .card-header {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.auth-card .form-control {
+    padding: 12px;
+    border-radius: 8px;
+}
+
+.auth-card .btn-lg {
+    padding: 12px;
+    border-radius: 8px;
+}
+
+.auth-tabs .nav-link {
+    color: var(--dark-text);
+}
+
+.auth-tabs .nav-link.active {
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+/* Event Cards */
+.event-card {
+    transition: transform 0.2s;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    height: 100%;
+}
+
+.event-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.event-date {
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 4px;
+}
+
+/* Registered Button Style */
+.registered-btn {
+    cursor: default;
+    opacity: 0.85;
+    border: none;
+}
+
+.registered-btn i {
+    margin-right: 5px;
+}
+
+/* Dashboard Stats */
+.stats-card {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.stats-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.stats-card-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: #f0f7ff;
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin-right: 16px;
+}
+
+.stats-card-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: #333;
+    line-height: 1.2;
+}
+
+.stats-card-label {
+    color: #666;
+    font-size: 14px;
+}
+
+/* Mini Calendar */
+.mini-calendar {
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.mini-calendar .calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.mini-calendar .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+}
+
+.mini-calendar .calendar-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    font-size: 14px;
+    position: relative;
+}
+
+.mini-calendar .calendar-day.has-event {
+    background-color: rgba(52, 152, 219, 0.1);
+    font-weight: bold;
+}
+
+.mini-calendar .calendar-day.has-event::after {
+    content: '';
+    position: absolute;
+    bottom: 4px;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+}
+
+.mini-calendar .day-name {
+    text-align: center;
+    font-weight: 500;
+    color: #666;
+    font-size: 12px;
+}
+
+/* Performance Metrics */
+.trend-indicator {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.trend-indicator.positive {
+    background-color: rgba(46, 204, 113, 0.15);
+    color: #27ae60;
+}
+
+.trend-indicator.negative {
+    background-color: rgba(231, 76, 60, 0.15);
+    color: #e74c3c;
+}
+
+.trend-indicator.neutral {
+    background-color: rgba(189, 195, 199, 0.15);
+    color: #7f8c8d;
+}
+
+/* Popular Events */
+.popular-event-item {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.popular-event-item:last-child {
+    border-bottom: none;
+}
+
+.popular-event-item .registration-count {
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+/* Tables */
+.table-responsive {
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.table thead th {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+    font-weight: 600;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .sidebar {
+        margin-left: calc(var(--sidebar-width) * -1);
+    }
+    
+    .sidebar.active {
+        margin-left: 0;
+    }
+    
+    .content {
+        margin-left: 0;
+    }
+    
+    .content.active {
+        margin-left: var(--sidebar-width);
+    }
+}
+
+/* Loading Spinner */
+.spinner-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1050;
+}
+
+/* Animations */
+.fade-in {
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Utility Classes */
+.hidden {
+    display: none !important;
+}
+
+.mt-6 {
+    margin-top: 4rem;
+}
+
+.mb-6 {
+    margin-bottom: 4rem;
+}
+
+/* Toast styling */
+.toast {
+    background-color: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.toast-header {
+    background-color: rgba(52, 152, 219, 0.1);
+}
+
+.toast.success .toast-header {
+    background-color: rgba(46, 204, 113, 0.1);
+}
+
+.toast.error .toast-header {
+    background-color: rgba(231, 76, 60, 0.1);
+}
+
+.toast.warning .toast-header {
+    background-color: rgba(243, 156, 18, 0.1);
+}
+
+/* Event Status Indicators */
+.event-status-today {
+    background-color: #f0ad4e;
+    color: white;
+    border-radius: 4px;
+    padding: 3px 6px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.event-status-upcoming {
+    background-color: #5cb85c;
+    color: white;
+    border-radius: 4px;
+    padding: 3px 6px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.event-countdown {
+    font-size: 12px;
+    color: #6c757d;
+    font-weight: 500;
+    margin-top: 3px;
+}

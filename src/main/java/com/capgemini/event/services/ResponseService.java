@@ -6,7 +6,7 @@ import com.capgemini.event.entities.Response;
 
 public interface ResponseService {
 
-	Response createResponse(Response response);
+	Response createResponse(Response response, Long queryId);
     Response getResponseById(Long responseId);
     List<Response> getAllResponses();
     void deleteResponse(Long responseId);

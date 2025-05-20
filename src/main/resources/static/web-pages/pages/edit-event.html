@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Event - Event Management System</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Custom CSS -->
+    <style>
+        body {
+            padding-top: 56px; /* For fixed navbar */
+            background-color: #f8f9fa;
+            font-family: sans-serif;
+        }
+        .sidebar {
+            position: fixed;
+            top: 56px; /* Height of navbar */
+            bottom: 0;
+            left: 0;
+            z-index: 100; /* Behind the navbar */
+            padding: 20px 0;
+            box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+            background-color: #343a40; /* Dark sidebar */
+            width: 220px;
+        }
+        .sidebar .nav-link {
+            font-weight: 500;
+            color: rgba(255, 255, 255, .65);
+            padding: .75rem 1.25rem;
+            display: flex;
+            align-items: center;
+        }
+        .sidebar .nav-link i {
+            margin-right: 10px;
+            font-size: 1.1rem;
+            width: 20px; /* Fixed width for icon alignment */
+            text-align: center;
+        }
+        .sidebar .nav-link:hover {
+            color: #fff;
+            background-color: #343a40; /* Keep dark on hover */
+        }
+        .sidebar .nav-link.active {
+            color: #fff;
+            background-color: #0d6efd; /* Bootstrap primary blue */
+        }
+        .main-content {
+            margin-left: 220px; /* Same as sidebar width */
+            padding: 25px;
+            min-height: calc(100vh - 56px); /* Full height minus navbar */
+        }
+        .navbar {
+            box-shadow: 0 2px 3px rgba(0,0,0,.1);
+            z-index: 101; /* Above sidebar */
+        }
+        .form-card { /* Renamed from .card to .form-card for consistency */
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 2px 4px rgba(0,0,0,.05);
+            margin-bottom: 1.5rem;
+        }
+        h2, h4 { /* Consistent heading styles */
+            color: #343a40;
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+        }
+        .required-field::after { /* Style for required fields */
+            content: "*";
+            color: red;
+            margin-left: 4px;
+        }
+        /* Custom styles for edit-event page can be added here or in style.css */
+    </style>
+    <script src="../js/script.js" defer></script> <!-- Assuming common JavaScript, defer loading -->
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-calendar-check"></i> Event Management System
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <span class="navbar-text me-3" id="username">
+                            Welcome, Organizer! <!-- Placeholder, to be updated by JS -->
+                        </span>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-outline-light btn-sm" onclick="logout()">Logout</button> <!-- Assuming logout function exists -->
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+                <div class="position-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a href="dashboard.html" class="nav-link" id="dashboard-link">
+                                <i class="bi bi-speedometer2"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="myevents.html" class="nav-link" id="my-events-link"> <!-- Consider making this active if appropriate -->
+                                <i class="bi bi-calendar-event"></i> My Events
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="create-event.html" class="nav-link" id="create-event-link"> <!-- Not active on edit page -->
+                                <i class="bi bi-plus-circle"></i> Add New Event
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="reports.html" class="nav-link" id="reports-link">
+                                <i class="bi bi-file-earmark-text"></i> Reports
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="queries.html" class="nav-link" id="queries-link">
+                                <i class="bi bi-question-circle"></i> Queries
+                                <span class="badge bg-danger rounded-pill ms-1">5</span> <!-- Example badge -->
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="feedback.html" class="nav-link" id="feedback-link">
+                                <i class="bi bi-chat-left-text"></i> Feedback
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h2><i class="bi bi-pencil-square"></i> Edit Event</h2> <!-- Icon for editing -->
+                </div>
+                
+                <!-- Alert placeholders for messages (optional) -->
+                <div class="alert alert-success alert-dismissible fade show d-none" id="successAlert" role="alert">
+                    Event updated successfully!
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <div class="alert alert-danger alert-dismissible fade show d-none" id="errorAlert" role="alert">
+                    <span id="errorMessage">An error occurred.</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+
+                <!-- Edit Event Form in a card -->
+                <div class="form-card">
+                    <form id="editEventForm">
+                        <!-- Existing form groups will be here, ensure they use Bootstrap classes e.g., form-label, form-control, form-select -->
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label for="eventName" class="form-label required-field">Event Name:</label>
+                                <input type="text" class="form-control" id="eventName" name="eventName" required value="Existing Event Name">
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="eventDate" class="form-label required-field">Event Date:</label>
+                                <input type="date" class="form-control" id="eventDate" name="eventDate" required value="2024-12-31">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="eventTime" class="form-label required-field">Event Time:</label>
+                                <input type="time" class="form-control" id="eventTime" name="eventTime" required value="18:00">
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label for="eventLocation" class="form-label required-field">Location:</label>
+                                <input type="text" class="form-control" id="eventLocation" name="eventLocation" required value="Existing Location">
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                             <div class="col-md-12">
+                                <label for="eventDescription" class="form-label required-field">Description:</label>
+                                <textarea class="form-control" id="eventDescription" name="eventDescription" rows="4" required>Existing event description.</textarea>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="eventCapacity" class="form-label required-field">Capacity:</label> <!-- Assuming capacity field is needed -->
+                                <input type="number" class="form-control" id="eventCapacity" name="eventCapacity" required min="1" value="100">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="eventCategory" class="form-label required-field">Category:</label>
+                                <select class="form-select" id="eventCategory" name="eventCategory" required>
+                                    <option value="CONFERENCE">Conference</option>
+                                    <option value="WORKSHOP">Workshop</option>
+                                    <option value="SEMINAR">Seminar</option>
+                                    <option value="CONCERT">Concert</option>
+                                    <option value="EXHIBITION">Exhibition</option>
+                                    <option value="SPORTS">Sports</option>
+                                    <option value="CORPORATE">Corporate</option>
+                                    <option value="FESTIVAL">Festival</option>
+                                    <option value="OTHER">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <input type="hidden" id="eventId" name="eventId" value="123"> <!-- Hidden field for event ID -->
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                            <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Save Changes</button>
+                            <a href="/pages/myevents.html" class="btn btn-secondary">Cancel</a> <!-- Link to My Events or View Events -->
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Footer -->
+                <footer class="pt-4 my-4 text-muted border-top">
+                    <p class="small text-center">© 2025 Event Management System. All rights reserved.</p>
+                </footer>
+            </main>
+        </div>
+    </div>
+
+    <!-- Bootstrap JavaScript Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom script for edit event page logic -->
+    <script>
+        let currentEventId = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check authentication
+            if (!localStorage.getItem('token')) {
+                window.location.href = '../login.html';
+                return;
+            }
+
+            // Set username in navbar from token
+            try {
+                const token = localStorage.getItem('token');
+                const decoded = decodeJWT(token);
+                console.log('Token payload:', decoded);
+                
+                let userName = "Organizer";
+                if (decoded && (decoded.username || decoded.name || decoded.sub)) {
+                    userName = decoded.username || decoded.name || decoded.sub;
+                    document.getElementById('username').textContent = 'Welcome, ' + userName + '!';
+                }
+            } catch (error) {
+                console.error("Error setting username:", error);
+            }
+
+            // Get eventId from URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            currentEventId = urlParams.get('id'); // Assuming the URL parameter is 'id'
+
+            if (!currentEventId) {
+                showError('No event ID provided');
+                return;
+            }
+
+            // Set the hidden input value
+            document.getElementById('eventId').value = currentEventId;
+
+            // Fetch and populate event data
+            fetchEventDetails(currentEventId);
+
+            // Handle form submission
+            document.getElementById('editEventForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                if (validateForm()) {
+                    updateEvent();
+                }
+            });
+        });
+
+        async function fetchEventDetails(eventId) {
+            try {
+                console.log("Fetching event details for ID:", eventId);
+                
+                const response = await fetch(`http://localhost:8080/api/events/${eventId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer ' + localStorage.getItem('token'),
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                // Parse response as JSON
+                const responseText = await response.text();
+                console.log("Raw response:", responseText);
+                
+                let event;
+                try {
+                    event = JSON.parse(responseText);
+                } catch (e) {
+                    console.error("Failed to parse JSON:", e);
+                    throw new Error("Invalid response format from server");
+                }
+                
+                console.log("Parsed event data:", event);
+                
+                // Populate form fields with event data
+                document.getElementById('eventName').value = event.title || '';
+                document.getElementById('eventDescription').value = event.description || '';
+                
+                // Format the date correctly
+                if (event.date) {
+                    document.getElementById('eventDate').value = event.date;
+                    console.log("Setting date:", event.date);
+                }
+                
+                // Format the time correctly
+                if (event.time) {
+                    // Handle different time formats: with or without seconds
+                    const timeValue = event.time.includes(':') 
+                        ? event.time.substring(0, 5) // Extract HH:MM from time string
+                        : event.time;
+                    document.getElementById('eventTime').value = timeValue;
+                    console.log("Setting time:", timeValue);
+                }
+                
+                document.getElementById('eventLocation').value = event.location || '';
+                document.getElementById('eventCapacity').value = event.capacity || '';
+                
+                // Ensure the category value matches the case in the backend
+                if (event.category) {
+                    console.log("Setting category:", event.category);
+                    // If the category is an object (with name property), use that
+                    const categoryValue = typeof event.category === 'object' && event.category.name 
+                        ? event.category.name 
+                        : event.category;
+                    
+                    // Find the matching option
+                    const categorySelect = document.getElementById('eventCategory');
+                    const options = Array.from(categorySelect.options);
+                    const matchingOption = options.find(option => 
+                        option.value === categoryValue || 
+                        option.value === categoryValue.toUpperCase());
+                    
+                    if (matchingOption) {
+                        categorySelect.value = matchingOption.value;
+                    } else {
+                        console.warn("No matching category option found for:", categoryValue);
+                    }
+                }
+
+                console.log("Event loaded successfully");
+                
+                // Remove any error messages that might be showing
+                document.getElementById('errorAlert').classList.add('d-none');
+
+            } catch (error) {
+                console.error('Error fetching event details:', error);
+                showError('Failed to load event details: ' + error.message);
+            }
+        }
+
+        function validateForm() {
+            const eventName = document.getElementById('eventName').value.trim();
+            const eventDate = document.getElementById('eventDate').value;
+            const eventTime = document.getElementById('eventTime').value;
+            const eventLocation = document.getElementById('eventLocation').value.trim();
+            const eventDescription = document.getElementById('eventDescription').value.trim();
+            const eventCapacity = document.getElementById('eventCapacity').value;
+            const eventCategory = document.getElementById('eventCategory').value;
+            
+            if (!eventName) {
+                showError('Event name is required');
+                return false;
+            }
+            
+            if (!eventDate) {
+                showError('Event date is required');
+                return false;
+            }
+            
+            if (!eventTime) {
+                showError('Event time is required');
+                return false;
+            }
+            
+            if (!eventLocation) {
+                showError('Event location is required');
+                return false;
+            }
+            
+            if (!eventDescription) {
+                showError('Event description is required');
+                return false;
+            }
+            
+            if (!eventCapacity || eventCapacity < 1) {
+                showError('Event capacity must be at least 1');
+                return false;
+            }
+            
+            if (!eventCategory) {
+                showError('Event category is required');
+                return false;
+            }
+            
+            return true;
+        }
+
+        async function updateEvent() {
+            try {
+                // Get the current category value to use for comparison
+                const categorySelect = document.getElementById('eventCategory');
+                let categoryValue = categorySelect.value;
+                
+                // If category values in the select don't match enum values in backend (all uppercase)
+                // Make sure to convert to uppercase for backend enum matching
+                if (categoryValue && 
+                    ['conference', 'workshop', 'webinar', 'social'].includes(categoryValue)) {
+                    categoryValue = categoryValue.toUpperCase();
+                }
+                
+                // Format the date and time correctly for the backend
+                const eventData = {
+                    // Don't include eventId in the request body - it's already in the URL
+                    title: document.getElementById('eventName').value.trim(),
+                    description: document.getElementById('eventDescription').value.trim(),
+                    date: document.getElementById('eventDate').value,
+                    time: document.getElementById('eventTime').value,
+                    location: document.getElementById('eventLocation').value.trim(),
+                    capacity: parseInt(document.getElementById('eventCapacity').value),
+                    category: categoryValue
+                };
+
+                console.log("Sending update with data:", eventData);
+
+                const response = await fetch(`http://localhost:8080/api/events/${currentEventId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + localStorage.getItem('token')
+                    },
+                    body: JSON.stringify(eventData)
+                });
+
+                // Try to parse response based on content type
+                let responseData;
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    responseData = await response.json();
+                    console.log("JSON response from server:", responseData);
+                } else {
+                    const responseText = await response.text();
+                    console.log("Text response from server:", responseText);
+                    
+                    // Try to parse as JSON anyway in case the Content-Type header is wrong
+                    try {
+                        if (responseText && responseText.trim().startsWith('{')) {
+                            responseData = JSON.parse(responseText);
+                        }
+                    } catch (e) {
+                        console.log("Could not parse response as JSON:", e);
+                    }
+                }
+
+                if (!response.ok) {
+                    let errorMessage = `HTTP error! status: ${response.status}`;
+                    if (responseData && responseData.message) {
+                        errorMessage += `, message: ${responseData.message}`;
+                    } else if (responseData && responseData.detail) {
+                        errorMessage += `, detail: ${responseData.detail}`;
+                    }
+                    throw new Error(errorMessage);
+                }
+
+                showSuccess('Event updated successfully!');
+                setTimeout(() => {
+                    window.location.href = 'myevents.html';
+                }, 2000);
+
+            } catch (error) {
+                console.error('Error updating event:', error);
+                showError('Failed to update event: ' + error.message);
+            }
+        }
+
+        function showError(message) {
+            const errorAlert = document.getElementById('errorAlert');
+            document.getElementById('errorMessage').textContent = message;
+            errorAlert.classList.remove('d-none');
+            window.scrollTo(0, 0);
+        }
+
+        function showSuccess(message) {
+            const successAlert = document.getElementById('successAlert');
+            successAlert.textContent = message;
+            successAlert.classList.remove('d-none');
+            window.scrollTo(0, 0);
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            window.location.href = '../login.html';
+        }
+
+        // JWT token decoder function
+        function decodeJWT(token) {
+            try {
+                if (!token || typeof token !== 'string' || !token.includes('.')) {
+                    console.error('Invalid token format');
+                    return {};
+                }
+                
+                const parts = token.split('.');
+                if (parts.length !== 3) {
+                    console.error('Token does not have three parts');
+                    return {};
+                }
+                
+                const base64Url = parts[1];
+                // Handle padding for base64url format
+                let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const pad = base64.length % 4;
+                if (pad) {
+                    if (pad === 1) {
+                        console.error('Invalid token padding');
+                        return {};
+                    }
+                    base64 += new Array(5-pad).join('=');
+                }
+                
+                // Decode and parse
+                const rawPayload = atob(base64);
+                const decodedPayload = decodeURIComponent(
+                    rawPayload.split('').map(c => {
+                        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                    }).join('')
+                );
+                
+                return JSON.parse(decodedPayload);
+            } catch (e) {
+                console.error('Error decoding JWT token:', e);
+                return {};
+            }
+        }
+    </script>
+</body>
+</html>

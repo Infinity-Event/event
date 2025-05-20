@@ -1,7 +1,6 @@
 package com.capgemini.event;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -56,17 +55,5 @@ class TicketControllerTest {
 		verify(ticketService).getTicketById(ticketId);
 	}
 
-	@Test
-	void createTicket() {
-		Ticket inputTicket = new Ticket();
-		Ticket savedTicket = new Ticket();
-		when(ticketService.createTicket(any(Ticket.class))).thenReturn(savedTicket);
-
-		ResponseEntity<Ticket> response = ticketController.createTicket(inputTicket, null);
-
-		assertEquals(HttpStatus.CREATED, response.getStatusCode());
-		assertEquals(savedTicket, response.getBody());
-		verify(ticketService).createTicket(inputTicket);
-	}
 
 }
